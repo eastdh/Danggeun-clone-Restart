@@ -10,11 +10,11 @@ Team Restart(재시동)의 Spring 기반 웹 프로젝트로, 챗봇 상담사�
 
 ## 👥 Team Restart
 
-| 이름     | 역할               |
-|----------|--------------------|
-| 유동혁   | 팀장, 백엔드 개발  |
-| 안시은   | 백엔드 개발        |
-| 이재원   | 백엔드 개발        |
+| 이름  | 역할         |
+|-----|------------|
+| 유동혁 | 팀장, 백엔드 개발 |
+| 안시은 | 백엔드 개발     |
+| 이재원 | 백엔드 개발     |
 
 > 팀명 "Restart"는 팀원 이름인 재(원) + 시(은) + 동(혁)의 조합에서 착안되었으며, ‘다시 시작하다’는 의미를 담고 있습니다.
 
@@ -54,12 +54,12 @@ Team Restart(재시동)의 Spring 기반 웹 프로젝트로, 챗봇 상담사�
 
 ## 🌐 External API
 
-| API            | 용도 설명                                  |
-|----------------|--------------------------------------------|
-| Google OAuth   | 기본 소셜 로그인 기능                      |
-| Google Maps    | 지역 기반 거래 위치 서비스                 |
-| ChatGPT API    | 챗봇 상담 기능 구현                         |
-| AWS S3         | 이미지 업로드 및 파일 URL 저장              |
+| API          | 용도 설명               |
+|--------------|---------------------|
+| Google OAuth | 기본 소셜 로그인 기능        |
+| Google Maps  | 지역 기반 거래 위치 서비스     |
+| ChatGPT API  | 챗봇 상담 기능 구현         |
+| AWS S3       | 이미지 업로드 및 파일 URL 저장 |
 
 ---
 
@@ -67,7 +67,8 @@ Team Restart(재시동)의 Spring 기반 웹 프로젝트로, 챗봇 상담사�
 
 - **RESTful API 직접 설계 및 구현**
 - 기존 템플릿 없음 (기획→설계→개발 전 과정을 자체 구성)
-- [Figma 시안](https://www.figma.com/file/kSMua8TOVGIIPbNH1jie1Q/%EC%98%A4%EB%A5%B4%EB%AF%B8-2%EA%B8%B0-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(%EB%8B%B9%EA%B7%BC%EB%A7%88%EC%BC%93Web-%ED%81%B4%EB%A1%A0%EC%BD%94%EB%94%A9)?type=design&t=0GKxjur6Zlk8Gse3-1)을 기반으로 UI 구성
+- [Figma 시안](https://www.figma.com/file/kSMua8TOVGIIPbNH1jie1Q/%EC%98%A4%EB%A5%B4%EB%AF%B8-2%EA%B8%B0-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(%EB%8B%B9%EA%B7%BC%EB%A7%88%EC%BC%93Web-%ED%81%B4%EB%A1%A0%EC%BD%94%EB%94%A9)?type=design&t=0GKxjur6Zlk8Gse3-1)
+  을 기반으로 UI 구성
 
 ---
 
@@ -76,9 +77,9 @@ Team Restart(재시동)의 Spring 기반 웹 프로젝트로, 챗봇 상담사�
 - **브랜치 규칙**: `feature/기능명`, `fix/이슈명`, `refactor/대상명`
 - **커밋 컨벤션**: `[Add] 기능`, `[Fix] 버그`, `[Refactor] 구조 개선`, `[Docs] 문서 수정`
 - **작업 흐름**:
-  - GitHub Issues를 기반으로 작업 생성 및 할당
-  - PR 요청 시 코드 리뷰 후 병합
-  - 매일 오전 스크럼, 저녁 회고를 통해 진행 상황 공유
+    - GitHub Issues를 기반으로 작업 생성 및 할당
+    - PR 요청 시 코드 리뷰 후 병합
+    - 매일 오전 스크럼, 저녁 회고를 통해 진행 상황 공유
 
 ---
 
