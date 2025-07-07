@@ -1,7 +1,6 @@
 package io.github.restart.gmo_danggeun.entity;
 
 import io.github.restart.gmo_danggeun.entity.id.ImageChatId;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;

@@ -10,8 +10,12 @@ public class ImageTradeId implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     ImageTradeId that = (ImageTradeId) o;
     return Objects.equals(trade, that.trade) &&

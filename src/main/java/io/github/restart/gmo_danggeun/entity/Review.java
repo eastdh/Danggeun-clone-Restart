@@ -62,6 +62,78 @@ public class Review {
     this.isSellerWriter = isSellerWriter;
   }
 
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Trade getTrade() {
+    return trade;
+  }
+
+  public void setTrade(Trade trade) {
+    this.trade = trade;
+  }
+
+  public User getBuyer() {
+    return buyer;
+  }
+
+  public void setBuyer(User buyer) {
+    this.buyer = buyer;
+  }
+
+  public User getSeller() {
+    return seller;
+  }
+
+  public void setSeller(User seller) {
+    this.seller = seller;
+  }
+
+  public String getContent() {
+    return content;
+  }
+
+  public void setContent(String content) {
+    this.content = content;
+  }
+
+  public Short getRating() {
+    return rating;
+  }
+
+  public void setRating(Short rating) {
+    this.rating = rating;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public LocalDateTime getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(LocalDateTime updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public Boolean getSellerWriter() {
+    return isSellerWriter;
+  }
+
+  public void setSellerWriter(Boolean sellerWriter) {
+    isSellerWriter = sellerWriter;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) {

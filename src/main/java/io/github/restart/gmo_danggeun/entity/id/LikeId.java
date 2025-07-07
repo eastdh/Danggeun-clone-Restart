@@ -10,8 +10,12 @@ public class LikeId implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     LikeId that = (LikeId) o;
     return Objects.equals(user, that.user) &&
