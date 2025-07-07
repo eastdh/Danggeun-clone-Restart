@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <header></header>
+  <main>
+    <!-- Todo : th:fragment로 교체 -->
+    <nav>
+      <ul class="nav-list">
+        <li><a th:href="@{/home}">홈</a></li>
+        <li><a th:href="@{/trade}">중고거래</a></li>
+        <li><a th:href="@{/trade/1}">거래글</a></li>
+      </ul>
+    </nav>
+    <div>
+      <section>
+        <!-- Todo: carousel -->
+        <div class="trade-img-box">
+          <div class="carousel">
+            <img th:src="${trade.img_url}" class="trade-img">
+          </div>
+        </div>
+        <div th:object="${user}" class="user-meta">
+          <div>
+            <div class="profile-img-box">
+              <img th:src="${profile}" class="profile-img">
+            </div>
+            <div>
+              <span th:text="${name}">당근당근</span>
+              <span th:text="${location}">부암동</span>
+            </div>
+          </div>
+          <div class="manner-temp">
+            <div class="manner-info">
+              <div>
+                <span th:text="${manner}">46.9℃</span>
+                <div class="manner-bar">
+                  <div class="filled-bar"></div>
+                </div>
+              </div>
+              <div class="manner-emoji">😀</div>
+            </div>
+            <div>
+              <span>매너온도</span>
+              <div>
+                <div class="box-arrow"></div>
+                <p>매너온도는 당근 사용자로부터 받은 칭찬, 후기, 비매너 평가, 운영자 제재 등을 종합해서 만든 매너 지표예요.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h1 th:text="${trade.title}">나이키 루나 츄카 우븐 260</h1>
+        <div>
+          <span th:text="${category}">남성패션/잡화</span>
+          <span>∙</span>
+          <span th:text="${updated_at}">끌올 2시간 전</span>
+        </div>
+        <div>
+          <span th:text="${price}">230,000원</span>
+        </div>
+        <div>
+          <!-- Todo : 나머지 정리 -->
+          <p th:text="${}"></p>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer></footer>
+</body>
+</html>

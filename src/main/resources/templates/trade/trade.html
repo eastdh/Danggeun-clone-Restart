@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title th:text="${location} + ' | GMO 당근'">서울특별시 종로구 중고거래 | GMO당근</title>
+</head>
+<body>
+  <header></header>
+  <main>
+    <div class="container">
+      <!-- Todo : th:fragment로 교체 -->
+      <nav>
+        <ul class="nav-list">
+          <li><a th:href="@{/home}">홈</a></li>
+          <li><a th:href="@{/trade}">중고거래</a></li>
+          <li><a th:href="@{/trade/1}">거래글</a></li>
+        </ul>
+      </nav>
+      <h1 th:text="${location} + ' 중고거래'">중고거래 인기매물</h1>
+      <section>
+        <aside>
+          <header>
+            <h2>필터</h2>
+            <span>초기화</span>
+          </header>
+          <section>
+            <div>
+              <a><input type="checkbox"/> <span>거래 가능만 보기</span></a>
+            </div>
+            <div class="divider-line"></div>
+            <div>
+              <h3>위치</h3>
+              <div th:each="obj:${dump_location}">
+                <a><input type="radio"/> <span th:value="${dump.name}">종로구</span></a>
+              </div>
+            </div>
+            <div class="divider-line"></div>
+            <div>
+              <h3>카테고리</h3>
+              <div th:each="obj:${dump_category}">
+                <a><input type="radio"/> <span th:value="${dump.category}">유아도서</span></a>
+              </div>
+            </div>
+            <div class="divider-line"></div>
+            <div>
+              <h3>가격</h3>
+              <div>
+                <a>나눔</a>
+                <a>5,000원 이하</a>
+                <a>10,000원 이하</a>
+                <a>20,000원 이하</a>
+              </div>
+              <div>
+                <input type="number" class="price-start"/> - <input type="number" class="price-end"/>
+                <a>적용하기</a>
+              </div>
+            </div>
+          </section>
+        </aside>
+        <div th:each="obj:${dump_test}" class="contents">
+          <div class="card">
+            <div class="card-img-box">
+              <img class="card-img"/>
+            </div>
+            <div class="card-info">
+              <div>
+                <span th:text="${dump.title}" class="card-title">나이키 루나 츄카 우븐 260</span>
+                <span th:text="${dump.price} + '원'" class="card-price">230,000원</span>
+              </div>
+              <div>
+                <span th:text="${dump.location}">종로구</span>
+                <span>∙</span>
+                <span th:text="${dump.updated_at}">3시간 전</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div class="float-box">
+    <span>거래글쓰기</span>
+  </div>
+  <footer></footer>
+</body>
+</html>
