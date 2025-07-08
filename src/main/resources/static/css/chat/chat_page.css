@@ -109,6 +109,11 @@ input:checked + .list__header__toggle-slider::before {
   padding: 8.5px 20px;
   border-bottom: 1px solid #ddd;
   gap: 4px;
+  cursor: pointer;
+}
+
+.list__room-list__item:hover {
+  background-color: #f0f0f0;
 }
 
 .list__room-list__item-content {
@@ -221,10 +226,29 @@ input:checked + .list__header__toggle-slider::before {
   cursor: pointer;
 }
 
-.room__header__trade-info__status-button .closed {
+.room__header__trade-info__status-button:hover {
+  background-color: #e85f00;
+}
+
+/* 거래 완료시 클릭, closed 클래스 추가, disabled 처리 */
+.room__header__trade-info__status-button.closed {
   color: #bdbec8;
   background-color: white;
-  border: #bdbec8 1px solid;
+  border: 1px solid #bdbec8;
+  cursor: default;
+}
+
+.room__header__trade-info__status-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 거래 종료 후 버튼 hover 무효화 */
+.room__header__trade-info__status-button.closed:hover {
+  background-color: white;
+  color: #bdbec8;
+  border: 1px solid #bdbec8;
+  cursor: default;
 }
 
 /* 메시지 공통 스타일 */
@@ -292,6 +316,10 @@ input:checked + .list__header__toggle-slider::before {
 .room__messages__item--chat-bot .room__messages__item__text {
   background-color: #fffae0;
   cursor: pointer;
+}
+
+.room__messages__item--chat-bot .room__messages__item__text:hover {
+  box-shadow: 0 0 0 2px #ffeb94;
 }
 
 /* 메시지 입력 영역 */
