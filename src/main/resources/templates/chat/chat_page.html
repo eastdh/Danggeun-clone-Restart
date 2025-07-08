@@ -1,0 +1,99 @@
+<!-- chat_page.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>chat page</title>
+    <link rel="stylesheet" href="/src/main/resources/static/css/chat/chat_page.css" />
+  </head>
+  <body>
+    <div class="chat-page">
+      <!-- chat list -->
+      <div class="chat-list">
+        <div class="chat-list__header">
+          <div class="list-header__my-id">내 아이디</div>
+          <div class="list-header__toggle">
+            읽지 않은 항목
+            <label class="list-toggle-switch">
+              <input type="checkbox" id="toggleOption" />
+              <span class="list-toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="chat-list__rooms">
+          <div class="chat-list__item">
+            <div class="chat-item__content">
+              <div class="chat-item__meta">
+                <div class="chat-meta__id">상대방 아이디</div>
+                <div class="chat-meta__location">화곡동</div>
+                <div class="chat-meta__timestamp">3주전</div>
+              </div>
+              <div class="chat-item__last-message">
+                넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!
+              </div>
+            </div>
+            <img class="thumbnail" src="/src/main/resources/static/assets/images/chat_test_pic.jpg" />
+          </div>
+        </div>
+      </div>
+      <!-- chat room -->
+      <div class="chat-room">
+        <div class="chat-room__header">
+          <div class="room-header__opponent-info">
+            <div class="room-header__id">상대방 아이디</div>
+            <div class="room-header__temperature">36.9°C</div>
+          </div>
+          <div class="room-header__trade-info">
+            <div class="room-header__product-info">
+              <img class="thumbnail" src="/src/main/resources/static/assets/images/chat_test_pic.jpg" />
+              <div class="room-header__product-meta">
+                <div class="room-header__product">LG 양문형 냉장고 779L</div>
+                <div class="room-header__price">150,000원</div>
+              </div>
+            </div>
+            <div class="room-header__status-button">거래 완료</div>
+          </div>
+        </div>
+        <div class="chat-room__messages">
+          <div class="chat-message__item chat-message__item--me">
+            <div class="chat-message__content">
+              <div class="chat-message__time">2022-08-05 18:00</div>
+              <div class="chat-message__message">
+                넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!
+              </div>
+            </div>
+          </div>
+          <div class="chat-message__item chat-message__item--you">
+            <div class="chat-message__content">
+              <div class="chat-message__time">2022-08-05 18:00</div>
+              <div class="chat-message__message">
+                넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!
+              </div>
+            </div>
+          </div>
+          <div class="chat-message__item chat-message__item--me">
+            <div class="chat-message__content">
+              <div class="chat-message__time">2022-08-05 18:00</div>
+              <div class="chat-message__message">
+                넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!
+              </div>
+            </div>
+          </div>
+          <div class="chat-message__item chat-message__item--you">
+            <div class="chat-message__content">
+              <div class="chat-message__time">2022-08-05 18:00</div>
+              <div class="chat-message__message">
+                넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!넵넵 감사합니다!
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-room__input">
+          <input type="text" />
+          <button>전송</button>
+        </div>
+      </div>
+    </div>
+    <script src="/src/main/resources/static/js/chat/chat_page.js"></script>
+  </body>
+</html>
