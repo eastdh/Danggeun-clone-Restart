@@ -5,18 +5,19 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>내 물건 팔기</title>
+  <title th:text="${title} + ' 편집 | GMO당근 중고거래'">거래물품 편집 | GMO당근 중고거래</title>
 </head>
 <body>
 <header></header>
 <main>
   <section>
     <div>
-      <h1>내 물건 팔기</h1>
+      <h1 th:text="${title} + ' 편집하기'">거래물품 편집하기</h1>
     </div>
     <!-- Todo :
       add th:action="@{/trade/write}" method="post"
       add form validation for all inputs
+      add original data from model attribute to each inputs' value
     -->
     <form>
       <div>
@@ -49,7 +50,7 @@
         placeholder="게시글 내용을 작성해주세요."></textarea>
       </div>
       <div>
-        <label for="preferred_location">거래 희망 장소</label>
+        <label for="preferred_location">거래 희망 장소</labe l>
         <input id="preferred_location" name="preferred_location" class="form-input"
                 placeholder="거래를 희망하는 장소를 입력해주세요."/>
       </div>

@@ -1,0 +1,30 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- nav -->
+<nav th:fragment="nav" class="nav">
+  <ul class="nav-list">
+    <li><a th:href="@{/home}">홈</a></li>
+    <li><a th:href="@{/trade}">중고거래</a></li>
+    <li><a th:href="@{/trade/1}">거래글</a></li>
+  </ul>
+</nav>
+
+<!-- trade_post's trades card -->
+<div th:fragment="trade_card" class="trade-card">
+  <div class="card-img-box">
+    <img class="card-img">
+  </div>
+  <div class="card-info">
+    <div>
+      <span th:text="${other_trade_title}" class="card-title">거래글이름</span>
+      <span th:text="${other_trade_price} + '원'" class="card-price">10,000원</span>
+    </div>
+    <div>
+      <span th:text="${other_location}">장소</span>
+      <span th:if="${is_trade_list}">
+        <span>∙</span>
+        <span th:text="${dump.updated_at}">3시간 전</span>
+      </span>
+    </div>
+  </div>
+</div>
