@@ -1,0 +1,139 @@
+/* scroll-container */
+.scroll-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+/* 슬라이드 공통 */
+.slide {
+  height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+  text-align: center;
+}
+
+.slide--features {
+  background-color: var(--gray-100);
+}
+
+.slide--preview {
+  background-color: var(--gray-050);
+}
+
+.slide--stack {
+  background-color: var(--gray-000);
+}
+
+.slide--team {
+  background-color: var(--gray-050);
+}
+
+/* 인디케이터 컨테이너 */
+.scroll-indicator {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1000;
+}
+
+/* dot */
+.dot {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--gray-400);
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.dot.active {
+  background-color: var(--orange-600);
+}
+
+/* dot 툴팁 스타일 */
+.dot::after {
+  content: attr(title);
+  position: absolute;
+  right: 140%;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--gray-900);
+  color: var(--gray-000);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.dot:hover::after {
+  opacity: 1;
+}
+
+/* 슬라이드 - 인트로 */
+.slide--intro {
+  background-color: var(--yellow-200);
+}
+
+.intro__project-logo,
+.intro__team-logo {
+  margin: 16px 0;
+}
+
+.intro__project-logo img,
+.intro__team-logo img {
+  max-height: 80px;
+  object-fit: fill;
+}
+
+.intro__title {
+  font-size: 3rem;
+  color: var(--gray-900);
+  margin: 20px 0;
+}
+
+.intro__description {
+  font-size: 1.25rem;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+
+/* 스크롤 유도 화살표 */
+.scroll-down-indicator {
+  margin-top: 80px;
+  color: var(--gray-600);
+  animation: bounce 1.5s infinite;
+}
+
+.arrow {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-left: 3px solid var(--gray-600);
+  border-bottom: 3px solid var(--gray-600);
+  transform: rotate(-45deg);
+  margin: 0 auto;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
