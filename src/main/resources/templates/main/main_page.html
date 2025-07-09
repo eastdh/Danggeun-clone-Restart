@@ -29,17 +29,120 @@
       </section>
 
       <section class="slide slide--features" data-label="기능 소개">
-        <h2>주요 기능 소개</h2>
-        <ul>
-          <li>📦 거래 게시글 작성/검색/수정</li>
-          <li>💬 실시간 채팅 및 GPT 챗봇</li>
-          <li>📍 위치 기반 추천 및 후기 시스템</li>
-        </ul>
+        <div class="features__grid">
+          <h2 class="features__title">주요 기능 소개</h2>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">🔐</span>
+            <h3 class="feature-card__title">계정 인증 및 관리</h3>
+            <p class="feature-card__desc">로그인, 가입, 비밀번호 찾기, 정보 수정, 탈퇴 등을 지원합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">📝</span>
+            <h3 class="feature-card__title">거래 게시글 관리</h3>
+            <p class="feature-card__desc">등록, 수정, 끌올, 삭제, 검색, 추천 기능을 포함합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">💬</span>
+            <h3 class="feature-card__title">채팅 및 거래 제안</h3>
+            <p class="feature-card__desc">실시간 메시지 교환과 가격 제안이 가능합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">🤖</span>
+            <h3 class="feature-card__title">AI 챗봇 시스템</h3>
+            <p class="feature-card__desc">GPT 챗봇과 대화하며 플로팅 버튼으로 접근할 수 있습니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">⭐</span>
+            <h3 class="feature-card__title">후기 및 매너온도</h3>
+            <p class="feature-card__desc">거래 후기 작성 및 평가로 매너온도를 관리합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">📍</span>
+            <h3 class="feature-card__title">위치 기반 추천</h3>
+            <p class="feature-card__desc">지역 설정을 통해 맞춤 거래글을 추천합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">🖼️</span>
+            <h3 class="feature-card__title">이미지 업로드 및 수정</h3>
+            <p class="feature-card__desc">프로필, 거래글, 채팅 이미지 등록/관리 기능을 제공합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">👥</span>
+            <h3 class="feature-card__title">사용자 페이지</h3>
+            <p class="feature-card__desc">마이페이지 및 프로필 정보 확인, UI 분기 처리 등 포함됩니다.</p>
+          </div>
+        </div>
       </section>
 
       <section class="slide slide--preview" data-label="UI 미리보기">
-        <h2>UI 미리보기</h2>
-        <p>각 페이지와 컴포넌트를 미리 경험해보세요</p>
+        <h2 class="preview__title">UI 미리보기</h2>
+        <p class="preview__description">각 페이지와 컴포넌트를 미리 경험해보세요</p>
+
+        <!-- 중앙 큰 미리보기 카드 -->
+        <div class="preview__main" id="previewMain">
+          <img src="/src/main/resources/static/assets/screenshots/screenshot_login.png" alt="미리보기" class="preview-main__img" />
+          <div class="preview-main__content">
+            <h3 class="preview-main__title">로그인 페이지</h3>
+            <p class="preview-main__desc">사이트 및 소셜 로그인 UI. 오류 피드백, 자동 포커싱 등이 포함됩니다.</p>
+          </div>
+        </div>
+
+        <!-- 하단 작은 카드 리스트 -->
+        <ul class="preview__list" id="previewList">
+          <li
+            class="preview-card"
+            data-index="0"
+            data-title="로그인 페이지"
+            data-desc="사이트 및 소셜 로그인 UI. 오류 피드백, 자동 포커싱 등이 포함됩니다."
+            data-src="screenshot_login.png"
+          >
+            <img src="/src/main/resources/static/assets/screenshots/screenshot_login.png" alt="로그인" />
+          </li>
+          <li
+            class="preview-card"
+            data-index="1"
+            data-title="거래글 목록"
+            data-desc="지역 기반 추천을 반영한 거래글 카드 UI입니다."
+            data-src="screenshot_trade.png"
+          >
+            <img src="/src/main/resources/static/assets/screenshots/screenshot_trade.png" alt="거래글" />
+          </li>
+          <li
+            class="preview-card"
+            data-index="2"
+            data-title="채팅 및 챗봇"
+            data-desc="사용자 간 실시간 채팅 UI 및 GPT 챗봇 인터페이스를 확인하세요."
+            data-src="screenshot_chat.png"
+          >
+            <img src="/src/main/resources/static/assets/screenshots/screenshot_chat.png" alt="채팅" />
+          </li>
+          <li
+            class="preview-card"
+            data-index="3"
+            data-title="후기 작성"
+            data-desc="거래 완료 후 사용자 평가와 매너온도 UI입니다."
+            data-src="screenshot_review.png"
+          >
+            <img src="/src/main/resources/static/assets/screenshots/screenshot_review.png" alt="후기" />
+          </li>
+          <li
+            class="preview-card"
+            data-index="4"
+            data-title="프로필 페이지"
+            data-desc="마이페이지 및 타인의 프로필 UI를 비교해보세요."
+            data-src="screenshot_profile.png"
+          >
+            <img src="/src/main/resources/static/assets/screenshots/screenshot_profile.png" alt="프로필" />
+          </li>
+        </ul>
       </section>
 
       <section class="slide slide--stack" data-label="기술 스택">
