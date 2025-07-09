@@ -118,5 +118,5 @@ feat(login): 로그인 실패 시 메시지 추가
 ## 📄 License
 
 이 프로젝트는 **비영리 학습 목적**으로 진행되며,  
-당근마켓(Danggeun Market) 공식 서비스와는 무관합니다.  
+당근마켓(Karrot Market)[https://www.daangn.com](https://www.daangn.com) 공식 서비스와는 무관합니다.  
 코드 및 자료는 자유롭게 참고 가능하지만, 상업적 사용은 삼가주시기 바랍니다.
