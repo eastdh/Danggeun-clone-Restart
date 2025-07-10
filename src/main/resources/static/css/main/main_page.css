@@ -6,7 +6,7 @@
   scroll-behavior: smooth;
 }
 
-/* 슬라이드 공통 */
+/* 슬라이드 공통 스타일*/
 .slide {
   height: 100vh;
   scroll-snap-align: start;
@@ -16,6 +16,20 @@
   align-items: center;
   padding: 60px;
   text-align: center;
+}
+
+h2 {
+  font-size: 2rem;
+  color: var(--gray-900);
+}
+
+.slide__subtitle {
+  font-size: 1.1rem;
+  color: var(--gray-600);
+  margin-bottom: 40px;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 800px;
 }
 
 /* 인디케이터 컨테이너 */
@@ -148,11 +162,15 @@
 .features__title {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
-  font-size: 2rem;
   text-align: left;
   align-self: start;
   justify-self: start;
-  color: var(--gray-900);
+}
+
+.features__subtitle {
+  text-align: left;
+  align-self: start;
+  justify-self: start;
 }
 
 .feature-card {
@@ -243,15 +261,7 @@
 }
 
 .preview__title {
-  font-size: 2rem;
-  color: var(--gray-900);
   margin-bottom: 8px;
-}
-
-.preview__description {
-  font-size: 1.1rem;
-  color: var(--gray-700);
-  margin-bottom: 40px;
 }
 
 /* 중앙 큰 미리보기 카드 */
@@ -322,9 +332,232 @@
   object-fit: cover;
 }
 
-/* 선택된 카드 강조 효과 */
 .preview-card.active {
   outline: 1px solid var(--orange-600);
   transform: scale(1.3);
   z-index: 10;
+}
+
+/* 슬라이드 - 기술 스택 */
+.slide--stack {
+  background-color: var(--gray-050);
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stack__title {
+  margin-bottom: 8px;
+}
+
+/* 흐름도 전체 */
+.stack-flow-html {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 32px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 150px;
+}
+
+/* 기술 칼럼 */
+.stack-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  min-width: 160px;
+}
+
+.stack-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 8px;
+}
+
+.stack-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 15rem;
+  background-color: var(--gray-000);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1.4rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  color: white;
+  white-space: nowrap;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.stack-box:hover {
+  transform: translateY(-8px);
+}
+
+.stack-desc {
+  position: absolute;
+  top: 80%;
+  min-width: 100%;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  color: var(--gray-800);
+  background-color: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(-16px);
+}
+
+.stack-box:hover .stack-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 색상 설정 */
+.stack-box--gray {
+  background-color: #f3f4f6;
+  color: #333;
+}
+.stack-box--template {
+  background-color: #673ab7;
+}
+.stack-box--backend {
+  background-color: #4caf50;
+}
+.stack-box--security {
+  background-color: #1976d2;
+}
+.stack-box--db {
+  background-color: #3f51b5;
+}
+.stack-box--storage {
+  background-color: #f57c00;
+}
+.stack-box--ai {
+  background-color: #9c27b0;
+}
+.stack-box--map {
+  background-color: #009688;
+}
+.stack-box--auth {
+  background-color: #e91e63;
+}
+
+/* 화살표 */
+.stack-arrow {
+  font-size: 1.4rem;
+  color: var(--gray-500);
+}
+
+/* 반응형 */
+@media screen and (max-width: 768px) {
+  .stack__title {
+    font-size: 1.6rem;
+  }
+  .stack__subtitle {
+    font-size: 1rem;
+  }
+  .stack-box {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+  .stack-desc {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
+}
+
+.slide--team {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.slide--team .slide__subtitle {
+  font-size: 1.2em;
+  color: #777;
+  margin-bottom: 24px;
+}
+
+.team-cards {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.card {
+  background-color: #f2fefc;
+  border: 1px solid #c6f2eb;
+  border-radius: 12px;
+  padding: 20px;
+  width: 220px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+.card h3 {
+  margin-bottom: 12px;
+  color: #00a8a8;
+}
+
+.card p {
+  line-height: 1.5;
+  color: #333;
+}
+
+.team-note {
+  font-size: 0.95em;
+  color: #888;
+  margin-top: 20px;
+}
+
+.team-logo {
+  display: block;
+  margin: 0 auto 28px;
+  width: 700px;
+  height: 300px;
+  object-fit: cover;
+}
+
+.team-slogan {
+  font-size: 1.05em;
+  font-weight: 500;
+  color: #00a8a8;
+  margin-top: 12px;
+}
+
+.project-github {
+  display: inline-block;
+  margin-top: 24px;
+  padding: 10px 16px;
+  background-color: #00a8a8;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.project-github:hover {
+  background-color: #007f7f;
 }
