@@ -29,20 +29,26 @@ h1 {
   gap: 1rem;
 }
 
-.trade-section > div {
+.trade-section .trade-content {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
 
-.trade-section .trade-profile,
-.trade-section .trade-meta {
+.trade-section .trade-content .trade-profile,
+.trade-section .trade-content .trade-meta {
   width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+}
+
+.trade-section .trade-content .trade-profile {
+  top: 0;
+  position: -webkit-sticky;
+  position: sticky;
 }
 
 /* trade profile section */
