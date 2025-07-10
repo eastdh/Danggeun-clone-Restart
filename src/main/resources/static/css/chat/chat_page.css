@@ -149,6 +149,43 @@ input:checked + .list__header__toggle-slider::before {
   white-space: nowrap;
 }
 
+/* 채팅 목록 비어있을 때 */
+.list__empty-message {
+  height: 100%;
+  text-align: center;
+  padding: 48px 24px;
+  color: #444;
+  background-color: #f9f9f9;
+}
+
+.empty-message__title {
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.empty-message__subtitle {
+  font-size: 1em;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.empty-message__browse-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #00a8a8;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.empty-message__browse-button:hover {
+  background-color: #007f7f;
+}
+
 /* 우측 채팅방 패널 */
 .room {
   display: flex;
@@ -361,4 +398,41 @@ input:checked + .list__header__toggle-slider::before {
   color: white;
   cursor: pointer;
   white-space: nowrap;
+}
+
+/* 선택된 채팅방 없을 때 */
+.room__empty-message {
+  height: 100%;
+  text-align: center;
+  padding: 60px 24px;
+  color: #555;
+  background-color: #f5f5f5;
+}
+
+.empty-message__title {
+  font-size: 1.4em;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.empty-message__subtitle {
+  font-size: 1em;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.empty-message__arrow-indicator {
+  font-size: 2em;
+  animation: bounceLeft 1.2s infinite;
+}
+
+@keyframes bounceLeft {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-10px);
+  }
 }

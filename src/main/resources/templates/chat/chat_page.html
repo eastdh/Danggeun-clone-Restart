@@ -4,81 +4,101 @@
   <head>
     <meta charset="UTF-8" />
     <title>chat page</title>
-    <link rel="stylesheet" href="/src/main/resources/static/css/chat/chat_page.css" />
+    <link rel="stylesheet" th:href="@{/css/chat/chat_page.css}" />
   </head>
   <body>
     <div class="chat-page">
       <!-- chat-list -->
       <div class="list">
         <div class="list__header">
-          <div class="list__header__user-id" th:text="${userId}">내 아이디</div>
+          <div class="list__header__user-id" th:text="${userNickname} ?: '내 닉네임'">내 닉네임</div>
           <div class="list__header__toggle">
             <span>읽지 않은 항목</span>
             <label class="list__header__toggle-switch">
-              <input type="checkbox" id="toggleOption" th:checked="${showUnreadOnly}" />
+              <input type="checkbox" id="toggleOption" th:checked="${showUnreadOnly} ?: false" />
               <span class="list__header__toggle-slider"></span>
             </label>
           </div>
         </div>
         <div class="list__room-list">
           <!-- 채팅방 리스트 아이템 -->
+          <div th:if="${#lists.isEmpty(chatRooms)}" class="list__empty-message">
+            <p class="empty-message__title">아직 시작된 채팅이 없어요</p>
+            <p class="empty-message__subtitle">
+              거래 상세 페이지에서 <strong>‘채팅하기’ 버튼</strong>을 누르면 대화를 시작할 수 있어요.<br />
+              관심 있는 상품을 먼저 둘러보는 건 어때요?
+            </p>
+            <a th:href="@{/trade}" class="empty-message__browse-button">거래글 둘러보기</a>
+          </div>
           <div class="list__room-list__item" th:each="room : ${chatRooms}">
             <div class="list__room-list__item-content">
               <div class="list__room-list__item-meta">
-                <div class="list__room-list__item-meta__partner-id" th:text="${room.partnerNickname}">상대방 아이디</div>
-                <div class="list__room-list__item-meta__location" th:text="${room.partnerLocation}">화곡동</div>
-                <div class="list__room-list__item-meta__timestamp" th:text="${room.lastMessageTime}">3주전</div>
+                <div class="list__room-list__item-meta__partner-id" th:text="${room.partnerNickname} ?: '상대방 닉네임'">상대방 닉네임</div>
+                <div class="list__room-list__item-meta__location" th:text="${room.partnerLocation} ?: '강남역'">강남역</div>
+                <div class="list__room-list__item-meta__timestamp" th:text="${room.lastMessageTime} ?: '1시간 전'">1시간 전</div>
               </div>
-              <div class="list__room-list__item__preview" th:text="${room.lastMessageContent}">
-                넵넵 감사합니다! 넵넵 감사합니다! 넵넵 감사합니다! 넵넵 감사합니다! 넵넵 감사합니다! 넵넵 감사합니다! 넵넵 감사합니다!
-              </div>
+              <div class="list__room-list__item__preview" th:text="${room.lastMessageContent} ?: '기본 미리보기 메시지'">기본 미리보기 메시지</div>
             </div>
-            <img class="thumbnail" src="/src/main/resources/static/assets/images/chat_test_pic.jpg" th:src="@{${room.productThumbnail}}" />
+            <img class="thumbnail" th:src="@{${room.productThumbnail} ?: '/assets/images/chat_test_pic.jpg'}" />
           </div>
         </div>
       </div>
 
       <!-- chat-room -->
       <div class="room">
-        <div class="room__header">
-          <div class="room__header__partner-info">
-            <div class="room__header__partner-info__id" th:text="${selectedRoom.partnerNickname}">상대방 아이디</div>
-            <div class="room__header__partner-info__temperature" th:text="${selectedRoom.partnerTemperature}">36.9°C</div>
-          </div>
-          <div class="room__header__trade-info">
-            <div class="room__header__trade-info__product">
-              <img class="thumbnail" src="/src/main/resources/static/assets/images/chat_test_pic.jpg" th:src="@{${selectedRoom.productThumbnail}}" />
-              <div class="room__header__trade-info__product-meta">
-                <div class="room__header__trade-info__product__name" th:text="${selectedRoom.productName}">LG 양문형 냉장고 779L</div>
-                <div class="room__header__trade-info__product__price" th:text="${selectedRoom.productPrice}">150,000원</div>
+        <div th:if="${selectedRoom == null}" class="room__empty-message">
+          <p class="empty-message__title">채팅방이 선택되지 않았어요</p>
+          <p class="empty-message__subtitle">
+            왼쪽에서 채팅방을 선택하면<br />
+            상대방과의 메시지를 확인하고 거래를 진행할 수 있어요.
+          </p>
+          <div class="empty-message__arrow-indicator">👈</div>
+        </div>
+        <div th:unless="${selectedRoom == null}">
+          <div class="room__header">
+            <div class="room__header__partner-info">
+              <div class="room__header__partner-info__id" th:text="${selectedRoom?.partnerNickname} ?: '상대방 닉네임'">상대방 닉네임</div>
+              <div class="room__header__partner-info__temperature" th:text="${selectedRoom?.partnerTemperature} ?: '36.5°C'">36.5°C</div>
+            </div>
+            <div class="room__header__trade-info">
+              <div class="room__header__trade-info__product">
+                <img class="thumbnail" th:src="@{${selectedRoom?.productThumbnail} ?: '/assets/images/chat_test_pic.jpg'}" />
+                <div class="room__header__trade-info__product-meta">
+                  <div class="room__header__trade-info__product__name" th:text="${selectedRoom?.productName} ?: 'LG 냉장고 799L'">LG 냉장고 799L</div>
+                  <div class="room__header__trade-info__product__price" th:text="${selectedRoom?.productPrice} ?: '150,000원'">150,000원</div>
+                </div>
+              </div>
+              <div
+                class="room__header__trade-info__status-button"
+                th:class="'room__header__trade-info__status-button' + (${selectedRoom?.isClosed} ? ' closed' : '')"
+                th:disabled="${selectedRoom?.isClosed} ?: false"
+              >
+                <span th:text="${selectedRoom?.isClosed} ? '거래 완료' : '거래 확정하기'">거래 확정하기</span>
               </div>
             </div>
-            <div class="room__header__trade-info__status-button" th:class="${selectedRoom.isClosed} ? 'closed'" th:disabled="${selectedRoom.isClosed}">
-              <span th:text="${selectedRoom.isClosed} ? '거래 완료' : '거래 확정하기'">버튼</span>
+          </div>
+          <!-- 채팅 메시지 반복 -->
+          <div class="room__messages">
+            <div
+              th:each="msg : ${messages}"
+              th:class="'room__messages__item room__messages__item--' + ${msg.senderType.toLowerCase()}"
+              class="room__messages__item room__messages__item--me"
+            >
+              <div class="room__messages__item__content">
+                <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
+                <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- 채팅 메시지 반복 -->
-        <div class="room__messages">
-          <div
-            th:each="msg : ${messages}"
-            th:class="'room__messages__item room__messages__item--' + ${msg.senderType.toLowerCase()}"
-            class="room__messages__item room__messages__item--me"
-          >
-            <div class="room__messages__item__content">
-              <div class="room__messages__item__text" th:text="${msg.content}">메시지 내용</div>
-              <div class="message-time" th:text="${msg.timestamp}">2022-08-05 18:00</div>
+          <div class="room__input-area">
+            <div class="room__input-area__wrapper">
+              <textarea class="room__input-area__field" placeholder="메시지를 입력하세요"></textarea>
+              <button class="room__input-area__send-button">전송</button>
             </div>
-          </div>
-        </div>
-        <div class="room__input-area">
-          <div class="room__input-area__wrapper">
-            <textarea class="room__input-area__field" placeholder="메시지를 입력하세요"></textarea>
-            <button class="room__input-area__send-button">전송</button>
           </div>
         </div>
       </div>
     </div>
-    <script src="/src/main/resources/static/js/chat/chat_page.js"></script>
+    <script th:src="@{/js/chat/chat_page.js}"></script>
   </body>
 </html>
