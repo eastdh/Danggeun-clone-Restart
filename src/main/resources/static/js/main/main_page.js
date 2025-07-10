@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = card.dataset.title;
     const desc = card.dataset.desc;
 
-    previewImg.src = `/src/main/resources/static/assets/screenshots/${src}`;
+    previewImg.src = src;
     previewTitle.textContent = title;
     previewDesc.textContent = desc;
 

@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <title>main page</title>
-    <link rel="stylesheet" href="/src/main/resources/static/css/style.css" />
-    <link rel="stylesheet" href="/src/main/resources/static/css/main/main_page.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/main/main_page.css}" />
   </head>
   <body>
     <div class="scroll-container">
       <section class="slide slide--intro" data-label="Intro">
         <!-- TODO: 프로젝트 로고 (favicon) -->
         <div class="intro__project-logo">
-          <img src="/src/main/resources/static/assets/logo/gmo_danggeun_logo.svg" alt="GMO-Danggeun 로고" />
+          <img th:src="@{/assets/logo/gmo_danggeun_logo.svg}" alt="GMO-Danggeun 로고" />
         </div>
         <h1 class="intro__title">GMO-Danggeun</h1>
         <p class="intro__description">
@@ -20,7 +20,7 @@
         </p>
         <!-- TODO: 팀 로고 -->
         <div class="intro__team-logo">
-          <img src="/src/main/resources/static/assets/logo/restart_team_logo_with_name.svg" alt="팀 Restart 로고" />
+          <img th:src="@{/assets/logo/restart_team_logo_with_name.svg}" alt="팀 Restart 로고" />
         </div>
         <div class="scroll-down-indicator">
           scroll down
@@ -90,7 +90,7 @@
 
         <!-- 중앙 큰 미리보기 카드 -->
         <div class="preview__main" id="previewMain">
-          <img src="/src/main/resources/static/assets/screenshots/screenshot_login.png" alt="미리보기" class="preview-main__img" />
+          <img th:src="@{/assets/screenshots/screenshot_login.png}" alt="미리보기" class="preview-main__img" />
           <div class="preview-main__content">
             <h3 class="preview-main__title">로그인 페이지</h3>
             <p class="preview-main__desc">사이트 및 소셜 로그인 UI. 오류 피드백, 자동 포커싱 등이 포함됩니다.</p>
@@ -104,45 +104,45 @@
             data-index="0"
             data-title="로그인 페이지"
             data-desc="사이트 및 소셜 로그인 UI. 오류 피드백, 자동 포커싱 등이 포함됩니다."
-            data-src="screenshot_login.png"
+            th:data-src="@{/assets/screenshots/screenshot_login.png}"
           >
-            <img src="/src/main/resources/static/assets/screenshots/screenshot_login.png" alt="로그인" />
+            <img th:src="@{/assets/screenshots/screenshot_login.png}" alt="로그인" />
           </li>
           <li
             class="preview-card"
             data-index="1"
             data-title="거래글 목록"
             data-desc="지역 기반 추천을 반영한 거래글 카드 UI입니다."
-            data-src="screenshot_trade.png"
+            th:data-src="@{/assets/screenshots/screenshot_trade.png}"
           >
-            <img src="/src/main/resources/static/assets/screenshots/screenshot_trade.png" alt="거래글" />
+            <img th:src="@{/assets/screenshots/screenshot_trade.png}" alt="거래글" />
           </li>
           <li
             class="preview-card"
             data-index="2"
             data-title="채팅 및 챗봇"
             data-desc="사용자 간 실시간 채팅 UI 및 GPT 챗봇 인터페이스를 확인하세요."
-            data-src="screenshot_chat.png"
+            th:data-src="@{/assets/screenshots/screenshot_chat.png}"
           >
-            <img src="/src/main/resources/static/assets/screenshots/screenshot_chat.png" alt="채팅" />
+            <img th:src="@{/assets/screenshots/screenshot_chat.png}" alt="채팅" />
           </li>
           <li
             class="preview-card"
             data-index="3"
             data-title="후기 작성"
             data-desc="거래 완료 후 사용자 평가와 매너온도 UI입니다."
-            data-src="screenshot_review.png"
+            th:data-src="@{/assets/screenshots/screenshot_review.png}"
           >
-            <img src="/src/main/resources/static/assets/screenshots/screenshot_review.png" alt="후기" />
+            <img th:src="@{/assets/screenshots/screenshot_review.png}" alt="후기" />
           </li>
           <li
             class="preview-card"
             data-index="4"
             data-title="프로필 페이지"
             data-desc="마이페이지 및 타인의 프로필 UI를 비교해보세요."
-            data-src="screenshot_profile.png"
+            th:data-src="@{/assets/screenshots/screenshot_profile.png}"
           >
-            <img src="/src/main/resources/static/assets/screenshots/screenshot_profile.png" alt="프로필" />
+            <img th:src="@{/assets/screenshots/screenshot_profile.png}" alt="프로필" />
           </li>
         </ul>
       </section>
@@ -218,7 +218,7 @@
         <p class="slide__subtitle">우리 팀의 기여와 협업을 소개합니다</p>
 
         <!-- 팀 로고 삽입 -->
-        <img src="/src/main/resources/static/assets/logo/restart_team_logo_with_name.svg" alt="Restart 팀 로고" class="team-logo" />
+        <img th:src="@{/assets/logo/restart_team_logo_with_name.svg}" alt="Restart 팀 로고" class="team-logo" />
 
         <div class="team-cards">
           <div class="card">
@@ -244,6 +244,6 @@
 
     <!-- 스크롤 인디케이터 -->
     <div class="scroll-indicator" id="scrollIndicator"></div>
-    <script src="/src/main/resources/static/js/main/main_page.js"></script>
+    <script th:src="@{/js/main/main_page.js}"></script>
   </body>
 </html>
