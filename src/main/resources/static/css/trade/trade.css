@@ -218,3 +218,10 @@ main {
 .trade-card .card-info div:nth-of-type(2) .card-time {
   gap: var(--gap-xxm);
 }
+
+/* common input style */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

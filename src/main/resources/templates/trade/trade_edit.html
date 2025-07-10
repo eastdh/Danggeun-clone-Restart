@@ -8,58 +8,74 @@
   <link rel="stylesheet" th:href="@{/css/common/style.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade_write.css}">
-  <title th:text="${title} + ' 편집 | GMO당근 중고거래'">거래물품 편집 | GMO당근 중고거래</title>
+  <title th:text="${trade.title} + ' 편집 | GMO당근 중고거래'">거래물품 편집 | GMO당근 중고거래</title>
 </head>
 <body>
 <header></header>
 <main>
-  <section>
-    <div>
-      <h1 th:text="${title} + ' 편집하기'">거래물품 편집하기</h1>
+  <section class="container">
+    <div class="title-box">
+      <h1 th:text="${trade.title} + ' 편집'"></h1>
     </div>
     <!-- Todo :
-      add th:action="@{/trade/write}" method="post"
+      add th:action="@{/trade/edit}" method="post"
       add form validation for all inputs
-      add original data from model attribute to each inputs' value
     -->
     <form>
-      <div>
-        <div class="img-input-box">
-          <input type="file"/>
+      <div class="trade-profile">
+        <div class="image-input-box">
+          <input type="file" name="images"
+                 multiple accept="image/*"/>
+          <img class="image-input-label"
+               th:src="@{/assets/icon/camera.svg}"
+               alt="이미지 추가하기"
+               title="이미지 추가하기">
         </div>
-        <div class="img-preview"></div>
-        <div>
-          <div>
+        <!-- Todo: add image preview components -->
+        <!--        <div class="img-preview"></div>-->
+        <div class="trade-info">
+          <div class="trade-title-box">
             <label for="title" class="form-label">글 제목</label>
-            <input id="title" name="title" class="form-input" placeholder="글 제목"/>
+            <input id="title" name="title" class="form-input"
+                   th:placeholder="${trade.title}"
+                   th:value="${trade.title}"
+                   required/>
           </div>
-          <div>
-            <p>거래 방식</p>
-            <div>
-              <span>판매하기</span>
+          <div class="trade-price-box">
+            <label>거래 방식</label>
+            <div class="trade-selection">
+              <span class="selected">판매하기</span>
               <span>나눔하기</span>
             </div>
-            <input id="price" name="price" class="form-input" placeholder="₩ 가격을 입력해주세요."/>
-            <div>
-              <input type="checkbox" id="offerable" name="is_offerable">
+            <input type="number" id="price" name="price" class="form-input"
+                   th:placeholder="${#numbers.formatInteger(trade.price, 1, 'COMMA')} + '원'"
+                   th:value="${trade.price}"
+                   required/>
+            <div class="offerable-box">
+              <input type="checkbox" id="offerable" name="isOfferable"
+              th:checked="${trade.isOfferable}">
               <label for="offerable">가격 제안 받기</label>
             </div>
           </div>
         </div>
       </div>
-      <div>
+      <div class="input-group">
         <label for="description" class="form-label">물품 설명</label>
         <textarea id="description" name="description" class="form-input"
-        placeholder="게시글 내용을 작성해주세요."></textarea>
+                  placeholder="게시글 내용을 작성해주세요."
+                  required
+                  th:text="${trade.description}"
+        ></textarea>
       </div>
-      <div>
-        <label for="preferred_location">거래 희망 장소</labe l>
-        <input id="preferred_location" name="preferred_location" class="form-input"
-                placeholder="거래를 희망하는 장소를 입력해주세요."/>
+      <div class="input-group">
+        <label for="preferred-location">거래 희망 장소</label>
+        <input id="preferred-location" name="preferredLocation" class="form-input"
+               placeholder="거래를 희망하는 장소를 입력해주세요."
+        th:value="${trade.preferredLocation}"/>
       </div>
-      <div>
+      <div class="button-wrap">
         <button type="submit" class="write-button">완료</button>
-        <button type="button" class="cancel-button">취소</button>
+        <a th:href="@{/trade/{id}(id=${trade.id})}" class="cancel-link">취소</a>
       </div>
     </form>
   </section>
