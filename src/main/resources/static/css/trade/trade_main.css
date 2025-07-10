@@ -1,0 +1,227 @@
+main {
+  position: relative;
+}
+
+.container {
+  margin: 28px auto 0;
+  max-width: 1400px;
+  padding: 0 var(--padding-lg);
+}
+
+h1 {
+  margin: 0;
+  padding: 0;
+  font-size: 28px;
+}
+
+.section-list {
+  width: 100%;
+  margin-top: 40px;
+  display: grid;
+  gap: var(--gap-xxl);
+  grid-template-columns: 1fr 3fr;
+}
+
+/* aside filter */
+aside {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+aside header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+aside header h2 {
+  font-size: 20px;
+}
+
+aside header a {
+  font-size: 14px;
+  color: var(--gray-800);
+  text-decoration: underline;
+}
+
+aside .section-filter {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 24px;
+}
+
+.section-filter > div:first-of-type {
+  margin-top: 24px;
+}
+
+.section-filter .divider-line {
+  width: 100%;
+  height: 1px;
+  background-color: var(--gray-200);
+}
+
+.section-filter .filter-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--gap-md);
+}
+
+.section-filter h3 {
+  font-size: 16px;
+}
+
+.section-filter .filter-box .filter-contents {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.section-filter .filter-box .filter-trade-able,
+.section-filter .filter-box .filter-link {
+  width: 100%;
+  min-height: 2rem;
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.section-filter .filter-box .filter-trade-able .check-img-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 0.275rem;
+  border: 1px solid var(--gray-800);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section-filter .filter-box .filter-link .radio-img-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--gray-800);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section-filter .price-filter-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--gap-md);
+}
+
+.section-filter .price-filter-box a {
+  padding: 4px 12px;
+  font-size: 14px;
+  border: 1px solid var(--gray-900);
+  border-radius: 14px;
+}
+
+.section-filter .price-input-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.section-filter .price-input-box div {
+  width: 100%;
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--gap-xm);
+}
+
+.section-filter .price-input-box input {
+  width: 100%;
+  font-size: 14px;
+  padding: 8px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-900);
+}
+
+.price-input-box input::-webkit-outer-spin-button,
+.price-input-box input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.section-filter .filter-box button {
+  margin-top: 4px;
+  font-size: 14px;
+  text-decoration: underline;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.section-filter .filter-box .location-box ~ button {
+  color: var(--orange-600);
+}
+
+/* trade list */
+.trade-list {
+  width: 100%;
+}
+
+.trade-list .trade-contents {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 16px;
+  row-gap: 48px;
+}
+
+.trade-list .trade-contents.filtered {
+  margin-top: 32px;
+}
+
+.trade-list .filter-applied {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.trade-list .filter-applied .filter-badge {
+  padding: 6px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--gap-xxm);
+  background-color: var(--trade-filter-badge-bg);
+  border-radius: 20px;
+  color: var(--gray-000);
+}
+
+.trade-list .filter-applied .filter-badge span {
+  font-size: 14px;
+}
+
+.trade-list .filter-applied .filter-badge img {
+  width: 14px;
+  height: 14px;
+  filter: invert();
+}

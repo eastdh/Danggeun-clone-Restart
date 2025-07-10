@@ -5,6 +5,9 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
+  <link rel="stylesheet" th:href="@{/css/trade/trade_main.css}">
   <title th:if="${keyword}" th:text="${keyword} + ' 중고거래 검색결과 | GMO 당근'">키워드 중고거래 검색결과 | GMO당근</title>
   <title th:unless="${keyword}" th:text="${location} + ' | GMO 당근'">서울특별시 종로구 중고거래 | GMO당근</title>
 </head>
@@ -12,13 +15,7 @@
 <header></header>
 <main>
   <div class="container">
-    <nav th:replace="~{/trade/fragments/trade_components :: nav}">
-      <ul class="nav-list">
-        <li><a th:href="@{/home}">홈</a></li>
-        <li><a th:href="@{/trade}">중고거래</a></li>
-        <li><a th:href="@{/trade/1}">거래글</a></li>
-      </ul>
-    </nav>
+    <nav th:replace="~{/trade/fragments/trade_components :: nav('trade', '')}"></nav>
     <!-- Todo : add search related components-->
     <div th:if="${keyword}">
       <h1 th:text="${keyword} + ' 검색 결과'">"키워드" 검색 결과</h1>
@@ -26,57 +23,94 @@
     <div th:unless="${keyword}">
       <h1 th:text="${location} + ' 중고거래'">지역별 중고거래</h1>
     </div>
-    <section>
+    <section class="section-list">
       <aside>
         <!-- Todo : add links to filter -->
         <header>
           <h2>필터</h2>
           <a th:href="@{/trade}">초기화</a>
         </header>
-        <section>
-          <div>
-            <a><input type="checkbox"/> <span>거래 가능만 보기</span></a>
+        <section class="section-filter">
+          <div class="filter-box">
+            <a
+                th:href="@{/trade}"
+                class="filter-trade-able"
+            >
+              <div class="check-img-box"></div>
+              <span>거래 가능만 보기</span>
+            </a>
           </div>
           <div class="divider-line"></div>
-          <div>
+          <div class="filter-box">
             <h3>위치</h3>
-            <div th:each="obj:${dump_location}">
-              <a><input type="radio"/> <span th:value="${dump.name}">종로구</span></a>
+            <div class="filter-contents">
+              <th:block th:each="location:${locations}">
+                <a
+                    th:href="@{/trade}"
+                    class="filter-link"
+                >
+                  <div class="radio-img-box"></div>
+                  <span th:text="${location}">종로구</span>
+                </a>
+              </th:block>
+              <button type="button">더보기</button>
             </div>
           </div>
           <div class="divider-line"></div>
-          <div>
+          <div class="filter-box">
             <h3>카테고리</h3>
-            <div th:each="obj:${dump_category}">
-              <a><input type="radio"/> <span th:value="${dump.category}">유아도서</span></a>
+            <div class="filter-contents">
+              <th:block th:each="category:${categories}">
+                <a
+                    th:href="@{/trade}"
+                    class="filter-link"
+                >
+                  <div class="radio-img-box"></div>
+                  <span th:text="${category.name}">유아도서</span>
+                </a>
+              </th:block>
             </div>
           </div>
           <div class="divider-line"></div>
-          <div>
+          <div class="filter-box">
             <h3>가격</h3>
-            <div>
+            <div class="price-filter-box">
+              <!-- Todo : edit filter link -->
               <a>나눔</a>
               <a>5,000원 이하</a>
               <a>10,000원 이하</a>
               <a>20,000원 이하</a>
             </div>
-            <div>
-              <input type="number" class="price-start"/> - <input type="number" class="price-end"/>
-              <a>적용하기</a>
+            <div class="price-input-box">
+              <div>
+                <input type="number" class="price-start"/>
+                <span>-</span>
+                <input type="number" class="price-end"/>
+              </div>
+              <button type="button">적용하기</button>
             </div>
           </div>
         </section>
       </aside>
-      <div th:each="obj:${dump_test}" class="contents">
-        <div th:fragment="~{/trade/fragments/trade_components :: trade_card" class="card"></div>
+      <div class="trade-list">
+        <div th:if="${filters}" class="filter-applied">
+          <span th:each="$filter:${filters}" class="filter-badge">
+            <span th:text="${filter}"></span>
+            <img th:src="@{/assets/icon/x-lg.svg}" alt="취소">
+          </span>
+        </div>
+        <!-- Todo : add class toggle(filtered) -->
+        <div class="trade-contents">
+          <th:block th:each="trade:${trades}">
+            <div th:replace="~{/trade/fragments/trade_components :: trade_card (${trade}, ${true})}"
+                 class="trade-card"></div>
+          </th:block>
+        </div>
       </div>
     </section>
   </div>
 </main>
-<!-- Todo : add link to float-box -->
-<div class="float-box">
-  <span>거래글쓰기</span>
-</div>
+<div th:replace="~{trade/fragments/trade_components :: new_trade_button}"></div>
 <footer></footer>
 </body>
 </html>

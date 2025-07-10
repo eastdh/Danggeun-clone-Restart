@@ -5,138 +5,189 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title th:text="${title} + ' | ' + ${category} + ' | GMO당근 중고거래'">거래물품 | 카테고리 | GMO당근 중고거래</title>
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
+  <link rel="stylesheet" th:href="@{/css/trade/trade_post.css}">
+  <title th:text="${trade.title} + ' | ' + ${category} + ' | GMO당근 중고거래'">거래물품 | 카테고리 | GMO당근 중고거래</title>
 </head>
 <body>
 <header></header>
 <main>
-  <div class="trade-container">
-    <nav th:replace="~{/trade/fragments/trade_components :: nav}">
-      <ul class="nav-list">
-        <li><a th:href="@{/home}">홈</a></li>
-        <li><a th:href="@{/trade}">중고거래</a></li>
-        <li><a th:href="@{/trade/1}">거래글</a></li>
-      </ul>
-    </nav>
-    <section class="trade-profile">
-      <!-- Todo: carousel -->
-      <div th:object="${trade_images}" class="trade-img-box">
-        <div class="carousel">
-          <img th:src="${img_url}" class="trade-img">
-        </div>
-      </div>
-      <div th:object="${user}" class="user-meta">
-        <div>
-          <div class="profile-img-box">
-            <!-- Todo : add th:src="*{profile}" -->
-            <img class="profile-img">
-          </div>
-          <div>
-            <!-- Todo : add *{name} and *{location} -->
-            <span>사용자 이름</span>
-            <span>장소</span>
-          </div>
-        </div>
-        <div class="manner-temp">
-          <div class="manner-info">
-            <div>
-              <!-- Todo : add th:text="*{manner}" -->
-              <span>46.9℃</span>
-              <div class="manner-bar">
-                <div class="filled-bar"></div>
+  <div class="container">
+    <div class="trade-section">
+      <nav th:replace="~{/trade/fragments/trade_components :: nav('trade', ${trade.title})}">
+        <ul class="nav-list">
+          <li><a th:href="@{/home}">홈</a></li>
+          <li><a th:href="@{/trade}">중고거래</a></li>
+          <li><a th:href="@{/trade/1}">거래글</a></li>
+        </ul>
+      </nav>
+      <div>
+        <section class="trade-profile">
+          <!-- Todo: carousel -->
+          <div class="carousel" id="carousel">
+            <div class="carousel-track" id="carousel-track">
+              <!-- data type : List<String> imgUrls -->
+              <div class="carousel-item">
+                <!-- Todo : add codes below -->
+<!--                     th:each="imgUrl, iterStat : ${imgUrls}"-->
+<!--                     th:classappend="${iterStat.index == 0} ? ' active' : ''"-->
+                <img
+                    th:src="${imgUrl == null or #strings.isEmpty(imgUrl)} ? @{/assets/trade/images/card-image.svg} : ${imgUrl}"
+                     alt="상품 이미지" />
               </div>
             </div>
-            <div class="manner-emoji">😀</div>
-          </div>
-          <div>
-            <span>매너온도</span>
-            <div>
-              <div class="box-arrow"></div>
-              <p>매너온도는 당근 사용자로부터 받은 칭찬, 후기, 비매너 평가, 운영자 제재 등을 종합해서 만든 매너 지표예요.</p>
+            <div class="carousel-indicators">
+              <button onclick="goToSlide(this)">
+                <!-- Todo : add codes below -->
+<!--                    th:each="imgUrl, iterStat : ${imgUrls}"-->
+<!--                        th:data-index="${iterStat.index}"-->
+<!--                        th:classappend="${iterStat.index == 0} ? ' active' : ''"-->
+              </button>
+            </div>
+            <button class="carousel-button prev" onclick="prevSlide()">
+              <img th:src="@{/assets/icon/chevron-left.svg}"
+                   title="이전 사진"
+                   alt="chevron-left">
+            </button>
+            <button class="carousel-button next" onclick="nextSlide()">
+              <img th:src="@{/assets/icon/chevron-right.svg}"
+                   title="다음 사진"
+                   alt="chevron-right">
+            </button>
+        </div>
+          <div th:object="${writer}" class="writer-meta">
+            <div class="writer-info">
+              <div class="writer-profile">
+                <!-- Todo : add th:href="@{/user/{id}(id=${writer.id}})}" -->
+                <a>
+                <!-- Todo : add th:src="*{profile}" -->
+                <!--            <img class="profile-img"-->
+                <!--                 th:src="${writer.profile} ? @{writer.profile} : @{/assets/trade/images/card-image.svg}"-->
+
+                  <img class="profile-img"
+                       th:src="@{/assets/icon/person-circle.svg}"
+                       th:alt="${nickname}">
+                </a>
+              </div>
+              <div>
+                <!-- Todo : add *{name} and *{location}
+                  add th:href="@{/user/{id}(id=${writer.id}})}"
+                  add th:href="@{/trade/location-search}"
+                -->
+                <a class="writer-name">사용자이름</a>
+                <a class="writer-location">장소</a>
+              </div>
+            </div>
+            <div class="manner-temp">
+              <div class="manner-info">
+                <div>
+                  <!-- Todo : add th:text="*{manner}" -->
+                  <span class="manner-score">46.9℃</span>
+                  <div class="manner-bar">
+                    <div class="filled-bar"></div>
+                  </div>
+                </div>
+                <div class="manner-emoji-box">
+                  <img
+                      th:src="@{/assets/icon/emoji-smile-fill.svg}"
+                      alt="이모지"
+                      class="emoji-image">
+                </div>
+              </div>
+              <div class="manner-description">
+                <span class="manner-label" onclick="toggleTooltip(event)">매너온도</span>
+                <div class="manner-tooltip">
+                  <div class="box-arrow"></div>
+                  <p>매너온도는 당근 사용자로부터 받은 칭찬, 후기, 비매너 평가, 운영자 제재 등을 종합해서 만든 매너 지표예요.</p>
+                </div>
+              </div>
             </div>
           </div>
+        </section>
+        <section th:object="${trade}" class="trade-meta">
+          <div class="trade-info">
+            <div class="trade-info-header">
+              <div>
+                <h1 th:text="*{title}">거래글 제목</h1>
+              </div>
+              <div class="trade-category-time">
+                <!-- Todo : add category search link -->
+                <a th:href="@{/trade}" th:text="*{category}">카테고리</a>
+                <span>∙</span>
+                <span th:text="*{updatedAt}">끌올 0시간 전</span>
+              </div>
+              <div class="trade-price-box">
+              <span th:text="*{#numbers.formatInteger(price, 1, 'COMMA') + '원'}"
+                    class="price">230,000원</span>
+                <a th:if="*{isOfferable}" th:href="@{/chat}" class="active">가격 제안하기</a>
+                <span th:unless="*{isOfferable}">가격 제안 불가</span>
+              </div>
+            </div>
+            <p th:text="*{description}" class="trade-description">거래글 설명</p>
+            <div th:if="*{preferredLocation != null}" class="preferred-location">
+              <span>희망 거래장소</span>
+              <span>|</span>
+              <span th:text="*{preferredLocation}"></span>
+            </div>
+          </div>
+          <div class="trade-stats">
+            <span th:text="'채팅 ' + ${chat}">채팅 0</span>
+            <span>∙</span>
+            <span th:text="'관심 ' + ${like}">관심 0</span>
+          </div>
+          <!-- Todo : check logged in user and trade owner
+            add th:if and th:unless for each components
+          -->
+          <div class="action-button-wrap owner">
+            <a th:href="@{/trade/{id}/edit(id=${id})}">수정하기</a>
+            <button type="button">삭제하기</button>
+          </div>
+          <div class="action-button-wrap">
+            <a th:href="@{/chat}">채팅하기</a>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="divider-line"></div>
+    <section class="related-trades writer">
+      <header>
+        <div>
+          <h2 th:text="${writer} + ' 의 판매물품'">당근당근 의 판매물품</h2>
         </div>
+        <!-- Todo : add hyperlink or url to user page -->
+        <a th:href="@{/trade}">
+          <span>더 구경하기</span>
+          <span>&gt;</span>
+        </a>
+      </header>
+      <div class="trade-list">
+        <th:block th:each="trade:${trades}">
+          <div th:replace="~{/trade/fragments/trade_components :: trade_card (${trade}, ${false})}"
+               class="trade-card"></div>
+        </th:block>
       </div>
     </section>
-    <section th:object="${trade}" class="trade-meta">
-      <div class="trade-info">
+    <section class="related-trades categories">
+      <header>
         <div>
-          <!-- Todo : add th:text="*{title}" -->
-          <h1>거래글 제목</h1>
+          <h2>비슷한 거래 목록</h2>
         </div>
-        <div>
-          <!-- Todo : th:text="*{category}" -->
-          <span>카테고리</span>
-          <span>∙</span>
-          <!-- Todo : th:text="*{updated_at}" -->
-          <span>끌올 0시간 전</span>
-        </div>
-        <div>
-          <!-- Todo : add th:text="*{price}" -->
-          <span>230,000원</span>
-          <span th:if="${is_offerable}" class="offer-link active">가격 제안하기</span>
-          <span th:unless="${is_offerable}" class="offer-link">가격 제안 불가</span>
-        </div>
-      </div>
-      <!-- Todo: add th:text="*{description}" -->
-      <p class="trade-description">거래글 설명</p>
-      <div th:if="${preferred_location} != null" class="preferred-location">
-        <span>희망 거래장소</span>
-        <span>|</span>
-        <span th:text="${prefered_location}"></span>
-      </div>
-      <div class="trade-stats">
-        <span th:text="'채팅 ' + ${chat}">채팅 0</span>
-        <span>∙</span>
-        <span th:text="'관심 ' + ${like}">관심 0</span>
-      </div>
-      <!-- Todo : check logged in user and trade owner
-        add th:if and th:unless for each components
-      -->
-      <div>
-        <!-- Todo : edit links -->
-        <a th:href="@{/trade/1/edit}" class="option-link">수정하기</a>
-        <a class="option-link">삭제하기</a>
-      </div>
-      <div>
-        <a class="chat-link">채팅하기</a>
+        <!-- Todo : add hyperlink or url to trades -->
+        <a th:href="@{/trade}">
+          <span>더 구경하기</span>
+          <span>&gt;</span>
+        </a>
+      </header>
+      <div class="trade-list">
+        <th:block th:each="trade:${trades}">
+          <div th:replace="~{/trade/fragments/trade_components :: trade_card (${trade}, ${false})}" class="trade-card"></div>
+        </th:block>
       </div>
     </section>
   </div>
-  <div class="divider-line"></div>
-  <section class="related-trades">
-    <header>
-      <div>
-        <h2 th:text="${username} + ' 의 판매물품'">당근당근 의 판매물품</h2>
-      </div>
-      <!-- Todo : add hyperlink or url to user page -->
-      <div class="show-more user-trades">
-        <span>더 구경하기</span>
-        <span>&gt;</span>
-      </div>
-    </header>
-    <!-- Todo : add th:each -->
-    <div class="trade-list">
-      <div th:replace="~{/trade/fragments/trade_components :: trade_card}" class="trade-card"></div>
-    </div>
-  </section>
-  <section class="related-trades">
-    <header>
-      <div>
-        <h2>인기매물</h2>
-      </div>
-      <!-- Todo : add hyperlink or url to trades -->
-      <div class="show-more hot-trades">
-        <span>더 구경하기</span>
-        <span>&gt;</span>
-      </div>
-    </header>
-    <!-- Todo : add th:each -->
-    <div class="trade-list">
-      <div th:replace="~{/trade/fragments/trade_components :: trade_card}" class="trade-card"></div>
-    </div>
-  </section>
 </main>
 <footer></footer>
+<script src="/js/trade/style_control.js"></script>
 </body>
 </html>

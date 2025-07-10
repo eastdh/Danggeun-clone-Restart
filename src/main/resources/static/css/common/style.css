@@ -1,0 +1,33 @@
+:root {
+  --gray-000: #ffffff;
+  --gray-050: #f8f9fa;
+  --gray-100: #f2f3f6;
+  --gray-200: #dbdce2;
+  --gray-300: #d0d1da;
+  --gray-400: #bdbec8;
+  --gray-500: #aaabb4;
+  --gray-600: #898a93;
+  --gray-700: #686971;
+  --gray-800: #525359;
+  --gray-900: #111111;
+  --yellow-200: #fffae0;
+  --orange-600: #ff6f0e;
+  --green-200: #e6f3e6;
+  --green-400: #c2e8c2;
+  --trade-filter-badge-bg: #2a3038;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+ul,
+li,
+ol {
+  list-style-type: none;
+}
