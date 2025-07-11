@@ -92,13 +92,13 @@
   display: block;
   position: relative;
   left: 0;
-  background-image: url("/src/main/resources/static/assets/icons/review/empty-star.svg");
+  background-image: url("/assets/icons/review/empty-star.svg");
   background-repeat: no-repeat;
   background-size: 40px;
 }
 
 .rating-label .star-icon.filled {
-  background-image: url("/src/main/resources/static/assets/icons/review/full-star.svg");
+  background-image: url("/assets/icons/review/full-star.svg");
 }
 
 .rating-label--full .star-icon {

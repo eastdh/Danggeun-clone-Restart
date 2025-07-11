@@ -10,10 +10,10 @@
     <section class="review-page">
       <div class="review-header">
         <div class="review-header__left">
-          <img src="/src/main/resources/static/assets/images/chat_test_pic.jpg" alt="프로필 이미지" class="profile-img" />
+          <img th:src="@{${review?.profileImage} ?: '/assets/images/chat_test_pic.jpg'}" alt="프로필 이미지" class="profile-img" />
           <div class="profile-info">
-            <h2 class="profile-name" th:text="${review.nickname}">닉네임</h2>
-            <div class="profile-rating">⭐ <span th:text="${review.avgRating}">4.8</span> / 5.0</div>
+            <h2 class="profile-name" th:text="${review?.nickname ?: '닉네임'}">닉네임</h2>
+            <div class="profile-rating">⭐ <span th:text="${review?.avgRating ?: '4.8'}">4.8</span> / 5.0</div>
           </div>
         </div>
         <div class="review-header__right">
@@ -27,15 +27,15 @@
         </div>
       </div>
 
-      <form id="ratingForm" class="review-form" method="post" th:action="@{/review/submit}">
+      <form id="reviewForm" class="review-form" method="post" th:action="@{/review/submit}">
         <div class="rating">
           <label
-            class="rating__label rating__label--half"
+            class="rating-label"
             th:each="i : ${#numbers.sequence(1, 10)}"
-            th:classappend="${i % 2 == 1} ? 'rating__label--half' : 'rating__label--full'"
+            th:classappend="${i % 2 == 1} ? 'rating-label--half' : 'rating-label--full'"
             th:for="${'star' + i}"
           >
-            <input type="radio" th:id="${'star' + i}" th:name="rating" th:value="${i}" class="rating__input" th:checked="${review.rating == i}" />
+            <input type="radio" th:id="${'star' + i}" th:name="rating" th:value="${i}" class="rating__input" />
             <span class="star-icon"></span>
           </label>
         </div>
@@ -57,7 +57,7 @@
 
         <div class="review-text">
           <label for="reviewContent">리뷰 작성 (필수)</label>
-          <textarea id="reviewContent" name="content" rows="5" required placeholder="리뷰 내용을 작성해주세요" th:text="${review.content}"></textarea>
+          <textarea id="reviewContent" name="content" rows="5" required placeholder="리뷰 내용을 작성해주세요" th:text="${review?.content ?: ''}"></textarea>
         </div>
 
         <div class="review-buttons">
