@@ -4,13 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // #region 별점 처리
   const ratingWrap = document.querySelector(".rating");
   const stars = ratingWrap.querySelectorAll(".star-icon");
-  const ratingDisplay = document.createElement("div");
-
-  // ⭐ 실시간 점수 표시 영역 추가
-  ratingDisplay.id = "ratingValue";
-  ratingDisplay.className = "rating-value-display";
-  ratingDisplay.textContent = "현재 선택: 0점";
-  ratingWrap.after(ratingDisplay);
 
   // 초기 선택된 값에 따라 별 채우기
   applyCheckedRating();
@@ -35,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 등록 버튼
   reviewForm.addEventListener("submit", function (e) {
-    e.preventDefault(); // 실제 사용 시 제거
+    e.preventDefault(); // TODO: 실제 사용 시 제거
 
     const score = getSelectedScore();
     console.log("선택된 별점 점수 (1~10):", score);
@@ -92,7 +85,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 실시간 점수 표시
   function updateRatingDisplay(score) {
-    ratingDisplay.textContent = `현재 선택: ${score}점`;
+    const display = document.getElementById("ratingValue");
+    if (!display) return;
+
+    if (score > 0) {
+      const realScore = (score / 2).toFixed(1); // 1~10 → 0.5 ~ 5.0
+      display.textContent = `현재 선택: ${realScore}점`;
+    } else {
+      display.textContent = ""; // 선택하지 않았으면 아무것도 출력 안함
+    }
   }
 
   // 이전 라벨들 가져오기
@@ -130,5 +131,49 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+  // #endregion
+
+  // #region 리뷰 가이드 표시
+  fetch("/data/review-guides.json")
+    .then((response) => response.json())
+    .then((guides) => {
+      const reviewTarget = "seller"; // TODO: 서버에서 전달받기
+
+      const guideList = reviewTarget === "buyer" ? guides.buyer : guides.seller;
+      const kindnessList = guides.kindness;
+
+      const selectedGuide = guideList[Math.floor(Math.random() * guideList.length)];
+      const kindnessGuide = kindnessList[Math.floor(Math.random() * kindnessList.length)];
+
+      const guideContainer = document.getElementById("reviewGuide");
+      guideContainer.innerHTML = `
+      <p class="guide-bubble">${selectedGuide}</p>
+      <p class="guide-bubble">${kindnessGuide}</p>
+    `;
+    })
+    .catch((err) => {
+      const fallback = `
+        <p class="guide-bubble">⚠️ 가이드를 불러오지 못했습니다.</p>
+        <p class="guide-bubble">💡 직접 리뷰를 작성해주셔도 좋아요!</p>
+      `;
+      document.getElementById("reviewGuide").innerHTML = fallback;
+      console.error("guide fetch error:", err);
+    });
+
+  // #endregion
+
+  // #region 리뷰 내용 글자 수 카운터
+  const reviewTextarea = document.getElementById("reviewContent");
+  const charCounter = document.getElementById("charCounter");
+
+  const updateCharCounter = () => {
+    const length = reviewTextarea.value.length;
+    charCounter.textContent = `${length} / 200자`;
+  };
+
+  reviewTextarea.addEventListener("input", updateCharCounter);
+
+  // 페이지 로딩 시 초기값 반영
+  updateCharCounter();
   // #endregion
 });
