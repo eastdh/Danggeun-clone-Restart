@@ -82,6 +82,20 @@ public class Trade {
     this.updatedAt = updatedAt;
   }
 
+  public Trade(User user, Category category, String title, String description,
+      String preferredLocation, Integer price, Boolean isOfferable, String status, Boolean hidden) {
+    this.user = user;
+    this.category = category;
+    this.title = title;
+    this.description = description;
+    this.preferredLocation = preferredLocation;
+    this.price = price;
+    this.isOfferable = isOfferable;
+    this.status = status;
+    this.hidden = hidden;
+    this.updatedAt = LocalDateTime.now();
+  }
+
   public Long getId() {
     return id;
   }
