@@ -18,30 +18,49 @@
         </div>
         <div class="review-header__right">
           <h3>이런 점이 좋았어요</h3>
-          <ul class="received-keywords structured">
+
+          <ul class="received-keywords structured" th:if="${receivedKeywords != null and #lists.size(receivedKeywords) > 0}">
             <li th:each="keywordStat : ${receivedKeywords}">
               <span class="keyword-count" th:text="${keywordStat.count + '명'}">0명</span>
               <span class="keyword-text" th:text="${keywordStat.keyword}">키워드</span>
             </li>
           </ul>
+
+          <div class="no-keywords" th:if="${receivedKeywords == null or #lists.isEmpty(receivedKeywords)}">아직 받은 키워드가 없어요 😊</div>
         </div>
       </div>
 
-      <form id="reviewForm" class="review-form" method="post" th:action="@{/review/submit}">
-        <div class="rating">
-          <label
-            class="rating-label"
-            th:each="i : ${#numbers.sequence(1, 10)}"
-            th:classappend="${i % 2 == 1} ? 'rating-label--half' : 'rating-label--full'"
-            th:for="${'star' + i}"
-          >
-            <input type="radio" th:id="${'star' + i}" th:name="rating" th:value="${i}" class="rating__input" />
-            <span class="star-icon"></span>
-          </label>
-        </div>
+      <div class="review-divider"></div>
 
-        <div class="review-keywords">
-          <label>어떤 점이 좋았나요? (1~5개 선택)</label>
+      <form id="reviewForm" class="review-form" method="post" th:action="@{/review/submit}">
+        <section class="form-section">
+          <div class="form-title">
+            <span>별점을 선택해주세요!</span>
+            <span class="form-badge">최대 5점</span>
+          </div>
+          <div class="form-subtitle">별을 클릭하면 점수가 표시됩니다</div>
+          <div class="rating-wrapper">
+            <div class="rating">
+              <label
+                class="rating-label"
+                th:each="i : ${#numbers.sequence(1, 10)}"
+                th:classappend="${i % 2 == 1} ? 'rating-label--half' : 'rating-label--full'"
+                th:for="${'star' + i}"
+              >
+                <input type="radio" th:id="${'star' + i}" th:name="rating" th:value="${i}" class="rating__input" />
+                <span class="star-icon"></span>
+              </label>
+            </div>
+            <div class="rating-value-display" id="ratingValue"></div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="form-title">
+            <span>리뷰 키워드</span>
+            <span class="form-badge">1~5개</span>
+          </div>
+          <div class="form-subtitle">어떤 점이 좋았나요?</div>
           <div class="keyword-options">
             <label th:each="keyword : ${availableKeywords}">
               <input
@@ -53,12 +72,31 @@
               <span th:text="${keyword.name}">키워드</span>
             </label>
           </div>
-        </div>
+        </section>
 
-        <div class="review-text">
-          <label for="reviewContent">리뷰 작성 (필수)</label>
-          <textarea id="reviewContent" name="content" rows="5" required placeholder="리뷰 내용을 작성해주세요" th:text="${review?.content ?: ''}"></textarea>
-        </div>
+        <section class="form-section">
+          <div class="form-title">
+            <span>리뷰 작성</span>
+            <span class="form-badge">최대 200자</span>
+          </div>
+          <div class="review-guide" id="reviewGuide">
+            <p class="guide-bubble loading">💬 가이드를 불러오는 중입니다...</p>
+            <p class="guide-bubble loading">🌱 잠시만 기다려주세요!</p>
+          </div>
+
+          <div class="review-text">
+            <textarea
+              id="reviewContent"
+              name="content"
+              rows="5"
+              required
+              maxlength="200"
+              placeholder="리뷰 내용을 작성해주세요"
+              th:text="${review?.content ?: ''}"
+            ></textarea>
+            <div id="charCounter" class="char-counter">0 / 200자</div>
+          </div>
+        </section>
 
         <div class="review-buttons">
           <button type="submit" class="btn-submit" th:text="${mode == 'edit'} ? '수정' : '등록'">등록</button>

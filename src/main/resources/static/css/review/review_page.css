@@ -6,6 +6,7 @@
   color: var(--gray-900);
 }
 
+/* 리뷰 페이지 상단 프로필 영역 */
 .review-header {
   display: flex;
   justify-content: space-between;
@@ -13,6 +14,7 @@
   margin-bottom: 32px;
 }
 
+/* 좌측 프로필 */
 .review-header__left {
   display: flex;
   align-items: center;
@@ -34,6 +36,13 @@
 .profile-rating {
   font-size: 0.95em;
   color: var(--orange-600);
+}
+
+/* 우측 키워드 리스트 */
+.review-header__right {
+  background-color: var(--gray-050);
+  padding: 16px;
+  border-radius: 8px;
 }
 
 .received-keywords.structured {
@@ -68,6 +77,58 @@
   border-radius: 6px;
   flex-grow: 1;
   border: 1px solid var(--gray-200);
+}
+
+.no-keywords {
+  padding: 12px;
+  font-size: 0.95em;
+  color: var(--gray-600);
+  background-color: var(--gray-050);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.review-divider {
+  border-top: 1px solid var(--gray-200);
+  margin: 32px 0;
+}
+
+/* 리뷰 페이지 하단 리뷰 작성 영역 */
+/* 각 리뷰 섹션 공통 스타일 */
+.form-section {
+  background-color: var(--gray-000);
+  border: 1px solid var(--gray-100);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border-radius: 10px;
+}
+.form-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 6px;
+}
+
+.form-subtitle {
+  font-size: 0.9em;
+  color: var(--gray-600);
+  margin-bottom: 12px;
+}
+
+.form-badge {
+  background-color: var(--gray-200);
+  color: var(--gray-800);
+  padding: 3px 8px;
+  font-size: 0.75em;
+  border-radius: 12px;
+}
+
+.rating-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .rating {
@@ -136,15 +197,66 @@
   color: var(--gray-800);
 }
 
+.review-guide {
+  margin-bottom: 16px;
+  min-height: 96px;
+}
+
+.guide-bubble {
+  width: fit-content;
+  background-color: var(--gray-050);
+  border-radius: 16px;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  color: var(--gray-800);
+  margin-bottom: 6px;
+  transition: opacity 0.3s ease;
+}
+
+.guide-bubble.loading {
+  font-style: italic;
+  color: var(--gray-500);
+  animation: pulseFade 1.4s infinite ease-in-out;
+}
+
+@keyframes pulseFade {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
 .review-text textarea {
   width: 100%;
-  padding: 12px;
+  padding: 12px 14px;
+  font-size: 0.95em;
+  line-height: 1.5;
   border-radius: 8px;
   border: 1px solid var(--gray-300);
-  resize: vertical;
-  margin-bottom: 24px;
   background-color: var(--gray-000);
   color: var(--gray-900);
+  resize: vertical;
+  min-height: 120px;
+  box-shadow: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.review-text textarea:focus {
+  outline: none;
+  border-color: var(--orange-400);
+  box-shadow: 0 0 0 3px rgba(255, 159, 67, 0.15); /* 오렌지 tone focus ring */
+}
+
+.char-counter {
+  text-align: right;
+  margin-top: 6px;
+  font-size: 0.85em;
+  color: var(--gray-600);
 }
 
 .review-buttons {
