@@ -12,75 +12,30 @@
         <div class="review-header__left">
           <img src="/src/main/resources/static/assets/images/chat_test_pic.jpg" alt="프로필 이미지" class="profile-img" />
           <div class="profile-info">
-            <h2 class="profile-name">닉네임</h2>
-            <div class="profile-rating">⭐ 4.8 / 5.0</div>
+            <h2 class="profile-name" th:text="${review.nickname}">닉네임</h2>
+            <div class="profile-rating">⭐ <span th:text="${review.avgRating}">4.8</span> / 5.0</div>
           </div>
         </div>
         <div class="review-header__right">
           <h3>이런 점이 좋았어요</h3>
           <ul class="received-keywords structured">
-            <li>
-              <span class="keyword-count">12회</span>
-              <span class="keyword-text">친절하고 매너가 좋아요</span>
-            </li>
-            <li>
-              <span class="keyword-count">9회</span>
-              <span class="keyword-text">응답이 빨라요</span>
-            </li>
-            <li>
-              <span class="keyword-count">7회</span>
-              <span class="keyword-text">시간 약속을 잘 지켜요</span>
+            <li th:each="keywordStat : ${receivedKeywords}">
+              <span class="keyword-count" th:text="${keywordStat.count + '명'}">0명</span>
+              <span class="keyword-text" th:text="${keywordStat.keyword}">키워드</span>
             </li>
           </ul>
         </div>
       </div>
 
-      <form id="ratingForm" class="review-form" method="post">
+      <form id="ratingForm" class="review-form" method="post" th:action="@{/review/submit}">
         <div class="rating">
-          <label class="rating__label rating__label--half" for="star1">
-            <input type="radio" id="star1" class="rating__input" name="rating" value="1" />
-            <span class="star-icon"></span>
-          </label>
-
-          <label class="rating__label rating__label--full" for="star2">
-            <input type="radio" id="star2" class="rating__input" name="rating" value="2" />
-            <span class="star-icon"></span>
-          </label>
-
-          <label class="rating__label rating__label--half" for="star3">
-            <input type="radio" id="star3" class="rating__input" name="rating" value="3" />
-            <span class="star-icon"></span>
-          </label>
-
-          <label class="rating__label rating__label--full" for="star4">
-            <input type="radio" id="star4" class="rating__input" name="rating" value="4" />
-            <span class="star-icon"></span>
-          </label>
-          <label class="rating__label rating__label--half" for="star5">
-            <input type="radio" id="star5" class="rating__input" name="rating" value="5" />
-            <span class="star-icon"></span>
-          </label>
-
-          <label class="rating__label rating__label--full" for="star6">
-            <input type="radio" id="star6" class="rating__input" name="rating" value="6" />
-            <span class="star-icon"></span>
-          </label>
-          <label class="rating__label rating__label--half" for="star7">
-            <input type="radio" id="star7" class="rating__input" name="rating" value="7" />
-            <span class="star-icon"></span>
-          </label>
-
-          <label class="rating__label rating__label--full" for="star8">
-            <input type="radio" id="star8" class="rating__input" name="rating" value="8" />
-            <span class="star-icon"></span>
-          </label>
-          <label class="rating__label rating__label--half" for="star9">
-            <input type="radio" id="star9" class="rating__input" name="rating" value="9" />
-            <span class="star-icon"></span>
-          </label>
-
-          <label class="rating__label rating__label--full" for="star10">
-            <input type="radio" id="star10" class="rating__input" name="rating" value="10" />
+          <label
+            class="rating__label rating__label--half"
+            th:each="i : ${#numbers.sequence(1, 10)}"
+            th:classappend="${i % 2 == 1} ? 'rating__label--half' : 'rating__label--full'"
+            th:for="${'star' + i}"
+          >
+            <input type="radio" th:id="${'star' + i}" th:name="rating" th:value="${i}" class="rating__input" th:checked="${review.rating == i}" />
             <span class="star-icon"></span>
           </label>
         </div>
@@ -88,22 +43,25 @@
         <div class="review-keywords">
           <label>어떤 점이 좋았나요? (1~5개 선택)</label>
           <div class="keyword-options">
-            <label><input type="checkbox" name="keywords" value="응답이 빨라요" />응답이 빨라요</label>
-            <label><input type="checkbox" name="keywords" value="상품 설명이 자세해요" />상품 설명이 자세해요</label>
-            <label><input type="checkbox" name="keywords" value="상품 상태가 설명한 것과 같아요" />상품 상태가 설명한 것과 같아요</label>
-            <label><input type="checkbox" name="keywords" value="시간 약속을 잘 지켜요" />시간 약속을 잘 지켜요</label>
-            <label><input type="checkbox" name="keywords" value="친절하고 매너가 좋아요" />친절하고 매너가 좋아요</label>
-            <label><input type="checkbox" name="keywords" value="좋은 상품을 저렴하게 판매해요" />좋은 상품을 저렴하게 판매해요</label>
+            <label th:each="keyword : ${availableKeywords}">
+              <input
+                type="checkbox"
+                name="keywords"
+                th:value="${keyword.name}"
+                th:checked="${review.keywords != null and review.keywords.contains(keyword.name)}"
+              />
+              <span th:text="${keyword.name}">키워드</span>
+            </label>
           </div>
         </div>
 
         <div class="review-text">
           <label for="reviewContent">리뷰 작성 (필수)</label>
-          <textarea id="reviewContent" name="content" rows="5" required placeholder="리뷰 내용을 작성해주세요"></textarea>
+          <textarea id="reviewContent" name="content" rows="5" required placeholder="리뷰 내용을 작성해주세요" th:text="${review.content}"></textarea>
         </div>
 
         <div class="review-buttons">
-          <button type="submit" class="btn-submit">등록</button>
+          <button type="submit" class="btn-submit" th:text="${mode == 'edit'} ? '수정' : '등록'">등록</button>
           <button type="reset" class="btn-cancel">취소</button>
         </div>
       </form>
