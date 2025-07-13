@@ -1,0 +1,89 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: var(--gray-100);
+    align-items: center;
+}
+
+main {
+    flex: 1;
+    width: 400px;
+    margin-top: 213px;
+    margin-bottom: 100px;
+}
+
+label {
+    color: var(--gray-900);
+    font-size: 16px;
+    margin-top: 24px;
+    display: block;
+}
+
+.login-container input,
+.register-container input{
+    width: 100%;
+    padding: 15px 24px;
+    margin-top: 4px;
+    border: none;
+    border-radius: 10px;
+}
+
+button.btn-orange,
+.btn-google {
+    width: 100%;
+    margin-top: 24px;
+    padding: 12px;
+    background-color: var(--orange-600);
+    color: var(--gray-000);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button.btn-orange:hover {
+    background-color: #e25d00; /* 필요 시 변수 추가 가능 */
+}
+
+.to-login a,
+.to-register a {
+    color: var(--orange-600);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.social-login {
+    text-align: center;
+}
+
+.btn-google {
+    gap: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gray-000);
+    color: var(--gray-900);
+    font-weight: 700;
+    text-underline: none;
+}
+
+.to-register,
+.to-login {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.to-register p,
+.to-login p {
+    margin-bottom: 8px;
+}
