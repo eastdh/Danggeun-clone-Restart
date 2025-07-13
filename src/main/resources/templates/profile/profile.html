@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>프로필 | 당근마켓</title>
+    <link rel="stylesheet" href="/css/common/style.css"/>
+    <link rel="stylesheet" href="/css/common/header.css"/>
+    <link rel="stylesheet" href="/css/common/footer.css"/>
+    <link rel="stylesheet" href="/css/profile/profile.css"/>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+    <section class="profile-top">
+        <div class="profile-left">
+            <div class="profile-user-info">
+                <img src="/assets/icon/profile.svg" alt="프로필 사진" class="profile-img">
+                <div class="profile-info">
+                    <div class ="profile-username">
+                        <span class="nickname">닉네임</span>
+                        <div sec:authorize="isAuthenticated()">
+                            <a th:href="@{/profile/edit}">프로필 수정</a>
+                            <a th:href="@{/profile/delete}">회원 탈퇴</a>
+                        </div>
+                    </div>
+                    <div class="user-id">#1234</div>
+                </div>
+            </div>
+            <div class="profile-manner-degree">
+                <p>매너온도</p>
+                <p class="manner-degree">46.8℃</p>
+            </div>
+            <div class="manner-bar">
+                <div class="filled-bar"></div>
+            </div>
+        </div>
+        <div class="profile-feedback">
+            <h3>받은 매너 평가</h3>
+            <ul>
+                <li>
+                    <img src="/assets/icon/group.svg" class="group-icon" alt="group-icon">
+                    <p class="feedback-number">10명</p>
+                    <p class="feedback-detail">시간약속을 잘 지켜요</p>
+                </li>
+                <li>
+                    <img src="/assets/icon/group.svg" class="group-icon" alt="group-icon">
+                    <p class="feedback-number">7명</p>
+                    <p class="feedback-detail">상품 상태가 설명한 것과 같아요</p>
+                </li>
+                <li>
+                    <img src="/assets/icon/group.svg" class="group-icon" alt="group-icon">
+                    <p class="feedback-number">4명</p>
+                    <p class="feedback-detail">응답이 빨라요</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <section class="review-section">
+        <h3>받은 거래 후기</h3>
+        <ul class="review-list">
+            <li class="review-item">
+                <div class="profile-img"><img src="/assets/icon/group.svg" class="group-icon" alt="프로필"></div>
+                <div class="review-content">
+                    <div class="review-meta">
+                        <strong class="nickname">당근26</strong>
+                        <span class="role">구매자</span> · <span class="location">서대문구 연희동</span> · <span
+                            class="time">1주 전</span>
+                    </div>
+                    <div class="review-text">감사합니다😊</div>
+                </div>
+            </li>
+
+            <li class="review-item">
+                <div class="profile-img"><img src="/assets/icon/group.svg" class="group-icon" alt="프로필"></div>
+                <div class="review-content">
+                    <div class="review-meta">
+                        <strong class="nickname">빠른거래선호</strong>
+                        <span class="role">구매자</span> · <span class="location">창천동</span> · <span
+                            class="time">4개월 전</span>
+                    </div>
+                    <div class="review-text">많은 배려와 도움 감사합니다.</div>
+                </div>
+            </li>
+
+            <li class="review-item">
+                <div class="profile-img"><img src="/assets/icon/group.svg" class="group-icon" alt="프로필"></div>
+                <div class="review-content">
+                    <div class="review-meta">
+                        <strong class="nickname">와웅</strong>
+                        <span class="role">판매자</span> · <span class="location">용인시 수지구</span> · <span class="time">11개월 전</span>
+                    </div>
+                    <div class="review-text">쿨거래 감사합니다:)</div>
+                </div>
+            </li>
+        </ul>
+        <div class="btn-more-wrapper">
+            <a href="#" class="btn-more">더보기</a>
+        </div>
+    </section>
+    <section class="sale-items">
+        <h3>판매상품</h3>
+        <div class="tab-buttons">
+            <button class="tab-button active">전체</button>
+            <button class="tab-button">판매중</button>
+            <button class="tab-button">예약중</button>
+            <button class="tab-button">판매완료</button>
+        </div>
+
+        <div class="items-grid">
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">aaa</div>
+                <div class="price">8,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">bbb</div>
+                <div class="price">6,300원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">ccc</div>
+                <div class="price">4,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">aaa</div>
+                <div class="price">8,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">bbb</div>
+                <div class="price">6,300원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">ccc</div>
+                <div class="price">4,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">aaa</div>
+                <div class="price">8,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">bbb</div>
+                <div class="price">6,300원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">ccc</div>
+                <div class="price">4,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">aaa</div>
+                <div class="price">8,500원</div>
+            </div>
+        </div>
+        <div class="btn-more-wrapper">
+            <a href="#" class="btn-more">더보기</a>
+        </div>
+    </section>
+    <section class="liked-items" sec:authorize="isAuthenticated()">
+        <h3>관심목록</h3>
+        <div class="items-grid">
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">aaa</div>
+                <div class="price">8,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">bbb</div>
+                <div class="price">6,300원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">ccc</div>
+                <div class="price">4,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">aaa</div>
+                <div class="price">8,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">bbb</div>
+                <div class="price">6,300원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">ccc</div>
+                <div class="price">4,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">aaa</div>
+                <div class="price">8,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">bbb</div>
+                <div class="price">6,300원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">ccc</div>
+                <div class="price">4,500원</div>
+            </div>
+            <div class="item-card">
+                <img src="assets/icon/default_product_img.svg" alt="상품 이미지">
+                <div class="title">aaa</div>
+                <div class="price">8,500원</div>
+            </div>
+        </div>
+        <div class="btn-more-wrapper">
+            <a href="#" class="btn-more">더보기</a>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="/js/common/header.js"></script>
+</body>
+</html>

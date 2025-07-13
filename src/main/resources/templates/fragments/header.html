@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<header>
+    <div class="header-container">
+        <div class="carrot-container">
+            <a th:href="@{/home}">
+                <img src="/assets/icon/carrot.svg" alt="당근로고" />
+            </a>
+            <a th:href="@{/trade}">중고거래</a>
+
+            <!-- 로그인 후 -->
+            <a th:href="@{/location}" sec:authorize="isAuthenticated()">동네인증</a>
+        </div>
+
+        <div class="search-container">
+            <input type="text" placeholder="물품이나 동네를 검색해 보세요" />
+
+            <!-- 로그인 전 -->
+            <div sec:authorize="isAnonymous()">
+                <a th:href="@{/login}">로그인</a>
+            </div>
+
+            <!-- 로그인 후 -->
+            <div class="header-btn" sec:authorize="isAuthenticated()" style="display: flex; gap: 10px;">
+                <a th:href="@{/chat}">
+                    <img src="/assets/icon/chat.svg" alt="채팅">
+                    <span>채팅</span>
+                </a>
+                <button class = "user-profile" id = "userProfileBtn">
+                    <img src="/assets/icon/myprofile.svg" alt="마이">
+                    <span>마이</span>
+                </button>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <a th:href="@{/profile}">마이페이지</a>
+                    <hr class="dropdown-divider">
+                    <a th:href="@{/logout}">로그아웃</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>

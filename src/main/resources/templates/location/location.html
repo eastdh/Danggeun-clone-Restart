@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>동네 인증 | 당근마켓</title>
+    <link rel="stylesheet" href="/css/common/style.css" />
+    <link rel="stylesheet" href="/css/common/header.css" />
+    <link rel="stylesheet" href="/css/common/footer.css" />
+    <link rel="stylesheet" href="/css/login/login.css" />
+    <link rel="stylesheet" href="/css/location/location.css" />
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <section class="title-section">
+            <p>어디에 살고 계신가요?</p>
+            <div class="input-wrapper">
+                <input type="text" placeholder="예) 서울 강서구 화곡동" />
+                <button class="btn-location">내 동네 설정</button> <!-- or 내 동네 수정 -->
+            </div>
+        </section>
+
+        <section class="map-section">
+            <p>현재 위치로 동네 인증하기</p>
+            <!-- 지도 API 연동 영역 -->
+            <div id="map-container"></div>
+            <p class="location-description">현재 위치는 서울 강서구 화곡동 입니다. <br> 현재 위치가 내 동네가 맞는지 확인해 주세요.</p>
+        </section>
+        <button class="btn-confirm">동네인증 완료하기</button>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script src="/js/common/header.js"></script>
+</body>
+</html>
