@@ -1,0 +1,438 @@
+html {
+  font-size: 10px;
+}
+body {
+  margin: 0;
+}
+.chat-page {
+  display: flex;
+  padding: 0 10%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #fffae0;
+}
+
+/* 썸네일: 리스트, 채팅방 스타일 통일 */
+.thumbnail {
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: 10%;
+}
+
+/* 좌측 채팅 목록 패널 */
+.list {
+  width: 30%;
+  border: #ddd 1px solid;
+  background-color: white;
+}
+
+.list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.list__header__user-id {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.list__header__toggle {
+  display: flex;
+  align-items: center;
+}
+.list__header__toggle span {
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 4px;
+}
+
+.list__header__toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.list__header__toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.list__header__toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.list__header__toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .list__header__toggle-slider {
+  background-color: #4caf50;
+}
+
+input:checked + .list__header__toggle-slider::before {
+  transform: translateX(26px);
+}
+
+.list__room-list {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 60px); /* 헤더 높이 제외 */
+  overflow-y: auto;
+}
+
+.list__room-list__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8.5px 20px;
+  border-bottom: 1px solid #ddd;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.list__room-list__item:hover {
+  background-color: #f0f0f0;
+}
+
+.list__room-list__item-content {
+  width: calc(100% - 4.8rem - 20px);
+  gap: 4px;
+}
+
+.list__room-list__item-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.list__room-list__item-meta__partner-id {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.list__room-list__item-meta__location,
+.list__room-list__item-meta__timestamp {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #aaabb4;
+}
+
+.list__room-list__item__preview {
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 채팅 목록 비어있을 때 */
+.list__empty-message {
+  height: 100%;
+  text-align: center;
+  padding: 48px 24px;
+  color: #444;
+  background-color: #f9f9f9;
+}
+
+.empty-message__title {
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.empty-message__subtitle {
+  font-size: 1em;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.empty-message__browse-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #00a8a8;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.empty-message__browse-button:hover {
+  background-color: #007f7f;
+}
+
+/* 우측 채팅방 패널 */
+.room {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  border: #ddd 1px solid;
+  background-color: white;
+}
+
+.room__header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: #ddd 1px solid;
+  border-top: 0;
+  padding: 14.5px 20px;
+  gap: 16px;
+}
+
+.room__header__partner-info {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.room__header__partner-info__id {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.room__header__partner-info__temperature {
+  padding: 2px 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  background-color: #ff6f0e;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.room__header__trade-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.room__header__trade-info__product {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.room__header__trade-info__product__name {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+.room__header__trade-info__product__price {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.room__header__trade-info__status-button {
+  display: flex;
+  align-self: flex-end;
+  justify-self: flex-end;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: white;
+  background-color: #ff6f0e;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.room__header__trade-info__status-button:hover {
+  background-color: #e85f00;
+}
+
+/* 거래 완료시 클릭, closed 클래스 추가, disabled 처리 */
+.room__header__trade-info__status-button.closed {
+  color: #bdbec8;
+  background-color: white;
+  border: 1px solid #bdbec8;
+  cursor: default;
+}
+
+.room__header__trade-info__status-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 거래 종료 후 버튼 hover 무효화 */
+.room__header__trade-info__status-button.closed:hover {
+  background-color: white;
+  color: #bdbec8;
+  border: 1px solid #bdbec8;
+  cursor: default;
+}
+
+/* 메시지 공통 스타일 */
+.room__messages {
+  width: 100%;
+  flex-grow: 1;
+  min-height: 300px;
+  overflow-y: auto;
+}
+
+.room__messages__item {
+  display: flex;
+  margin: 20px;
+}
+
+.room__messages__item__content {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  gap: 8px;
+  max-width: 75%;
+}
+
+.room__messages__item__text {
+  color: #111111;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 150%;
+  word-break: break-word;
+}
+
+.message-time {
+  font-size: 1.2rem;
+  color: #898a93;
+  white-space: nowrap;
+}
+
+/* 상대방 메시지 */
+.room__messages__item--partner {
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.room__messages__item--partner .room__messages__item__text {
+  background-color: #f2f3f6;
+}
+
+/* 내 메시지 */
+.room__messages__item--me {
+  flex-direction: row-reverse;
+}
+
+.room__messages__item--me .room__messages__item__content {
+  flex-direction: row-reverse;
+}
+
+.room__messages__item--me .room__messages__item__text {
+  background-color: #ff6f0e;
+  color: #fff;
+}
+
+/* 챗봇 메시지 */
+.room__messages__item--chat-bot .room__messages__item__text {
+  background-color: #fffae0;
+  cursor: pointer;
+}
+
+.room__messages__item--chat-bot .room__messages__item__text:hover {
+  box-shadow: 0 0 0 2px #ffeb94;
+}
+
+/* 메시지 입력 영역 */
+.room__input-area {
+  background-color: #f2f3f6;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 0px 20px 40px 20px;
+}
+
+.room__input-area__wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.room__input-area__field {
+  flex: 1;
+  resize: none;
+  height: 72px;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 1.4rem;
+  box-sizing: border-box;
+  background-color: #f2f3f6;
+}
+
+.room__input-area__field:focus {
+  outline: none;
+}
+
+.room__input-area__send-button {
+  background-color: #ff6f0e;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 20px;
+  font-size: 1.4rem;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* 선택된 채팅방 없을 때 */
+.room__empty-message {
+  height: 100%;
+  text-align: center;
+  padding: 60px 24px;
+  color: #555;
+  background-color: #f5f5f5;
+}
+
+.empty-message__title {
+  font-size: 1.4em;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.empty-message__subtitle {
+  font-size: 1em;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.empty-message__arrow-indicator {
+  font-size: 2em;
+  animation: bounceLeft 1.2s infinite;
+}
+
+@keyframes bounceLeft {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-10px);
+  }
+}

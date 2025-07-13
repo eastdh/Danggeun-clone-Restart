@@ -1,0 +1,285 @@
+.review-page {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--gray-900);
+}
+
+/* 리뷰 페이지 상단 프로필 영역 */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* 좌측 프로필 */
+.review-header__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-name {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.profile-rating {
+  font-size: 0.95em;
+  color: var(--orange-600);
+}
+
+/* 우측 키워드 리스트 */
+.review-header__right {
+  background-color: var(--gray-050);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.received-keywords.structured {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.received-keywords.structured li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.keyword-count {
+  background-color: var(--green-200);
+  color: var(--gray-800);
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 6px 10px;
+  min-width: 50px;
+  text-align: center;
+  flex-shrink: 0;
+  border: 1px solid var(--green-400);
+}
+
+.keyword-text {
+  background-color: var(--gray-100);
+  color: var(--gray-800);
+  padding: 6px 12px;
+  border-radius: 6px;
+  flex-grow: 1;
+  border: 1px solid var(--gray-200);
+}
+
+.no-keywords {
+  padding: 12px;
+  font-size: 0.95em;
+  color: var(--gray-600);
+  background-color: var(--gray-050);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.review-divider {
+  border-top: 1px solid var(--gray-200);
+  margin: 32px 0;
+}
+
+/* 리뷰 페이지 하단 리뷰 작성 영역 */
+/* 각 리뷰 섹션 공통 스타일 */
+.form-section {
+  background-color: var(--gray-000);
+  border: 1px solid var(--gray-100);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border-radius: 10px;
+}
+.form-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 6px;
+}
+
+.form-subtitle {
+  font-size: 0.9em;
+  color: var(--gray-600);
+  margin-bottom: 12px;
+}
+
+.form-badge {
+  background-color: var(--gray-200);
+  color: var(--gray-800);
+  padding: 3px 8px;
+  font-size: 0.75em;
+  border-radius: 12px;
+}
+
+.rating-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rating {
+  float: none;
+  width: 200px;
+  display: flex;
+}
+
+.rating__input {
+  display: none;
+}
+
+.rating-label {
+  width: 20px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.rating-label .star-icon {
+  width: 20px;
+  height: 40px;
+  display: block;
+  position: relative;
+  left: 0;
+  background-image: url("/assets/icons/review/empty-star.svg");
+  background-repeat: no-repeat;
+  background-size: 40px;
+}
+
+.rating-label .star-icon.filled {
+  background-image: url("/assets/icons/review/full-star.svg");
+}
+
+.rating-label--full .star-icon {
+  background-position: right;
+}
+
+.rating-label--half .star-icon {
+  background-position: left;
+}
+
+.rating.readonly .star-icon {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.rating-value-display {
+  margin: 8px 0 16px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.keyword-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.keyword-options label {
+  background: var(--gray-050);
+  padding: 8px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--gray-800);
+}
+
+.review-guide {
+  margin-bottom: 16px;
+  min-height: 96px;
+}
+
+.guide-bubble {
+  width: fit-content;
+  background-color: var(--gray-050);
+  border-radius: 16px;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  color: var(--gray-800);
+  margin-bottom: 6px;
+  transition: opacity 0.3s ease;
+}
+
+.guide-bubble.loading {
+  font-style: italic;
+  color: var(--gray-500);
+  animation: pulseFade 1.4s infinite ease-in-out;
+}
+
+@keyframes pulseFade {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
+.review-text textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.95em;
+  line-height: 1.5;
+  border-radius: 8px;
+  border: 1px solid var(--gray-300);
+  background-color: var(--gray-000);
+  color: var(--gray-900);
+  resize: vertical;
+  min-height: 120px;
+  box-shadow: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.review-text textarea:focus {
+  outline: none;
+  border-color: var(--orange-400);
+  box-shadow: 0 0 0 3px rgba(255, 159, 67, 0.15); /* 오렌지 tone focus ring */
+}
+
+.char-counter {
+  text-align: right;
+  margin-top: 6px;
+  font-size: 0.85em;
+  color: var(--gray-600);
+}
+
+.review-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-submit {
+  background-color: var(--orange-600);
+  color: var(--gray-000);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background-color: var(--gray-300);
+  color: var(--gray-900);
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
