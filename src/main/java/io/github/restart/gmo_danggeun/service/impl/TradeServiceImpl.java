@@ -1,11 +1,13 @@
 package io.github.restart.gmo_danggeun.service.impl;
 
-import io.github.restart.gmo_danggeun.entity.Trade;
-import io.github.restart.gmo_danggeun.repository.CategoryRepository;
+import io.github.restart.gmo_danggeun.dto.FilterDto;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.repository.LikeRepository;
 import io.github.restart.gmo_danggeun.repository.TradeRepository;
+import io.github.restart.gmo_danggeun.repository.readonly.TradeDetailRepository;
+import io.github.restart.gmo_danggeun.repository.readonly.TradeListRepository;
 import io.github.restart.gmo_danggeun.service.TradeService;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,38 +19,31 @@ import org.springframework.transaction.annotation.Transactional;
 public class TradeServiceImpl implements TradeService {
 
   private TradeRepository tradeRepository;
+  private TradeListRepository tradeListRepository;
+  private TradeDetailRepository tradeDetailRepository;
   private LikeRepository likeRepository;
-  private CategoryRepository categoryRepository;
 
-  public TradeServiceImpl(TradeRepository tradeRepository, LikeRepository likeRepository,
-      CategoryRepository categoryRepository) {
+  public TradeServiceImpl(TradeRepository tradeRepository, TradeListRepository tradeListRepository,
+      TradeDetailRepository tradeDetailRepository, LikeRepository likeRepository) {
     this.tradeRepository = tradeRepository;
+    this.tradeListRepository = tradeListRepository;
+    this.tradeDetailRepository = tradeDetailRepository;
     this.likeRepository = likeRepository;
-    this.categoryRepository = categoryRepository;
   }
 
   @Override
-  @Transactional(readOnly = true)
-  public Page<Trade> findAllByLocation(String location, Pageable pageable) {
-    return null;
+  public Page<TradeList> searchTrades(FilterDto filter, Pageable pageable) {
+    return tradeListRepository.findAllByFilters(filter, pageable);
   }
 
   @Override
-  @Transactional(readOnly = true)
-  public Page<Trade> searchTrades(String keyword, String location, String category,
-      int priceLowLimit, int priceHighLimit, Pageable pageable) {
-    return null;
+  public Optional<TradeDetail> findById(Long id) {
+    return tradeDetailRepository.findById(id);
   }
 
   @Override
-  @Transactional(readOnly = true)
-  public Optional<Trade> findById(Long id) {
-    return null;
+  public Page<TradeList> findAllByUserId(Long userId, Pageable pageable) {
+    return tradeListRepository.findAllByUserId(userId, pageable);
   }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<Trade> findAllByUserId(Long userId) {
-    return null;
-  }
 }

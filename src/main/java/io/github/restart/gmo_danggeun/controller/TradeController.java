@@ -1,7 +1,9 @@
 package io.github.restart.gmo_danggeun.controller;
 
-import io.github.restart.gmo_danggeun.dto.FilterDTO;
-import io.github.restart.gmo_danggeun.entity.Trade;
+import io.github.restart.gmo_danggeun.config.PageConfig;
+import io.github.restart.gmo_danggeun.dto.FilterDto;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.service.TradeService;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -32,22 +34,37 @@ public class TradeController {
       @RequestParam(required = false) int priceHighLimit,
       Model model) {
 
-    Pageable pageable = PageRequest.of(page, 10);
-    Page<Trade> tradePage = tradeService.searchTrades(keyword, location, category, priceLowLimit, priceHighLimit, pageable);
-
-    FilterDTO filterDTO = new FilterDTO(location, category, priceLowLimit, priceHighLimit);
+    Pageable pageable = PageRequest.of(page, PageConfig.TRADELIST_PAGE_SIZE);
+    FilterDto filter = new FilterDto(keyword, location, category, priceLowLimit, priceHighLimit);
+    Page<TradeList> tradePage = tradeService.searchTrades(filter, pageable);
 
     model.addAttribute("trade", tradePage);
-    model.addAttribute("keyword", keyword);
-    model.addAttribute("filter", filterDTO);
+    model.addAttribute("filter", filter);
     return "trade/trade";
   }
 
   @GetMapping("/trade/{id}")
   public String tradeDetail(@PathVariable Long id, Model model) {
-    Optional<Trade> trade = tradeService.findById(id);
-    model.addAttribute("trade", trade);
-    return "trade/trade_post";
+    Optional<TradeDetail> trade = tradeService.findById(id);
+    if (!trade.isEmpty()) {
+      TradeDetail tradeDetail = trade.get();
+      Pageable userTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_USER_TRADE_PAGE_SIZE);
+      Pageable categoryTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_CATEGORY_TRADE_PAGE_SIZE);
+      FilterDto filter = new FilterDto();
+      filter.setCategory(tradeDetail.getCategoryName());
+
+      Page<TradeList> sellerTrades = tradeService.findAllByUserId(tradeDetail.getUserId(), userTradePageable);
+      Page<TradeList> categoryTrades = tradeService.searchTrades(filter, categoryTradePageable);
+
+      model.addAttribute("trade", tradeDetail);
+      model.addAttribute("userTrade", sellerTrades);
+      model.addAttribute("categoryTrade", categoryTrades);
+      return "trade/trade_post";
+    } else {
+      model.addAttribute("error", "거래글 없음");
+      // Todo : edit redirect to error page
+      return "trade/trade_post";
+    }
   }
 
   @GetMapping("/trade/new")
@@ -57,7 +74,7 @@ public class TradeController {
 
   @GetMapping("/trade/{id}/edit")
   public String tradeEdit(@PathVariable Long id, Model model) {
-    Optional<Trade> trade = tradeService.findById(id);
+    Optional<TradeDetail> trade = tradeService.findById(id);
     model.addAttribute("trade", trade);
     return "trade/trade_edit";
   }

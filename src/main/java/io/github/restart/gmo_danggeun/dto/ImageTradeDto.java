@@ -1,12 +1,17 @@
 package io.github.restart.gmo_danggeun.dto;
 
 public class ImageTradeDto {
-
     private Long tradeId;
 
     private Long imageId;
 
+    public ImageTradeDto() {
+    }
 
+    public ImageTradeDto(Long tradeId, Long imageId) {
+        this.tradeId = tradeId;
+        this.imageId = imageId;
+    }
 
     public Long getTradeId() {
         return tradeId;
