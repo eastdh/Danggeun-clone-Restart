@@ -10,7 +10,6 @@ public class HomeController {
     public String home() {
         return "redirect:/main";
     }
-
     @GetMapping("/login")
     public String loginPage() {
         return "login/login";
@@ -20,10 +19,7 @@ public class HomeController {
     public String registerPage() {
         return "login/register";
     }
-    @GetMapping("/location")
-    public String locationPage() {
-        return "location/location";
-    }
+
     @GetMapping("/profile")
     public String profilePage() {
         return "profile/profile";
