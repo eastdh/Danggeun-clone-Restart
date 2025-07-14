@@ -1,4 +1,4 @@
-package io.github.restart.gmo_danggeun.dto;
+package io.github.restart.gmo_danggeun.dto.auth;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;

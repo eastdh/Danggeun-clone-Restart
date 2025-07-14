@@ -1,6 +1,6 @@
 package io.github.restart.gmo_danggeun.controller;
 
-import io.github.restart.gmo_danggeun.dto.FilterDTO;
+import io.github.restart.gmo_danggeun.dto.trade.FilterDTO;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.service.TradeService;
 import java.util.Optional;

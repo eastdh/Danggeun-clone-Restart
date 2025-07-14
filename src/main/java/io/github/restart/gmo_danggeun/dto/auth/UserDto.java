@@ -1,24 +1,27 @@
-package io.github.restart.gmo_danggeun.dto;
+package io.github.restart.gmo_danggeun.dto.auth;
 
-import java.time.LocalDateTime;
+public class UserDto {
 
-public class RegisterDto {
+    private Long id;
 
     private String email;
-    private String password;
-    private String nickname;
-    private String location;
-    private LocalDateTime joinDate;
 
-    public RegisterDto() {
+    private String password;
+
+    private String nickname;
+
+    private String joinDate;
+
+    private String location;
+
+
+
+    public Long getId() {
+        return id;
     }
 
-    public RegisterDto(String email, String password, String nickname, String location, LocalDateTime joinDate) {
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.location = location;
-        this.joinDate = joinDate;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -45,6 +48,14 @@ public class RegisterDto {
         this.nickname = nickname;
     }
 
+    public String getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -53,11 +64,4 @@ public class RegisterDto {
         this.location = location;
     }
 
-    public LocalDateTime getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(LocalDateTime joinDate) {
-        this.joinDate = joinDate;
-    }
 }

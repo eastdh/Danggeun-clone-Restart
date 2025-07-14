@@ -1,4 +1,4 @@
-package io.github.restart.gmo_danggeun.dto;
+package io.github.restart.gmo_danggeun.dto.review;
 
 public class ReviewDto {
 
