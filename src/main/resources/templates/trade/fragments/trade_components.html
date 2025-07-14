@@ -33,14 +33,14 @@
 <!-- trade_post's trades card -->
 <div th:fragment="trade_card (trade, is_trade_list)" class="trade-card">
   <a
-      th:href="@{/trade/{id}(id=${trade.id})}"
+      th:href="@{/trade/{id}(id=${trade.tradeId})}"
       class="trade-card-link">
     <div class="card-img-box">
       <th:block th:switch="${trade.status}">
         <span th:case="completed" class="badge-status completed">판매완료</span>
         <span th:case="reserved" class="badge-status reserved">예약중</span>
       </th:block>
-      <img th:src="${#strings.isEmpty(trade.url)} ? @{/assets/trade/images/card-image.svg} : @{trade.url}"
+      <img th:src="${#strings.isEmpty(trade.imgUrl)} ? @{/assets/trade/images/card-image.svg} : @{trade.imgUrl}"
            th:alt="${trade.title != null} ? ${trade.title} : '거래글 이미지'"
            class="card-img">
     </div>
@@ -51,7 +51,7 @@
               class="card-price">10,000원</span>
       </div>
       <div>
-        <span th:text="${trade.preferredLocation}">장소</span>
+        <span th:text="${trade.location}">장소</span>
         <span th:if="${is_trade_list}" class="card-time">
           <span>•</span>
           <span th:text="${trade.updatedAt}">3시간 전</span>

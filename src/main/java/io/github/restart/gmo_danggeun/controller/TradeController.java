@@ -1,10 +1,14 @@
 package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.config.PageConfig;
+import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.FilterDto;
+import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.service.TradeService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,18 +32,25 @@ public class TradeController {
   public String trade(
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(required = false) String keyword,
-      @RequestParam(required = true) String location,
+      @RequestParam(required = true, defaultValue = "서울특별시 종로구") String location,
+      @RequestParam(required = false, defaultValue = "false") String onlyOnSale,
       @RequestParam(required = false) String category,
-      @RequestParam(required = false) int priceLowLimit,
-      @RequestParam(required = false) int priceHighLimit,
+      @RequestParam(required = false, defaultValue = "0") int priceLowLimit,
+      @RequestParam(required = false, defaultValue = TradeConfig.MAX_PRICE+"") int priceHighLimit,
       Model model) {
 
     Pageable pageable = PageRequest.of(page, PageConfig.TRADELIST_PAGE_SIZE);
-    FilterDto filter = new FilterDto(keyword, location, category, priceLowLimit, priceHighLimit);
-    Page<TradeList> tradePage = tradeService.searchTrades(filter, pageable);
+    Page<TradeList> tradePage = tradeService.searchTrades(keyword, location, category, priceLowLimit, priceHighLimit, pageable);
+    List<Category> categories = tradeService.findAllCategories();
 
-    model.addAttribute("trade", tradePage);
-    model.addAttribute("filter", filter);
+    FilterDto filter = new FilterDto(category, priceLowLimit, priceHighLimit);
+
+    model.addAttribute("trades", tradePage);
+    model.addAttribute("categories", categories);
+    model.addAttribute("page", page);
+    model.addAttribute("keyword", keyword);
+    model.addAttribute("location", location);
+    model.addAttribute("filters", filter);
     return "trade/trade";
   }
 
@@ -50,13 +61,15 @@ public class TradeController {
       TradeDetail tradeDetail = trade.get();
       Pageable userTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_USER_TRADE_PAGE_SIZE);
       Pageable categoryTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_CATEGORY_TRADE_PAGE_SIZE);
-      FilterDto filter = new FilterDto();
-      filter.setCategory(tradeDetail.getCategoryName());
 
       Page<TradeList> sellerTrades = tradeService.findAllByUserId(tradeDetail.getUserId(), userTradePageable);
-      Page<TradeList> categoryTrades = tradeService.searchTrades(filter, categoryTradePageable);
+      Page<TradeList> categoryTrades = tradeService.searchTrades("", tradeDetail.getLocation(), tradeDetail.getCategoryName(), 0,
+          TradeConfig.MAX_PRICE, categoryTradePageable);
+
+      List<TradeImageList> images = tradeService.findAllImageById(tradeDetail.getTradeId());
 
       model.addAttribute("trade", tradeDetail);
+      model.addAttribute("images", images);
       model.addAttribute("userTrade", sellerTrades);
       model.addAttribute("categoryTrade", categoryTrades);
       return "trade/trade_post";

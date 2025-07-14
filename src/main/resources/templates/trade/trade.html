@@ -93,13 +93,15 @@
         </section>
       </aside>
       <div class="trade-list">
-        <div th:if="${filters}" class="filter-applied">
-          <span th:each="$filter:${filters}" class="filter-badge">
-            <span th:text="${filter}"></span>
-            <img th:src="@{/assets/icon/x-lg.svg}" alt="취소">
-          </span>
-        </div>
-        <!-- Todo : add class toggle(filtered) -->
+          <div th:if="${filters != null}" class="filter-applied">
+            <span th:if="${filters.category != null}" class="filter-badge">
+              <span th:text="${filters.category}"></span>
+              <img th:src="@{/assets/icon/x-lg.svg}" alt="취소">
+            </span>
+          </div>
+        <!-- Todo : add class toggle(filtered) to content div
+         top-margin change
+         -->
         <div class="trade-contents">
           <th:block th:each="trade:${trades}">
             <div th:replace="~{/trade/fragments/trade_components :: trade_card (${trade}, ${true})}"

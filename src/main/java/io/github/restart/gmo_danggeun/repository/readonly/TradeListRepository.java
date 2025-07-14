@@ -9,18 +9,26 @@ import org.springframework.data.repository.query.Param;
 
 public interface TradeListRepository extends ReadOnlyRepository<TradeList, Long> {
   @Query(value = """
-      SELECT trade_id, title, price, status, category_name, hidden, updated_at, location, img_url
+      SELECT trade_id, title, price, status, hidden, created_at,
+      updated_at, user_id, location,
+      category_id, category_name, img_url
       FROM trade_list
       WHERE
-      (:#{#filter.keyword} IS NULL OR LOWER(title) LIKE LOWER(CONCAT('%', :#{#filter.keyword}, '%'))
-      OR LOWER(description) LIKE LOWER(CONCAT('%', :#{#filter.keyword}, '%'))) AND
-      (:#{#filter.location} IS NULL OR location LIKE CONCAT('%', :#{#filter.location}, '%')) AND
-      (:#{#filter.category} IS NULL OR category_name = ':#{#filter.category}') AND
-      (:#{#filter.priceLowLimit} IS NULL OR price >= :#{#filter.priceLowLimit}) AND
-      (:#{#filter.priceHighLimit} IS NULL OR price <= :#{#filter.priceHighLimit})
-      ORDER BY created_at, updated_at
+      (:keyword IS NULL OR LOWER(title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+      OR LOWER(description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND
+      (:location IS NULL OR location LIKE CONCAT('%', :location, '%')) AND
+      (:category IS NULL OR category_name = :category) AND
+      (:priceLowLimit IS NULL OR price >= :priceLowLimit) AND
+      (:priceHighLimit IS NULL OR price <= :priceHighLimit)
+      ORDER BY created_at DESC, updated_at DESC
       """, nativeQuery = true)
-  Page<TradeList> findAllByFilters(@Param("filter") FilterDto filter, Pageable pageable);
+  Page<TradeList> findAllByFilters(
+      @Param("keyword") String keyword,
+      @Param("location") String location,
+      @Param("category") String category,
+      @Param("priceLowLimit") int priceLowLimit,
+      @Param("priceHighLimit") int priceHighLimit,
+      Pageable pageable);
 
   Page<TradeList> findAllByUserId(@Param("user_id") Long userId, Pageable pageable);
 }

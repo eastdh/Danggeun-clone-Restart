@@ -10,10 +10,10 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 
 @NoRepositoryBean
-public interface ReadOnlyRepository<T, ID> extends Repository<T, ID> {
+public interface ReadOnlyRepository<T, Long> extends Repository<T, Long> {
   List<T> findAll();
   List<T> findAll(Sort sort);
   Page<T> findAll(Pageable pageable);
-  Optional<T> findById(Id id);
+  Optional<T> findById(Long id);
   long count();
 }

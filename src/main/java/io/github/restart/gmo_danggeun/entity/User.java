@@ -32,7 +32,7 @@ public class User {
   @Column(length = 50)
   private String location;
 
-  @Column
+  @Column(name = "manner_score")
   private double mannerScore;
 
   // OneToMany: 사용자 = 리뷰 구매자/판매자, 이미지 업로더, 글쓴이, 채팅 작성자 등

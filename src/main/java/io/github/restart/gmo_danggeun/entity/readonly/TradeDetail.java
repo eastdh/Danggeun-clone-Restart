@@ -63,6 +63,9 @@ public class TradeDetail {
   @Column(name = "manner_score")
   private double mannerScore;
 
+  public TradeDetail() {
+  }
+
   public TradeDetail(Long tradeId, Long categoryId, String categoryName, String title,
       String description, String preferredLocation, Integer price, Boolean isOfferable,
       String status,

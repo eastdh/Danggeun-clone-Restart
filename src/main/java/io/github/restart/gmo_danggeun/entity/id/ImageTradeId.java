@@ -1,5 +1,6 @@
 package io.github.restart.gmo_danggeun.entity.id;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
@@ -7,7 +8,10 @@ import java.util.Objects;
 @Embeddable
 public class ImageTradeId implements Serializable {
 
+  @Column(name = "trade_id")
   private Long tradeId;
+
+  @Column(name = "image_id")
   private Long imageId;
 
   public ImageTradeId() {

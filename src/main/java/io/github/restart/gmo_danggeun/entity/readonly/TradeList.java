@@ -48,6 +48,9 @@ public class TradeList {
   @Column(name = "img_url")
   private String imgUrl;
 
+  public TradeList() {
+  }
+
   public TradeList(Long tradeId, String title, int price, String status, boolean hidden,
       LocalDateTime createdAt, LocalDateTime updatedAt, Long userId, String location,
       Long categoryId,
