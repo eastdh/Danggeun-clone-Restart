@@ -45,6 +45,15 @@ public class TradeDetail {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
+  @Column(name = "bump_updated_at")
+  private LocalDateTime bumpUpdatedAt;
+
+  @Column(name = "update_term")
+  private String updateTerm;
+
+  @Column(name = "bump_update_term")
+  private String bumpUpdateTerm;
+
   @Column(name = "like_counts")
   private int likeCounts;
 
@@ -69,8 +78,9 @@ public class TradeDetail {
   public TradeDetail(Long tradeId, Long categoryId, String categoryName, String title,
       String description, String preferredLocation, Integer price, Boolean isOfferable,
       String status,
-      Boolean hidden, LocalDateTime createdAt, LocalDateTime updatedAt, int likeCounts,
-      int chatCounts, Long userId, String nickname, String location, double mannerScore) {
+      Boolean hidden, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime bumpUpdatedAt,
+      String updateTerm, String bumpUpdateTerm, int likeCounts, int chatCounts, Long userId,
+      String nickname, String location, double mannerScore) {
     this.tradeId = tradeId;
     this.categoryId = categoryId;
     this.categoryName = categoryName;
@@ -83,6 +93,9 @@ public class TradeDetail {
     this.hidden = hidden;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.bumpUpdatedAt = bumpUpdatedAt;
+    this.updateTerm = updateTerm;
+    this.bumpUpdateTerm = bumpUpdateTerm;
     this.likeCounts = likeCounts;
     this.chatCounts = chatCounts;
     this.userId = userId;
@@ -137,6 +150,18 @@ public class TradeDetail {
 
   public LocalDateTime getUpdatedAt() {
     return updatedAt;
+  }
+
+  public LocalDateTime getBumpUpdatedAt() {
+    return bumpUpdatedAt;
+  }
+
+  public String getUpdateTerm() {
+    return updateTerm;
+  }
+
+  public String getBumpUpdateTerm() {
+    return bumpUpdateTerm;
   }
 
   public int getLikeCounts() {

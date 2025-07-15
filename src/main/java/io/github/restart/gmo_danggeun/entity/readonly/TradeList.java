@@ -33,6 +33,15 @@ public class TradeList {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
+  @Column(name = "bump_updated_at")
+  private LocalDateTime bumpUpdatedAt;
+
+  @Column(name = "update_term")
+  private String updateTerm;
+
+  @Column(name = "bump_update_term")
+  private String bumpUpdateTerm;
+
   @Column(name = "user_id")
   private Long userId;
 
@@ -52,8 +61,8 @@ public class TradeList {
   }
 
   public TradeList(Long tradeId, String title, int price, String status, boolean hidden,
-      LocalDateTime createdAt, LocalDateTime updatedAt, Long userId, String location,
-      Long categoryId,
+      LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime bumpUpdatedAt,
+      String updateTerm, String bumpUpdateTerm, Long userId, String location, Long categoryId,
       String categoryName, String imgUrl) {
     this.tradeId = tradeId;
     this.title = title;
@@ -62,6 +71,9 @@ public class TradeList {
     this.hidden = hidden;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.bumpUpdatedAt = bumpUpdatedAt;
+    this.updateTerm = updateTerm;
+    this.bumpUpdateTerm = bumpUpdateTerm;
     this.userId = userId;
     this.location = location;
     this.categoryId = categoryId;
@@ -95,6 +107,18 @@ public class TradeList {
 
   public LocalDateTime getUpdatedAt() {
     return updatedAt;
+  }
+
+  public LocalDateTime getBumpUpdatedAt() {
+    return bumpUpdatedAt;
+  }
+
+  public String getUpdateTerm() {
+    return updateTerm;
+  }
+
+  public String getBumpUpdateTerm() {
+    return bumpUpdateTerm;
   }
 
   public Long getUserId() {

@@ -2,6 +2,7 @@ package io.github.restart.gmo_danggeun.service.impl;
 
 import io.github.restart.gmo_danggeun.dto.FilterDto;
 import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
@@ -12,9 +13,12 @@ import io.github.restart.gmo_danggeun.repository.readonly.TradeDetailRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.TradeImageListRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.TradeListRepository;
 import io.github.restart.gmo_danggeun.service.TradeService;
+import io.github.restart.gmo_danggeun.util.DateUtil;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +50,21 @@ public class TradeServiceImpl implements TradeService {
   public Page<TradeList> searchTrades(String keyword, String location, String category,
       Integer priceLowLimit, Integer priceHighLimit,
       String status, Pageable pageable) {
-    return tradeListRepository.findAllByFilters(keyword, location, category, priceLowLimit, priceHighLimit, status, pageable);
+    Page<TradeList> pages =
+    tradeListRepository.findAllByFilters(keyword, location, category, priceLowLimit, priceHighLimit, status, pageable);
+
+    List<TradeList> list = new ArrayList<>();
+    pages.get().forEach(trade -> {
+      String updateTerm = DateUtil.getMaxDateTerm(trade.getUpdateTerm());
+      String bumpUpdateTerm = DateUtil.getMaxDateTerm(trade.getBumpUpdateTerm());
+
+      TradeList newTrade = new TradeList(trade.getTradeId(), trade.getTitle(), trade.getPrice(), trade.getStatus(), trade.isHidden(), trade.getCreatedAt(),
+          trade.getUpdatedAt(), trade.getBumpUpdatedAt(), updateTerm, bumpUpdateTerm, trade.getUserId(), trade.getLocation(), trade.getCategoryId(),
+          trade.getCategoryName(), trade.getImgUrl());
+      list.add(newTrade);
+    });
+
+    return new PageImpl<>(list, pageable, list.size());
   }
 
   @Override

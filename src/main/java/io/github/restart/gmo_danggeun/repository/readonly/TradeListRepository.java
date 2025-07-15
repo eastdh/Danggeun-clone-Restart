@@ -9,8 +9,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface TradeListRepository extends ReadOnlyRepository<TradeList, Long> {
   @Query(value = """
-      SELECT trade_id, title, price, status, hidden, created_at,
-      updated_at, user_id, location,
+      SELECT trade_id, title, price, status, hidden, 
+      created_at, updated_at, bump_updated_at,
+      update_term, bump_update_term, 
+      user_id, location,
       category_id, category_name, img_url
       FROM trade_list
       WHERE

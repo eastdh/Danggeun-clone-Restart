@@ -3,7 +3,7 @@
 <!-- nav -->
 <nav th:fragment="nav (page, trade_title)" class="trade-nav">
   <ul class="nav-list">
-    <li><a th:href="@{/home}">홈</a></li>
+    <li><a th:href="@{/}">홈</a></li>
     <th:block th:if="${#strings.equals(page, 'trade')}">
       <li><img th:src="@{/assets/icon/chevron-right.svg}" alt="chevron-right"></li>
       <li>
@@ -54,7 +54,12 @@
         <span th:text="${trade.location}">장소</span>
         <span th:if="${is_trade_list}" class="card-time">
           <span>•</span>
-          <span th:text="${trade.updatedAt}">3시간 전</span>
+          <span th:if="${trade.bumpUpdatedAt == null}"
+              th:text="${trade.updateTerm}"
+              >3시간 전</span>
+          <span th:unless="${trade.bumpUpdatedAt == null}"
+                th:text="${trade.bumpUpdatedAt.isAfter(trade.updatedAt) ? '끌올 ' + trade.bumpUpdateTerm : trade.updateTerm}"
+          >3시간 전</span>
         </span>
       </div>
     </div>
