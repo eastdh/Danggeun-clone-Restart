@@ -4,11 +4,11 @@ public class ChatMessageDto {
 
   private Long messageId;
   private Long senderId;
-  private String senderType; // "ME" 또는 "PARTNER"
+  private String senderType; // ME, PARTNER, CHAT_BOT, DATE_LABEL
   private String content;
   private String timestamp;
   private boolean isRead;
-  private String messageType = "TEXT";  // 🔥 선택: TEXT, IMAGE, SYSTEM 등
+  private String messageType = "TEXT";  // TEXT, IMAGE, SYSTEM, DATE_LABEL 등
 
 
   public ChatMessageDto() {

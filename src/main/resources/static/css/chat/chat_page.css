@@ -340,6 +340,20 @@ input:checked + .list__header__toggle-slider::before {
   white-space: nowrap;
 }
 
+/* 날짜 구분선 */
+.room__messages__item--date {
+  justify-content: center;
+}
+
+.room__messages__item__date-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+  background-color: #f9f9f9;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
 /* 상대방 메시지 */
 .room__messages__item--partner {
   flex-direction: row;

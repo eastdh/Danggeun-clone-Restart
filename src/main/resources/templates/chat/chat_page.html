@@ -91,20 +91,26 @@
           <!-- 채팅 메시지 반복 -->
           <div class="room__messages">
             <div
-              class="room__messages__item room__messages__item--me"
+              th:each="msg : ${chatPage.messages}"
               th:class="'room__messages__item ' + 
                       (${msg.senderType} == 'ME' ? 'room__messages__item--me' :
+                       ${msg.senderType} == 'PARTNER' ? 'room__messages__item--partner' :
                        ${msg.senderType} == 'CHAT_BOT' ? 'room__messages__item--chat-bot' :
-                       'room__messages__item--partner')"
-              th:each="msg : ${chatPage?.messages}"
+                       'room__messages__item--date')"
             >
-              <div class="room__messages__item__content">
-                <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
-                <div class="room__messages__item__meta">
-                  <span class="message-read-status" th:if="${msg.senderType == 'ME'}" th:text="${msg.isRead} ? '읽음' : '전송됨'">읽음</span>
-                  <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+              <th:block th:if="${msg.messageType == 'DATE_LABEL'}">
+                <div class="room__messages__item__date-label" th:text="${msg.content}">2025년 7월 15일 화요일</div>
+              </th:block>
+
+              <th:block th:if="${msg.messageType != 'DATE_LABEL'}">
+                <div class="room__messages__item__content">
+                  <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
+                  <div class="room__messages__item__meta">
+                    <span class="message-read-status" th:if="${msg.senderType == 'ME'}" th:text="${msg.isRead} ? '읽음' : '전송됨'">읽음</span>
+                    <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+                  </div>
                 </div>
-              </div>
+              </th:block>
             </div>
           </div>
           <div class="room__input-area">
