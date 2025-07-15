@@ -17,12 +17,13 @@ h1 {
   margin-top: 40px;
   display: grid;
   gap: var(--gap-xxl);
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 4fr;
 }
 
 /* aside filter */
 aside {
   width: 100%;
+  min-width: 242px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -31,6 +32,7 @@ aside {
 
 aside header {
   width: 100%;
+  padding: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -108,7 +110,17 @@ aside .section-filter {
   align-items: center;
 }
 
-.section-filter .filter-box .filter-link .radio-img-box {
+.section-filter .filter-box .filter-trade-able .check-img-box.active {
+  border: 1px solid var(--gray-300);
+}
+
+.check-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.section-filter .filter-box .filter-link.category .radio-img-box {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -116,6 +128,16 @@ aside .section-filter {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.section-filter .filter-box .filter-link.category .radio-img-box.active {
+  border: 1px solid var(--gray-300);
+}
+
+.radio-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .section-filter .price-filter-box {
@@ -127,11 +149,16 @@ aside .section-filter {
   gap: var(--gap-md);
 }
 
-.section-filter .price-filter-box a {
+.section-filter .price-filter-box .filter-link-price {
   padding: 4px 12px;
   font-size: 14px;
   border: 1px solid var(--gray-900);
   border-radius: 14px;
+}
+
+.section-filter .price-filter-box .filter-link-price.active {
+  background: var(--gray-900);
+  color: var(--gray-000);
 }
 
 .section-filter .price-input-box {
@@ -212,8 +239,9 @@ aside .section-filter {
   font-size: 14px;
 }
 
-.trade-list .filter-applied .filter-badge img {
+.trade-list .filter-applied .filter-badge .filter-remove-button {
   width: 14px;
   height: 14px;
   filter: invert();
+  cursor: pointer;
 }
