@@ -137,6 +137,18 @@ input:checked + .list__header__toggle-slider::before {
   color: #aaabb4;
 }
 
+.unread-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #ff4d4f;
+  color: #fff;
+  border-radius: 12px;
+  vertical-align: middle;
+}
+
 .list__room-list__item__preview {
   width: 100%;
   font-size: 1.1rem;
@@ -316,6 +328,12 @@ input:checked + .list__header__toggle-slider::before {
   word-break: break-word;
 }
 
+.room__messages__item__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
 .message-time {
   font-size: 1.2rem;
   color: #898a93;
@@ -344,6 +362,11 @@ input:checked + .list__header__toggle-slider::before {
 .room__messages__item--me .room__messages__item__text {
   background-color: #ff6f0e;
   color: #fff;
+}
+
+.message-read-status {
+  font-size: 11px;
+  color: #888;
 }
 
 /* 챗봇 메시지 */
