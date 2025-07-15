@@ -2,66 +2,82 @@ package io.github.restart.gmo_danggeun.dto.chat;
 
 public class ChatMessageDto {
 
-    private Long id;
-
-    private Long chatRoomId;
-
-    private Long writerId;
-
-    private String content;
-
-    private String createdAt;
-
-    private Boolean readOrNot;
+  private Long messageId;
+  private Long senderId;
+  private String senderType; // "ME" 또는 "PARTNER"
+  private String content;
+  private String timestamp;
+  private boolean isRead;
+  private String messageType = "TEXT";  // 🔥 선택: TEXT, IMAGE, SYSTEM 등
 
 
+  public ChatMessageDto() {
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public ChatMessageDto(Long messageId, Long senderId, String senderType, String content, String timestamp,
+      boolean isRead, String messageType) {
+    this.messageId = messageId;
+    this.senderId = senderId;
+    this.senderType = senderType;
+    this.content = content;
+    this.timestamp = timestamp;
+    this.isRead = isRead;
+    this.messageType = messageType;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public Long getMessageId() {
+    return messageId;
+  }
 
-    public Long getChatRoomId() {
-        return chatRoomId;
-    }
+  public void setMessageId(Long messageId) {
+    this.messageId = messageId;
+  }
 
-    public void setChatRoomId(Long chatRoomId) {
-        this.chatRoomId = chatRoomId;
-    }
+  public Long getSenderId() {
+    return senderId;
+  }
 
-    public Long getWriterId() {
-        return writerId;
-    }
+  public void setSenderId(Long senderId) {
+    this.senderId = senderId;
+  }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
+  public String getSenderType() {
+    return senderType;
+  }
 
-    public String getContent() {
-        return content;
-    }
+  public void setSenderType(String senderType) {
+    this.senderType = senderType;
+  }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+  public String getContent() {
+    return content;
+  }
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
+  public void setContent(String content) {
+    this.content = content;
+  }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getTimestamp() {
+    return timestamp;
+  }
 
-    public Boolean getReadOrNot() {
-        return readOrNot;
-    }
+  public void setTimestamp(String timestamp) {
+    this.timestamp = timestamp;
+  }
 
-    public void setReadOrNot(Boolean readOrNot) {
-        this.readOrNot = readOrNot;
-    }
+  public boolean isRead() {
+    return isRead;
+  }
 
+  public void setRead(boolean read) {
+    isRead = read;
+  }
+
+  public String getMessageType() {
+    return messageType;
+  }
+
+  public void setMessageType(String messageType) {
+    this.messageType = messageType;
+  }
 }
