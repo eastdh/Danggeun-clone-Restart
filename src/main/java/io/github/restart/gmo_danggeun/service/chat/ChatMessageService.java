@@ -7,7 +7,9 @@ import java.util.List;
 public interface ChatMessageService {
 
   ChatMessageDto sendMessage(ChatSendRequestDto request);
+
   List<ChatMessageDto> getMessagesWithDateLabels(Long chatRoomId, Long currentUserId);
+
   void markMessagesAsRead(Long chatRoomId, Long userId);
 
 }

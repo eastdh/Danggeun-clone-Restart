@@ -55,7 +55,8 @@ public class ChatController {
 
   @PostMapping("/api/chat/list")
   public ResponseEntity<List<ChatRoomSummaryDto>> getChatList(@RequestBody ChatFilterRequestDto request) {
-    List<ChatRoomSummaryDto> chatRooms = chatRoomService.getChatRoomSummaries(request.getUserId(), request.isShowUnreadOnly());
+    List<ChatRoomSummaryDto> chatRooms = chatRoomService.getChatRoomSummaries(request.getUserId(),
+        request.isShowUnreadOnly());
     return ResponseEntity.ok(chatRooms);
   }
 
