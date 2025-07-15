@@ -16,6 +16,7 @@ public interface TradeListRepository extends ReadOnlyRepository<TradeList, Long>
       WHERE
       (:keyword IS NULL OR LOWER(title) LIKE LOWER(CONCAT('%', :keyword, '%'))
       OR LOWER(description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND
+      (:status IS NULL OR status = :status) AND
       (:location IS NULL OR location LIKE CONCAT('%', :location, '%')) AND
       (:category IS NULL OR category_name = :category) AND
       (:priceLowLimit IS NULL OR price >= :priceLowLimit) AND
@@ -26,8 +27,9 @@ public interface TradeListRepository extends ReadOnlyRepository<TradeList, Long>
       @Param("keyword") String keyword,
       @Param("location") String location,
       @Param("category") String category,
-      @Param("priceLowLimit") int priceLowLimit,
-      @Param("priceHighLimit") int priceHighLimit,
+      @Param("priceLowLimit") Integer priceLowLimit,
+      @Param("priceHighLimit") Integer priceHighLimit,
+      @Param("status") String status,
       Pageable pageable);
 
   Page<TradeList> findAllByUserId(@Param("user_id") Long userId, Pageable pageable);

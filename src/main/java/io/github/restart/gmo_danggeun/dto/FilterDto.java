@@ -2,27 +2,30 @@ package io.github.restart.gmo_danggeun.dto;
 
 public class FilterDto {
   private String category;
-  private int priceLowLimit;
-  private int priceHighLimit;
+  private Integer priceLowLimit;
+  private Integer priceHighLimit;
+
+  private String status;
 
   public FilterDto() {
   }
 
-  public FilterDto(String category, int priceLowLimit, int priceHighLimit) {
+  public FilterDto(String category, Integer priceLowLimit, Integer priceHighLimit, String status) {
     this.category = category;
     this.priceLowLimit = priceLowLimit;
     this.priceHighLimit = priceHighLimit;
+    this.status = status;
   }
 
   public String getCategory() {
     return category;
   }
 
-  public int getPriceLowLimit() {
+  public Integer getPriceLowLimit() {
     return priceLowLimit;
   }
 
-  public int getPriceHighLimit() {
+  public Integer getPriceHighLimit() {
     return priceHighLimit;
   }
 
@@ -30,11 +33,19 @@ public class FilterDto {
     this.category = category;
   }
 
-  public void setPriceLowLimit(int priceLowLimit) {
+  public void setPriceLowLimit(Integer priceLowLimit) {
     this.priceLowLimit = priceLowLimit;
   }
 
-  public void setPriceHighLimit(int priceHighLimit) {
+  public void setPriceHighLimit(Integer priceHighLimit) {
     this.priceHighLimit = priceHighLimit;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 }

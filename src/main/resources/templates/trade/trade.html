@@ -6,17 +6,18 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  <link rel="stylesheet" th:href="@{/css/common/header.css}">
+  <link rel="stylesheet" th:href="@{/css/common/footer.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade_main.css}">
   <title th:if="${keyword}" th:text="${keyword} + ' 중고거래 검색결과 | GMO 당근'">키워드 중고거래 검색결과 | GMO당근</title>
   <title th:unless="${keyword}" th:text="${location} + ' | GMO 당근'">서울특별시 종로구 중고거래 | GMO당근</title>
 </head>
 <body>
-<header></header>
+<header th:replace="~{fragments/header}"></header>
 <main>
   <div class="container">
     <nav th:replace="~{/trade/fragments/trade_components :: nav('trade', '')}"></nav>
-    <!-- Todo : add search related components-->
     <div th:if="${keyword}">
       <h1 th:text="${keyword} + ' 검색 결과'">"키워드" 검색 결과</h1>
     </div>
@@ -25,47 +26,49 @@
     </div>
     <section class="section-list">
       <aside>
-        <!-- Todo : add links to filter -->
         <header>
           <h2>필터</h2>
-          <a th:href="@{/trade}">초기화</a>
+          <a th:href="@{/trade?location={local}(local=${location})}">초기화</a>
         </header>
         <section class="section-filter">
           <div class="filter-box">
-            <a
-                th:href="@{/trade}"
-                class="filter-trade-able"
-            >
-              <div class="check-img-box"></div>
+            <a class="filter-trade-able">
+              <div class="check-img-box">
+                <img th:if="${filters.status != null}"
+                    th:src="@{/assets/icon/check-square-fill-orange.svg}"
+                alt="선택됨">
+              </div>
               <span>거래 가능만 보기</span>
             </a>
           </div>
           <div class="divider-line"></div>
-          <div class="filter-box">
-            <h3>위치</h3>
-            <div class="filter-contents">
-              <th:block th:each="location:${locations}">
-                <a
-                    th:href="@{/trade}"
-                    class="filter-link"
-                >
-                  <div class="radio-img-box"></div>
-                  <span th:text="${location}">종로구</span>
-                </a>
-              </th:block>
-              <button type="button">더보기</button>
-            </div>
-          </div>
-          <div class="divider-line"></div>
+          <!-- 시간 상 지역별 필터링 기능은 생략 -->
+<!--          <div class="filter-box">-->
+<!--            <h3>위치</h3>-->
+<!--            <div class="filter-contents">-->
+<!--              <th:block th:each="location:${locations}">-->
+<!--                <a-->
+<!--                    th:href="@{/trade}"-->
+<!--                    class="filter-link"-->
+<!--                >-->
+<!--                  <div class="radio-img-box"></div>-->
+<!--                  <span th:text="${location}">종로구</span>-->
+<!--                </a>-->
+<!--              </th:block>-->
+<!--              <button type="button">더보기</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="divider-line"></div>-->
           <div class="filter-box">
             <h3>카테고리</h3>
             <div class="filter-contents">
               <th:block th:each="category:${categories}">
-                <a
-                    th:href="@{/trade}"
-                    class="filter-link"
-                >
-                  <div class="radio-img-box"></div>
+                <a class="filter-link category">
+                  <div class="radio-img-box" th:data-category="${category.name}">
+                    <img th:if="${filters != null} AND ${#strings.equals(filters.category, category.name)}"
+                         th:src="@{/assets/icon/check-circle-fill-orange.svg}"
+                         alt="선택됨">
+                  </div>
                   <span th:text="${category.name}">유아도서</span>
                 </a>
               </th:block>
@@ -75,11 +78,10 @@
           <div class="filter-box">
             <h3>가격</h3>
             <div class="price-filter-box">
-              <!-- Todo : edit filter link -->
-              <a>나눔</a>
-              <a>5,000원 이하</a>
-              <a>10,000원 이하</a>
-              <a>20,000원 이하</a>
+              <a class="filter-link-price" data-price="0">나눔</a>
+              <a class="filter-link-price" data-price="5000">5,000원 이하</a>
+              <a class="filter-link-price" data-price="10000">10,000원 이하</a>
+              <a class="filter-link-price" data-price="20000">20,000원 이하</a>
             </div>
             <div class="price-input-box">
               <div>
@@ -87,22 +89,46 @@
                 <span>-</span>
                 <input type="number" class="price-end"/>
               </div>
-              <button type="button">적용하기</button>
+              <button type="button" class="filter-price-button">적용하기</button>
             </div>
           </div>
         </section>
       </aside>
       <div class="trade-list">
           <div th:if="${filters != null}" class="filter-applied">
+            <span th:if="${filters.status != null}" class="filter-badge">
+              <span>판매중</span>
+              <img th:src="@{/assets/icon/x-lg.svg}"
+                   class="filter-remove-button"
+                   data-filter="status"
+                   alt="취소">
+            </span>
             <span th:if="${filters.category != null}" class="filter-badge">
               <span th:text="${filters.category}"></span>
-              <img th:src="@{/assets/icon/x-lg.svg}" alt="취소">
+              <img th:src="@{/assets/icon/x-lg.svg}"
+                   class="filter-remove-button"
+                   data-filter="category"
+                   alt="취소">
+            </span>
+            <span th:if="${filters.priceLowLimit != null or filters.priceHighLimit != null}" class="filter-badge">
+              <th:block th:if="${filters.priceLowLimit == 0}"
+              th:switch="${filters.priceHighLimit}">
+                <span th:case="0">나눔</span>
+                <span th:case="5000">5,000원 이하</span>
+                <span th:case="10000">10,000원 이하</span>
+                <span th:case="20000">20,000원 이하</span>
+                <span th:case="*" th:text="'나눔 - ' + ${filters.priceHighLimit} + '원'"></span>
+              </th:block>
+              <span
+                  th:unless="${filters.priceLowLimit == 0}"
+                  th:text="${filters.priceLowLimit} + '원 - ' + ${filters.priceHighLimit} + '원'"></span>
+              <img th:src="@{/assets/icon/x-lg.svg}"
+                   class="filter-remove-button"
+                   data-filter="price"
+                   alt="취소">
             </span>
           </div>
-        <!-- Todo : add class toggle(filtered) to content div
-         top-margin change
-         -->
-        <div class="trade-contents">
+        <div th:class="'trade-contents ' + ${filters != null ? 'filtered' : ''}">
           <th:block th:each="trade:${trades}">
             <div th:replace="~{/trade/fragments/trade_components :: trade_card (${trade}, ${true})}"
                  class="trade-card"></div>
@@ -113,6 +139,7 @@
   </div>
 </main>
 <div th:replace="~{trade/fragments/trade_components :: new_trade_button}"></div>
-<footer></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="js/trade/trade.js"></script>
 </body>
 </html>

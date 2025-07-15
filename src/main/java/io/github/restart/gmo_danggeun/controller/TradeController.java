@@ -1,7 +1,6 @@
 package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.config.PageConfig;
-import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.FilterDto;
 import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
@@ -33,17 +32,24 @@ public class TradeController {
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(required = false) String keyword,
       @RequestParam(required = true, defaultValue = "서울특별시 종로구") String location,
-      @RequestParam(required = false, defaultValue = "false") String onlyOnSale,
+      @RequestParam(required = false) String status,
       @RequestParam(required = false) String category,
-      @RequestParam(required = false, defaultValue = "0") int priceLowLimit,
-      @RequestParam(required = false, defaultValue = TradeConfig.MAX_PRICE+"") int priceHighLimit,
+      @RequestParam(name = "price", required = false) String priceRange,
       Model model) {
 
+    Integer priceLowLimit = null;
+    Integer priceHighLimit = null;
+
+    if (priceRange != null) {
+      priceLowLimit = Integer.parseInt(priceRange.split("_")[0]);
+      priceHighLimit = Integer.parseInt(priceRange.split("_")[1]);
+    }
+
     Pageable pageable = PageRequest.of(page, PageConfig.TRADELIST_PAGE_SIZE);
-    Page<TradeList> tradePage = tradeService.searchTrades(keyword, location, category, priceLowLimit, priceHighLimit, pageable);
+    Page<TradeList> tradePage = tradeService.searchTrades(keyword, location, category, priceLowLimit, priceHighLimit, status, pageable);
     List<Category> categories = tradeService.findAllCategories();
 
-    FilterDto filter = new FilterDto(category, priceLowLimit, priceHighLimit);
+    FilterDto filter = new FilterDto(category, priceLowLimit, priceHighLimit, status);
 
     model.addAttribute("trades", tradePage);
     model.addAttribute("categories", categories);
@@ -63,8 +69,8 @@ public class TradeController {
       Pageable categoryTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_CATEGORY_TRADE_PAGE_SIZE);
 
       Page<TradeList> sellerTrades = tradeService.findAllByUserId(tradeDetail.getUserId(), userTradePageable);
-      Page<TradeList> categoryTrades = tradeService.searchTrades("", tradeDetail.getLocation(), tradeDetail.getCategoryName(), 0,
-          TradeConfig.MAX_PRICE, categoryTradePageable);
+      Page<TradeList> categoryTrades = tradeService.searchTrades("", tradeDetail.getLocation(), tradeDetail.getCategoryName(), null,
+          null, null, categoryTradePageable);
 
       List<TradeImageList> images = tradeService.findAllImageById(tradeDetail.getTradeId());
 

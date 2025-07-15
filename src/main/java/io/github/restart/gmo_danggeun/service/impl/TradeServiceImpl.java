@@ -43,8 +43,10 @@ public class TradeServiceImpl implements TradeService {
   }
 
   @Override
-  public Page<TradeList> searchTrades(String keyword, String location, String category, int priceLowLimit, int priceHighLimit, Pageable pageable) {
-    return tradeListRepository.findAllByFilters(keyword, location, category, priceLowLimit, priceHighLimit, pageable);
+  public Page<TradeList> searchTrades(String keyword, String location, String category,
+      Integer priceLowLimit, Integer priceHighLimit,
+      String status, Pageable pageable) {
+    return tradeListRepository.findAllByFilters(keyword, location, category, priceLowLimit, priceHighLimit, status, pageable);
   }
 
   @Override
