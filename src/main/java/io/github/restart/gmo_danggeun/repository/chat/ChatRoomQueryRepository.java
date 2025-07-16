@@ -44,6 +44,7 @@ public interface ChatRoomQueryRepository extends Repository<Object, Long> {
              trade_price AS tradePrice,
              trade_status AS tradeStatus,
              trade_thumbnail_url AS tradeThumbnailUrl,
+             is_seller AS isSeller,
              last_message_content AS lastMessageContent,
              last_message_time AS lastMessageTime,
              unread_count AS unreadCount

@@ -13,13 +13,14 @@ public class ChatRoomDetailDto {
   private String tradeThumbnailUrl;
   private String tradeTitle;
   private Integer tradePrice;
+  private boolean isSeller;
   private boolean isClosed; // 거래 완료 여부
 
   public ChatRoomDetailDto() {
   }
 
   public ChatRoomDetailDto(Long chatRoomId, String partnerNickname, Double partnerTemperature, Long tradeId,
-      String tradeThumbnailUrl, String tradeTitle, Integer tradePrice, boolean isClosed) {
+      String tradeThumbnailUrl, String tradeTitle, Integer tradePrice, boolean isSeller, boolean isClosed) {
     this.chatRoomId = chatRoomId;
     this.partnerNickname = partnerNickname;
     this.partnerTemperature = partnerTemperature;
@@ -27,6 +28,7 @@ public class ChatRoomDetailDto {
     this.tradeThumbnailUrl = tradeThumbnailUrl;
     this.tradeTitle = tradeTitle;
     this.tradePrice = tradePrice;
+    this.isSeller = isSeller;
     this.isClosed = isClosed;
   }
 
@@ -84,6 +86,14 @@ public class ChatRoomDetailDto {
 
   public void setTradePrice(Integer tradePrice) {
     this.tradePrice = tradePrice;
+  }
+
+  public boolean isSeller() {
+    return isSeller;
+  }
+
+  public void setSeller(boolean seller) {
+    isSeller = seller;
   }
 
   public boolean isClosed() {

@@ -18,6 +18,7 @@ public interface ChatRoomViewProjection {
   Integer getTradePrice();
   String getTradeStatus();
   String getTradeThumbnailUrl();
+  Boolean getIsSeller();
 
   String getLastMessageContent();
   LocalDateTime getLastMessageTime();

@@ -71,6 +71,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     dto.setTradeTitle(row.getTradeTitle());
     dto.setTradePrice(row.getTradePrice());
     dto.setTradeThumbnailUrl(row.getTradeThumbnailUrl());
+    dto.setSeller(Boolean.TRUE.equals(row.getIsSeller()));
     dto.setClosed("completed".equalsIgnoreCase(row.getTradeStatus()));
 
     return dto;
