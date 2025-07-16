@@ -14,7 +14,8 @@
         </div>
 
         <div class="search-container">
-            <input type="text" placeholder="물품이나 동네를 검색해 보세요" />
+            <input type="text" placeholder="물품을 검색해 보세요"
+            id="search-input"/>
 
             <!-- 로그인 전 -->
             <div sec:authorize="isAnonymous()">
@@ -39,7 +40,7 @@
             </div>
         </div>
     </div>
+    <script th:src="@{/js/common/header.js}"></script>
 </header>
-
 </body>
 </html>
