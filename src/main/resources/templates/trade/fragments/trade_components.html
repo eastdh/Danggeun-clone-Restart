@@ -40,7 +40,7 @@
         <span th:case="completed" class="badge-status completed">판매완료</span>
         <span th:case="reserved" class="badge-status reserved">예약중</span>
       </th:block>
-      <img th:src="${#strings.isEmpty(trade.imgUrl)} ? @{/assets/icon/card-image.svg} : @{trade.imgUrl}"
+      <img th:src="${#strings.isEmpty(trade.imgUrl)} ? @{/assets/icon/card-image.svg} : ${trade.imgUrl}"
            th:alt="${trade.title != null} ? ${trade.title} : '거래글 이미지'"
            class="card-img">
     </div>
@@ -59,7 +59,7 @@
               >3시간 전</span>
           <span th:unless="${trade.bumpUpdatedAt == null}"
                 th:text="${trade.bumpUpdatedAt.isAfter(trade.updatedAt) ? '끌올 ' + trade.bumpUpdateTerm : trade.updateTerm}"
-          >3시간 전</span>
+          >끌올 3시간 전</span>
         </span>
       </div>
     </div>

@@ -31,7 +31,7 @@ public class TradeDetail {
   private Integer price;
 
   @Column(name = "is_offerable")
-  private Boolean isOfferable;
+  private Boolean offerable;
 
   @Column
   private String status;
@@ -76,7 +76,7 @@ public class TradeDetail {
   }
 
   public TradeDetail(Long tradeId, Long categoryId, String categoryName, String title,
-      String description, String preferredLocation, Integer price, Boolean isOfferable,
+      String description, String preferredLocation, Integer price, Boolean offerable,
       String status,
       Boolean hidden, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime bumpUpdatedAt,
       String updateTerm, String bumpUpdateTerm, int likeCounts, int chatCounts, Long userId,
@@ -88,7 +88,7 @@ public class TradeDetail {
     this.description = description;
     this.preferredLocation = preferredLocation;
     this.price = price;
-    this.isOfferable = isOfferable;
+    this.offerable = offerable;
     this.status = status;
     this.hidden = hidden;
     this.createdAt = createdAt;
@@ -133,7 +133,7 @@ public class TradeDetail {
   }
 
   public Boolean getOfferable() {
-    return isOfferable;
+    return offerable;
   }
 
   public String getStatus() {

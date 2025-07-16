@@ -417,15 +417,17 @@ h1 {
   margin: 40px auto 0;
 }
 
-.related-trades header {
+.related-trades .related-trades-header {
   width: 100%;
+  height: auto;
+  padding: 0;
   margin: 32px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.related-trades header h2 {
+.related-trades .related-trades-header h2 {
   font-size: 24px;
   font-weight: 600;
 }
@@ -438,10 +440,10 @@ h1 {
   row-gap: 68px;
 }
 
-.related-trades header a span:first-of-type:hover {
+.related-trades .related-trades-header a span:first-of-type:hover {
   text-decoration: underline;
 }
 
-.related-trades header span {
+.related-trades .related-trades-header span {
   color: var(--orange-600);
 }

@@ -1,6 +1,5 @@
 package io.github.restart.gmo_danggeun.repository.readonly;
 
-import io.github.restart.gmo_danggeun.dto.FilterDto;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

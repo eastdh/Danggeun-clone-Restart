@@ -1,12 +1,13 @@
 package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.config.PageConfig;
-import io.github.restart.gmo_danggeun.dto.FilterDto;
+import io.github.restart.gmo_danggeun.dto.trade.FilterDto;
 import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.service.TradeService;
+import io.github.restart.gmo_danggeun.util.UserMannerUtil;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -63,21 +64,24 @@ public class TradeController {
   @GetMapping("/trade/{id}")
   public String tradeDetail(@PathVariable Long id, Model model) {
     Optional<TradeDetail> trade = tradeService.findById(id);
-    if (!trade.isEmpty()) {
+    if (!trade.isEmpty() || !trade.get().getHidden()) {
       TradeDetail tradeDetail = trade.get();
       Pageable userTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_USER_TRADE_PAGE_SIZE);
       Pageable categoryTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_CATEGORY_TRADE_PAGE_SIZE);
 
       Page<TradeList> sellerTrades = tradeService.findAllByUserId(tradeDetail.getUserId(), userTradePageable);
-      Page<TradeList> categoryTrades = tradeService.searchTrades("", tradeDetail.getLocation(), tradeDetail.getCategoryName(), null,
+      Page<TradeList> categoryTrades = tradeService.searchTrades(null, tradeDetail.getLocation(), tradeDetail.getCategoryName(), null,
           null, null, categoryTradePageable);
 
       List<TradeImageList> images = tradeService.findAllImageById(tradeDetail.getTradeId());
 
+      String emojiFileName = UserMannerUtil.setEmoji(tradeDetail.getMannerScore());
+
       model.addAttribute("trade", tradeDetail);
       model.addAttribute("images", images);
-      model.addAttribute("userTrade", sellerTrades);
-      model.addAttribute("categoryTrade", categoryTrades);
+      model.addAttribute("emojiFileName", emojiFileName);
+      model.addAttribute("userTrades", sellerTrades);
+      model.addAttribute("categoryTrades", categoryTrades);
       return "trade/trade_post";
     } else {
       model.addAttribute("error", "거래글 없음");
