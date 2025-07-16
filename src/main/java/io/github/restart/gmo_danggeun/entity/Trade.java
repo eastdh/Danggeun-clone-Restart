@@ -42,8 +42,6 @@ public class Trade {
   @Column(name = "is_offerable", nullable = false)
   private Boolean isOfferable;
 
-  @Column(name = "likes_count", nullable = false)
-  private Integer likesCount;
 
   @Column(name = "bump_count", nullable = false)
   private Integer bumpCount;
@@ -64,8 +62,8 @@ public class Trade {
   }
 
   public Trade(Long id, User user, Category category, String title, String description, String preferredLocation,
-      Integer price, Boolean isOfferable, Integer likesCount, Integer bumpCount, String status, Boolean hidden,
-      LocalDateTime createdAt, LocalDateTime updatedAt) {
+               Integer price, Boolean isOfferable, Integer bumpCount, String status, Boolean hidden,
+               LocalDateTime createdAt, LocalDateTime updatedAt) {
     this.id = id;
     this.user = user;
     this.category = category;
@@ -74,7 +72,6 @@ public class Trade {
     this.preferredLocation = preferredLocation;
     this.price = price;
     this.isOfferable = isOfferable;
-    this.likesCount = likesCount;
     this.bumpCount = bumpCount;
     this.status = status;
     this.hidden = hidden;
@@ -83,7 +80,7 @@ public class Trade {
   }
 
   public Trade(User user, Category category, String title, String description,
-      String preferredLocation, Integer price, Boolean isOfferable, String status, Boolean hidden) {
+               String preferredLocation, Integer price, Boolean isOfferable, String status, Boolean hidden) {
     this.user = user;
     this.category = category;
     this.title = title;
@@ -158,14 +155,6 @@ public class Trade {
 
   public void setOfferable(Boolean offerable) {
     isOfferable = offerable;
-  }
-
-  public Integer getLikesCount() {
-    return likesCount;
-  }
-
-  public void setLikesCount(Integer likesCount) {
-    this.likesCount = likesCount;
   }
 
   public Integer getBumpCount() {

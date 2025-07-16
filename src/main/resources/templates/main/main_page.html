@@ -5,8 +5,11 @@
     <title>main page</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" th:href="@{/css/main/main_page.css}" />
+    <link rel="stylesheet" href="/css/common/header.css" />
+    <link rel="stylesheet" href="/css/common/footer.css"/>
   </head>
   <body>
+    <div th:replace="~{fragments/header :: header}"></div>
     <div class="scroll-container">
       <section class="slide slide--intro" data-label="Intro">
         <!-- TODO: 프로젝트 로고 (favicon) -->
@@ -244,6 +247,8 @@
 
     <!-- 스크롤 인디케이터 -->
     <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script src="/js/common/header.js"></script>
     <script th:src="@{/js/main/main_page.js}"></script>
   </body>
 </html>

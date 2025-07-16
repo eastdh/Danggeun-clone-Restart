@@ -47,7 +47,7 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-.profile-username a{
+.profile-username a, .modal-actions button{
     background-color: var(--gray-100);
     border: none;
     border-radius: 10px;
@@ -278,3 +278,45 @@ h3 {
     color: var(--gray-800);
     margin-top: 4px;
 }
+
+
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: var(--gray-000);
+    padding: 2rem;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.modal-content input {
+    padding: 8px;
+    margin: 8px 0 20px 0;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.modal-actions button:first-child {
+    background-color: var(--orange-600);
+    color: white;
+}
+
