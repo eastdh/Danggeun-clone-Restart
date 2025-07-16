@@ -8,21 +8,23 @@ import org.springframework.data.repository.query.Param;
 
 public interface TradeListRepository extends ReadOnlyRepository<TradeList, Long> {
   @Query(value = """
-      SELECT trade_id, title, price, status, hidden, 
+      SELECT trade_id, title, price, status, hidden,
       created_at, updated_at, bump_updated_at,
-      update_term, bump_update_term, 
+      update_term, bump_update_term,
       user_id, location,
-      category_id, category_name, img_url
-      FROM trade_list
+      category_id, category_name, img_url,
+      ts_rank(search_vector, query) AS rank
+      FROM trade_list,
+      websearch_to_tsquery('simple', :keyword) AS query
       WHERE
-      (:keyword IS NULL OR LOWER(title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-      OR LOWER(description) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND
+      (:keyword IS NULL OR :keyword = '' OR search_vector @@ query) AND
       (:status IS NULL OR status = :status) AND
       (:location IS NULL OR location LIKE CONCAT('%', :location, '%')) AND
       (:category IS NULL OR category_name = :category) AND
       (:priceLowLimit IS NULL OR price >= :priceLowLimit) AND
       (:priceHighLimit IS NULL OR price <= :priceHighLimit)
-      ORDER BY created_at DESC, updated_at DESC
+      ORDER BY
+      rank DESC, created_at DESC, updated_at DESC
       """, nativeQuery = true)
   Page<TradeList> findAllByFilters(
       @Param("keyword") String keyword,
