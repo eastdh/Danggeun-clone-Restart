@@ -41,6 +41,10 @@ public class ProfileServiceImpl implements ProfileService {
         for (Review review : reviews) {
             User buyer = review.getBuyer();
 
+            // 🛑 Null 체크
+            if (buyer == null) {
+                continue; // 또는 필요시 기본값 설정하고 진행
+            }
             List<ReviewReviewCategory> rrCategories = reviewReviewCategoryRepository.findByReviewId(review.getId());
 
             for (ReviewReviewCategory rr : rrCategories) {
