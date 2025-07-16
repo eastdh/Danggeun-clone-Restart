@@ -1,30 +1,30 @@
 package io.github.restart.gmo_danggeun.dto.chat;
 
+import java.time.LocalDateTime;
+
 public class ChatRoomSummaryDto {
 
   // 내 정보
   private Long meId;
   private String meNickname;
 
-  // 채팅방 및 거래글 식별자
-  private Long chatRoomId;
-  private Long tradeId;
-
-  // 거래 정보
-  private String productName;
-  private Integer productPrice;
-  private String tradeStatus;
-  private String productThumbnailUrl;
-
-  // 상대 정보
+  // 상대방 정보
   private Long partnerId;
   private String partnerNickname;
   private String partnerLocation;
   private Double partnerTemperature;
 
-  // 메시지 요약
+  // 채팅방 및 거래글 정보
+  private Long chatRoomId;
+  private Long tradeId;
+  private String tradeTitle;
+  private Integer tradePrice;
+  private String tradeStatus;
+  private String tradeThumbnailUrl;
+
+  // 마지막 메시지
   private String lastMessageContent;
-  private String lastMessageTime;
+  private LocalDateTime lastMessageTime;
 
   // 안 읽은 메시지 수
   private int unreadCount;
@@ -32,22 +32,23 @@ public class ChatRoomSummaryDto {
   public ChatRoomSummaryDto() {
   }
 
-  public ChatRoomSummaryDto(Long meId, String meNickname, Long chatRoomId, Long tradeId, String productName,
-      Integer productPrice, String tradeStatus, String productThumbnailUrl, Long partnerId, String partnerNickname,
-      String partnerLocation, Double partnerTemperature, String lastMessageContent, String lastMessageTime,
-      int unreadCount) {
+  public ChatRoomSummaryDto(Long meId, String meNickname, Long partnerId, String partnerNickname,
+      String partnerLocation,
+      Double partnerTemperature, Long chatRoomId, Long tradeId, String tradeTitle, Integer tradePrice,
+      String tradeStatus,
+      String tradeThumbnailUrl, String lastMessageContent, LocalDateTime lastMessageTime, int unreadCount) {
     this.meId = meId;
     this.meNickname = meNickname;
-    this.chatRoomId = chatRoomId;
-    this.tradeId = tradeId;
-    this.productName = productName;
-    this.productPrice = productPrice;
-    this.tradeStatus = tradeStatus;
-    this.productThumbnailUrl = productThumbnailUrl;
     this.partnerId = partnerId;
     this.partnerNickname = partnerNickname;
     this.partnerLocation = partnerLocation;
     this.partnerTemperature = partnerTemperature;
+    this.chatRoomId = chatRoomId;
+    this.tradeId = tradeId;
+    this.tradeTitle = tradeTitle;
+    this.tradePrice = tradePrice;
+    this.tradeStatus = tradeStatus;
+    this.tradeThumbnailUrl = tradeThumbnailUrl;
     this.lastMessageContent = lastMessageContent;
     this.lastMessageTime = lastMessageTime;
     this.unreadCount = unreadCount;
@@ -67,54 +68,6 @@ public class ChatRoomSummaryDto {
 
   public void setMeNickname(String meNickname) {
     this.meNickname = meNickname;
-  }
-
-  public Long getChatRoomId() {
-    return chatRoomId;
-  }
-
-  public void setChatRoomId(Long chatRoomId) {
-    this.chatRoomId = chatRoomId;
-  }
-
-  public Long getTradeId() {
-    return tradeId;
-  }
-
-  public void setTradeId(Long tradeId) {
-    this.tradeId = tradeId;
-  }
-
-  public String getProductName() {
-    return productName;
-  }
-
-  public void setProductName(String productName) {
-    this.productName = productName;
-  }
-
-  public Integer getProductPrice() {
-    return productPrice;
-  }
-
-  public void setProductPrice(Integer productPrice) {
-    this.productPrice = productPrice;
-  }
-
-  public String getTradeStatus() {
-    return tradeStatus;
-  }
-
-  public void setTradeStatus(String tradeStatus) {
-    this.tradeStatus = tradeStatus;
-  }
-
-  public String getProductThumbnailUrl() {
-    return productThumbnailUrl;
-  }
-
-  public void setProductThumbnailUrl(String productThumbnailUrl) {
-    this.productThumbnailUrl = productThumbnailUrl;
   }
 
   public Long getPartnerId() {
@@ -149,6 +102,54 @@ public class ChatRoomSummaryDto {
     this.partnerTemperature = partnerTemperature;
   }
 
+  public Long getChatRoomId() {
+    return chatRoomId;
+  }
+
+  public void setChatRoomId(Long chatRoomId) {
+    this.chatRoomId = chatRoomId;
+  }
+
+  public Long getTradeId() {
+    return tradeId;
+  }
+
+  public void setTradeId(Long tradeId) {
+    this.tradeId = tradeId;
+  }
+
+  public String getTradeTitle() {
+    return tradeTitle;
+  }
+
+  public void setTradeTitle(String tradeTitle) {
+    this.tradeTitle = tradeTitle;
+  }
+
+  public Integer getTradePrice() {
+    return tradePrice;
+  }
+
+  public void setTradePrice(Integer tradePrice) {
+    this.tradePrice = tradePrice;
+  }
+
+  public String getTradeStatus() {
+    return tradeStatus;
+  }
+
+  public void setTradeStatus(String tradeStatus) {
+    this.tradeStatus = tradeStatus;
+  }
+
+  public String getTradeThumbnailUrl() {
+    return tradeThumbnailUrl;
+  }
+
+  public void setTradeThumbnailUrl(String tradeThumbnailUrl) {
+    this.tradeThumbnailUrl = tradeThumbnailUrl;
+  }
+
   public String getLastMessageContent() {
     return lastMessageContent;
   }
@@ -157,11 +158,11 @@ public class ChatRoomSummaryDto {
     this.lastMessageContent = lastMessageContent;
   }
 
-  public String getLastMessageTime() {
+  public LocalDateTime getLastMessageTime() {
     return lastMessageTime;
   }
 
-  public void setLastMessageTime(String lastMessageTime) {
+  public void setLastMessageTime(LocalDateTime lastMessageTime) {
     this.lastMessageTime = lastMessageTime;
   }
 
@@ -171,26 +172,5 @@ public class ChatRoomSummaryDto {
 
   public void setUnreadCount(int unreadCount) {
     this.unreadCount = unreadCount;
-  }
-
-  @Override
-  public String toString() {
-    return "ChatRoomSummaryDto{" +
-        "meId=" + meId +
-        ", meNickname='" + meNickname + '\'' +
-        ", chatRoomId=" + chatRoomId +
-        ", tradeId=" + tradeId +
-        ", productName='" + productName + '\'' +
-        ", productPrice=" + productPrice +
-        ", tradeStatus='" + tradeStatus + '\'' +
-        ", productThumbnailUrl='" + productThumbnailUrl + '\'' +
-        ", partnerId=" + partnerId +
-        ", partnerNickname='" + partnerNickname + '\'' +
-        ", partnerLocation='" + partnerLocation + '\'' +
-        ", partnerTemperature=" + partnerTemperature +
-        ", lastMessageContent='" + lastMessageContent + '\'' +
-        ", lastMessageTime='" + lastMessageTime + '\'' +
-        ", unreadCount=" + unreadCount +
-        '}';
   }
 }
