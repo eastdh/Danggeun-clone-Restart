@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>닉네임 입력</title>
+</head>
+<body>
+<h2>닉네임을 입력해주세요</h2>
+
+<form th:action="@{/oauth2/nickname}" method="post">
+  <input type="text" name="nickname" placeholder="닉네임" required>
+  <button type="submit">제출</button>
+</form>
+
+<!-- 중복 에러 메시지 표시 -->
+<p th:if="${session.nickname_error}" th:text="${session.nickname_error}" style="color: red;"></p>
+
+</body>
+</html>

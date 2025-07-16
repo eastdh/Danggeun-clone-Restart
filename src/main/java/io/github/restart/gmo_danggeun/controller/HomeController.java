@@ -15,13 +15,6 @@ public class HomeController {
         return "login/login";
     }
 
-    @GetMapping("/register")
-    public String registerPage() {
-        return "login/register";
-    }
 
-    @GetMapping("/profile")
-    public String profilePage() {
-        return "profile/profile";
-    }
+
 }

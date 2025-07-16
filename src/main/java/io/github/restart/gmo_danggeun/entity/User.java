@@ -6,11 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
 
   @Id
@@ -32,19 +33,19 @@ public class User {
   @Column(length = 50)
   private String location;
 
-  // OneToMany: 사용자 = 리뷰 구매자/판매자, 이미지 업로더, 글쓴이, 채팅 작성자 등
+  @Column(name = "manner_score", precision = 4, scale = 1, nullable = false)
+  private BigDecimal mannerScore = BigDecimal.valueOf(36.5); // 기본값 설정 가능
 
+  public User() {}
 
-  public User() {
-  }
-
-  public User(Long id, String email, String password, String nickname, LocalDateTime joinDate, String location) {
+  public User(Long id, String email, String password, String nickname, LocalDateTime joinDate, String location, BigDecimal mannerScore) {
     this.id = id;
     this.email = email;
     this.password = password;
     this.nickname = nickname;
     this.joinDate = joinDate;
     this.location = location;
+    this.mannerScore = mannerScore;
   }
 
   public Long getId() {
@@ -95,11 +96,17 @@ public class User {
     this.location = location;
   }
 
+  public BigDecimal getMannerScore() {
+    return mannerScore;
+  }
+
+  public void setMannerScore(BigDecimal mannerScore) {
+    this.mannerScore = mannerScore;
+  }
+
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+    if (o == null || getClass() != o.getClass()) return false;
     User user = (User) o;
     return Objects.equals(id, user.id);
   }
