@@ -86,7 +86,7 @@
                         <strong class="nickname" th:text="${review.reviewerNickname}">닉네임</strong>
                         <span class="role" th:text="${review.role}">구매자</span> ·
                         <span class="location" th:text="${review.location}">지역</span> ·
-                        <span class="time" th:text="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}">날짜</span>
+                        <span class="time" th:text="${#dates.format(review.createdAt, 'yyyy.MM.dd')}">날짜</span>
                     </div>
                     <div class="review-text" th:text="${review.content}">리뷰 내용</div>
                 </div>
