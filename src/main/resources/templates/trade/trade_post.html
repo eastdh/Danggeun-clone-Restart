@@ -6,12 +6,14 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  <link rel="stylesheet" th:href="@{/css/common/header.css}">
+  <link rel="stylesheet" th:href="@{/css/common/footer.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade_post.css}">
   <title th:text="${trade.title} + ' | ' + ${category} + ' | GMO당근 중고거래'">거래물품 | 카테고리 | GMO당근 중고거래</title>
 </head>
 <body>
-<header></header>
+<header th:replace="~{fragments/header}"></header>
 <main>
   <div class="container">
     <div class="trade-section">
@@ -113,7 +115,7 @@
               </div>
               <div class="trade-category-time">
                 <!-- Todo : add category search link -->
-                <a th:href="@{/trade}" th:text="*{category}">카테고리</a>
+                <a th:href="@{/trade}" th:text="*{categoryName}">카테고리</a>
                 <span>∙</span>
                 <span th:text="*{updatedAt}">끌올 0시간 전</span>
               </div>
@@ -187,7 +189,7 @@
     </section>
   </div>
 </main>
-<footer></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 <script src="/js/trade/style_control.js"></script>
 </body>
 </html>

@@ -1,51 +1,47 @@
 package io.github.restart.gmo_danggeun.entity;
 
 import io.github.restart.gmo_danggeun.entity.id.ImageTradeId;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.util.Objects;
 
 @Entity
 @Table(name = "image_trade")
-@IdClass(ImageTradeId.class)
 public class ImageTrade {
 
-  @Id
-  @ManyToOne
+  @EmbeddedId
+  private ImageTradeId id;
+
+  @MapsId("tradeId")
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "trade_id")
   private Trade trade;
 
-  @Id
-  @ManyToOne
+  @MapsId("tradeId")
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "image_id")
   private Image image;
 
   public ImageTrade() {
   }
 
-  public ImageTrade(Trade trade, Image image) {
-    this.trade = trade;
-    this.image = image;
+  public ImageTrade(ImageTradeId id) {
+    this.id = id;
   }
 
-  public Trade getTrade() {
-    return trade;
+  public ImageTradeId getId() {
+    return id;
   }
 
-  public void setTrade(Trade trade) {
-    this.trade = trade;
-  }
-
-  public Image getImage() {
-    return image;
-  }
-
-  public void setImage(Image image) {
-    this.image = image;
+  public void setId(ImageTradeId id) {
+    this.id = id;
   }
 
   @Override
@@ -54,11 +50,11 @@ public class ImageTrade {
       return false;
     }
     ImageTrade that = (ImageTrade) o;
-    return Objects.equals(trade, that.trade) && Objects.equals(image, that.image);
+    return Objects.equals(id, that.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(trade, image);
+    return Objects.hash(id, id);
   }
 }
