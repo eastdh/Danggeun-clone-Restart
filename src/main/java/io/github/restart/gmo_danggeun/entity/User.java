@@ -17,7 +17,7 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(length = 30, nullable = false)
+  @Column(length = 30, nullable = false, unique = true)
   private String email;
 
   @Column(length = 100, nullable = false)
@@ -33,7 +33,7 @@ public class User {
   private String location;
 
   @Column(name = "manner_score")
-  private double mannerScore;
+  private double mannerScore = 0.0;
 
   // OneToMany: 사용자 = 리뷰 구매자/판매자, 이미지 업로더, 글쓴이, 채팅 작성자 등
 
