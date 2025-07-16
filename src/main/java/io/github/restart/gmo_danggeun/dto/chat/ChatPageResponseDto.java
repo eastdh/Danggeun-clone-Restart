@@ -3,7 +3,7 @@ package io.github.restart.gmo_danggeun.dto.chat;
 import java.util.List;
 
 /** 채팅 페이지를 총괄하는 DTO */
-public class ChatPageDto {
+public class ChatPageResponseDto {
 
   // 로그인한 사용자 정보
   private Long userId;
@@ -18,10 +18,10 @@ public class ChatPageDto {
   private ChatRoomDetailDto selectedRoom;                  // 선택된 채팅방 정보
   private List<ChatMessageDto> messages;
 
-  public ChatPageDto() {
+  public ChatPageResponseDto() {
   }
 
-  public ChatPageDto(Long userId, String userNickname, boolean showUnreadOnly, List<ChatRoomSummaryDto> chatRooms,
+  public ChatPageResponseDto(Long userId, String userNickname, boolean showUnreadOnly, List<ChatRoomSummaryDto> chatRooms,
       boolean isSeller, ChatRoomDetailDto selectedRoom, List<ChatMessageDto> messages) {
     this.userId = userId;
     this.userNickname = userNickname;
