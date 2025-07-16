@@ -9,24 +9,24 @@ public class ChatRoomDetailDto {
   private Double partnerTemperature;
 
   // 거래 정보
-  private Long productId;
-  private String productThumbnailUrl;
-  private String productName;
-  private Integer productPrice;
+  private Long tradeId;
+  private String tradeThumbnailUrl;
+  private String tradeTitle;
+  private Integer tradePrice;
   private boolean isClosed; // 거래 완료 여부
 
   public ChatRoomDetailDto() {
   }
 
-  public ChatRoomDetailDto(Long chatRoomId, String partnerNickname, Double partnerTemperature, Long productId,
-      String productThumbnailUrl, String productName, Integer productPrice, boolean isClosed) {
+  public ChatRoomDetailDto(Long chatRoomId, String partnerNickname, Double partnerTemperature, Long tradeId,
+      String tradeThumbnailUrl, String tradeTitle, Integer tradePrice, boolean isClosed) {
     this.chatRoomId = chatRoomId;
     this.partnerNickname = partnerNickname;
     this.partnerTemperature = partnerTemperature;
-    this.productId = productId;
-    this.productThumbnailUrl = productThumbnailUrl;
-    this.productName = productName;
-    this.productPrice = productPrice;
+    this.tradeId = tradeId;
+    this.tradeThumbnailUrl = tradeThumbnailUrl;
+    this.tradeTitle = tradeTitle;
+    this.tradePrice = tradePrice;
     this.isClosed = isClosed;
   }
 
@@ -54,36 +54,36 @@ public class ChatRoomDetailDto {
     this.partnerTemperature = partnerTemperature;
   }
 
-  public Long getProductId() {
-    return productId;
+  public Long getTradeId() {
+    return tradeId;
   }
 
-  public void setProductId(Long productId) {
-    this.productId = productId;
+  public void setTradeId(Long tradeId) {
+    this.tradeId = tradeId;
   }
 
-  public String getProductThumbnailUrl() {
-    return productThumbnailUrl;
+  public String getTradeThumbnailUrl() {
+    return tradeThumbnailUrl;
   }
 
-  public void setProductThumbnailUrl(String productThumbnailUrl) {
-    this.productThumbnailUrl = productThumbnailUrl;
+  public void setTradeThumbnailUrl(String tradeThumbnailUrl) {
+    this.tradeThumbnailUrl = tradeThumbnailUrl;
   }
 
-  public String getProductName() {
-    return productName;
+  public String getTradeTitle() {
+    return tradeTitle;
   }
 
-  public void setProductName(String productName) {
-    this.productName = productName;
+  public void setTradeTitle(String tradeTitle) {
+    this.tradeTitle = tradeTitle;
   }
 
-  public Integer getProductPrice() {
-    return productPrice;
+  public Integer getTradePrice() {
+    return tradePrice;
   }
 
-  public void setProductPrice(Integer productPrice) {
-    this.productPrice = productPrice;
+  public void setTradePrice(Integer tradePrice) {
+    this.tradePrice = tradePrice;
   }
 
   public boolean isClosed() {

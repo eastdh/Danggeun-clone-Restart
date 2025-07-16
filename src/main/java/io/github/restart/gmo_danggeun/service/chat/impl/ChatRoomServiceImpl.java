@@ -2,54 +2,81 @@ package io.github.restart.gmo_danggeun.service.chat.impl;
 
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomDetailDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomSummaryDto;
+import io.github.restart.gmo_danggeun.dto.chat.ChatRoomViewProjection;
 import io.github.restart.gmo_danggeun.entity.ChatRoom;
+import io.github.restart.gmo_danggeun.entity.ChatUser;
+import io.github.restart.gmo_danggeun.entity.User;
+import io.github.restart.gmo_danggeun.repository.chat.ChatRoomQueryRepository;
 import io.github.restart.gmo_danggeun.service.chat.ChatRoomService;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ChatRoomServiceImpl implements ChatRoomService {
 
-  private final ChatRoomRepository chatRoomRepository;
-  private final ProductRepository productRepository;
-  private final UserRepository userRepository;
-  private final ChatRoomConverter converter;
+  private final ChatRoomQueryRepository chatRoomQueryRepository;
 
   @Autowired
-  public ChatRoomServiceImpl(ChatRoomRepository chatRoomRepository,
-      ProductRepository productRepository,
-      UserRepository userRepository,
-      ChatRoomConverter converter) {
-    this.chatRoomRepository = chatRoomRepository;
-    this.productRepository = productRepository;
-    this.userRepository = userRepository;
-    this.converter = converter;
+  public ChatRoomServiceImpl(ChatRoomQueryRepository chatRoomQueryRepository) {
+    this.chatRoomQueryRepository = chatRoomQueryRepository;
   }
-
 
   @Override
   public List<ChatRoomSummaryDto> getChatRoomSummaries(Long userId, boolean showUnreadOnly) {
-    List<ChatRoom> rooms = chatRoomRepository.findByUser(userId);
+    List<ChatRoomViewProjection> rows = chatRoomQueryRepository.findAllByUserId(userId);
 
-    return rooms.stream()
-        .filter(room -> !showUnreadOnly || room.hasUnreadMessages(userId))
-        .map(converter::toSummaryDto)
+    return rows.stream()
+        .filter(row -> !showUnreadOnly || row.getUnreadCount() > 0) // 읽지 않은 메시지만 보기
+        .map(row -> {
+          ChatRoomSummaryDto dto = new ChatRoomSummaryDto();
+          dto.setMeId(row.getMeId());
+          dto.setMeNickname(row.getMeNickname());
+
+          dto.setPartnerId(row.getPartnerId());
+          dto.setPartnerNickname(row.getPartnerNickname());
+          dto.setPartnerLocation(row.getPartnerLocation());
+          dto.setPartnerTemperature(row.getPartnerTemperature());
+
+          dto.setChatRoomId(row.getChatRoomId());
+          dto.setTradeId(row.getTradeId());
+          dto.setTradeTitle(row.getTradeTitle());
+          dto.setTradePrice(row.getTradePrice());
+          dto.setTradeStatus(row.getTradeStatus());
+          dto.setTradeThumbnailUrl(row.getTradeThumbnailUrl());
+
+          dto.setLastMessageContent(row.getLastMessageContent());
+          dto.setLastMessageTime(row.getLastMessageTime());
+          dto.setUnreadCount(row.getUnreadCount());
+
+          return dto;
+        })
         .collect(Collectors.toList());
-
   }
 
   @Override
   public ChatRoomDetailDto getChatRoomDetail(Long chatRoomId, Long userId) {
-    ChatRoom room = chatRoomRepository.findById(chatRoomId)
-        .orElseThrow(() -> new IllegalArgumentException("채팅방이 존재하지 않습니다"));
+    ChatRoomViewProjection row = chatRoomQueryRepository
+        .findByChatRoomIdAndUserId(chatRoomId, userId)
+        .orElseThrow(() -> new RuntimeException("해당 채팅방 정보가 없습니다."));
 
-    Product product = productRepository.findById(room.getProduct().getId())
-        .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다"));
+    ChatRoomDetailDto dto = new ChatRoomDetailDto();
+    dto.setChatRoomId(row.getChatRoomId());
+    dto.setPartnerNickname(row.getPartnerNickname());
+    dto.setPartnerTemperature(row.getPartnerTemperature());
 
-    User partner = userRepository.findById(room.getPartnerId(userId))
-        .orElseThrow(() -> new IllegalArgumentException("상대방 정보를 찾을 수 없습니다"));
+    dto.setTradeId(row.getTradeId());
+    dto.setTradeTitle(row.getTradeTitle());
+    dto.setTradePrice(row.getTradePrice());
+    dto.setTradeThumbnailUrl(row.getTradeThumbnailUrl());
+    dto.setClosed("completed".equalsIgnoreCase(row.getTradeStatus()));
 
-    return converter.toDetailDto(room, product, partner, userId);
-
+    return dto;
   }
+
+
+
 }
+
