@@ -12,7 +12,7 @@ public class MessageConverter {
   /**
    * 일반 텍스트 메시지용 DTO 변환
    */
-  public ChatMessageDto toDto(ChatMessage message, Long currentUserId) {
+  public static ChatMessageDto toDto(ChatMessage message, Long currentUserId) {
     ChatMessageDto dto = new ChatMessageDto();
 
     dto.setMessageId(message.getId());
@@ -36,7 +36,7 @@ public class MessageConverter {
   /**
    * 날짜 라벨 메시지 생성
    */
-  public ChatMessageDto toDateLabel(LocalDateTime dateTime) {
+  public static ChatMessageDto toDateLabel(LocalDateTime dateTime) {
     ChatMessageDto dto = new ChatMessageDto();
 
     dto.setMessageType(MessageType.DATE_LABEL);
