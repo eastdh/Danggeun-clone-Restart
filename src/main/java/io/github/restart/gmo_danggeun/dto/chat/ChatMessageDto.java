@@ -11,7 +11,7 @@ public class ChatMessageDto {
   private String senderType; // ME, PARTNER, CHAT_BOT, DATE_LABEL
   private String content;
   private String timestamp;
-  private boolean isRead;
+  private Boolean isRead;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING)
   private MessageType messageType;

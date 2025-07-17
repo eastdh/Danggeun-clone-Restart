@@ -25,7 +25,7 @@ public class MessageConverter {
 
     dto.setContent(message.getContent());
     dto.setTimestamp(TimeFormatUtil.formatForChat(message.getCreatedAt())); // "오후 3:13"
-    dto.setRead(message.getReadOrNot());
+    dto.setIsRead(message.getReadOrNot());
 
     // ✅ enum 기반으로 타입 지정
     dto.setMessageType(MessageType.TEXT);
