@@ -143,7 +143,8 @@
               </div>
             </div>
             <p th:text="*{description}" class="trade-description">거래글 설명</p>
-            <div th:if="*{preferredLocation != null}" class="preferred-location">
+            <div th:if="*{preferredLocation != null} and !*{#strings.isEmpty(preferredLocation)}"
+                 class="preferred-location">
               <span>희망 거래장소</span>
               <span>|</span>
               <span th:text="*{preferredLocation}"></span>
@@ -194,7 +195,8 @@
           <h2>비슷한 거래 목록</h2>
         </div>
         <a class="related-trade-link"
-           th:data-keyword="${trade.title}">
+            th:data-keyword="${trade.title}"
+            data-filter="available">
           <span>더 구경하기</span>
           <span>&gt;</span>
         </a>

@@ -24,6 +24,10 @@ form {
   gap: var(--gap-xxl);
 }
 
+form .error {
+  color: var(--red-700);
+}
+
 form input,
 form textarea {
   width: 100%;
@@ -48,7 +52,20 @@ form textarea {
 }
 
 form label {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--gap-xm);
   font-weight: 500;
+}
+
+form label .label-main {
+  font-size: 16px;
+}
+
+form label .label-text-length {
+  font-size: 14px;
+  color: var(--gray-700);
 }
 
 .trade-profile {
@@ -60,8 +77,8 @@ form label {
 }
 
 .trade-profile .image-input-box {
-  width: 210px;
-  height: 210px;
+  width: 300px;
+  height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,7 +109,7 @@ form label {
 }
 
 .trade-profile .trade-info {
-  width: calc(100% - var(--gap-2) - 210px);
+  width: calc(100% - var(--gap-2) - 300px);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -102,7 +119,8 @@ form label {
 }
 
 .trade-profile .trade-info .trade-title-box,
-.trade-profile .trade-info .trade-price-box {
+.trade-profile .trade-info .trade-price-box,
+.trade-profile .trade-info .trade-category-box {
   min-width: 50%;
   display: flex;
   flex-direction: column;
@@ -132,10 +150,14 @@ form label {
   cursor: pointer;
 }
 
-.trade-price-box .trade-selection span.selected {
+.trade-price-box .trade-selection .trade-type.selected {
   background-color: var(--trade-filter-badge-bg);
   border: 1px solid var(--trade-filter-badge-bg);
   color: var(--gray-000);
+}
+
+.trade-price-box #price.inactive {
+  cursor: not-allowed;
 }
 
 .trade-price-box .offerable-box {
@@ -146,10 +168,114 @@ form label {
   gap: var(--gap-sm);
 }
 
+/* custom checkbox*/
 .trade-price-box .offerable-box input[type="checkbox"] {
   width: 20px;
   height: 20px;
+  padding: 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--gray-800);
+  border-radius: 4px;
+  background-color: transparent;
   cursor: pointer;
+  position: relative;
+}
+
+.trade-price-box .offerable-box input[type="checkbox"]:checked {
+  background-color: var(--orange-600);
+  border-color: var(--orange-600);
+}
+
+.trade-price-box .offerable-box input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 6px;
+  height: 12px;
+  border: solid var(--gray-000);
+  border-width: 0 2px 2px 0;
+  opacity: 0;
+  transform: rotate(45deg);
+}
+
+.trade-price-box .offerable-box input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
+.trade-profile .trade-info .trade-category-box {
+  gap: var(--gap-sm);
+}
+
+/* custom select */
+.trade-profile .trade-info .trade-category-box {
+  flex-direction: row;
+  align-items: center;
+}
+
+.custom-select {
+  width: 50%;
+  min-width: 180px;
+  position: relative;
+  font-family: Arial, sans-serif;
+}
+.custom-select select {
+  display: none;
+}
+.select-selected {
+  position: relative;
+  padding: 8px 16px;
+  background-color: var(--orange-600);
+  color: var(--gray-000);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-color: var(--gray-000) transparent transparent transparent;
+}
+.select-arrow-active:after {
+  border-color: transparent transparent var(--gray-000) transparent;
+  top: 45%;
+}
+.select-items {
+  position: absolute;
+  background-color: var(--orange-500);
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 10px;
+  scroll-behavior: smooth;
+  scrollbar-color: var(--gray-000) transparent;
+  scroll-padding: 1px;
+}
+.select-items div,
+.select-selected {
+  color: var(--gray-000);
+  padding: 8px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.select-items div:hover,
+.same-as-selected {
+  background-color: var(--orange-600);
+}
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover,
+.same-as-selected {
+  background-color: var(--orange-600);
 }
 
 .input-group {
@@ -185,7 +311,7 @@ form label {
   background-color: var(--orange-600);
 }
 
-.button-wrap .cancel-link {
+.button-wrap .cancel-button {
   display: flex;
   justify-content: center;
   align-items: center;

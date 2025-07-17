@@ -10,7 +10,7 @@
   <link rel="stylesheet" th:href="@{/css/common/footer.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade_write.css}">
-  <title>내 물건 팔기</title>
+  <title>내 물건 팔기 | GMO당근</title>
 </head>
 <body>
 <header th:replace="~{fragments/header}"></header>
@@ -19,14 +19,12 @@
     <div class="title-box">
       <h1>내 물건 팔기</h1>
     </div>
-    <!-- Todo :
-      add th:action="@{/trade/write}" method="post"
-      add form validation for all inputs
-    -->
-    <form>
+    <form th:action="@{/trade/new}" method="post"
+          th:object="${tradeDto}"
+          enctype="multipart/form-data">
       <div class="trade-profile">
         <div class="image-input-box">
-          <input type="file" name="images"
+          <input type="file" id="images" th:field="*{files}"
                  multiple accept="image/*"/>
           <img class="image-input-label"
                th:src="@{/assets/icon/camera.svg}"
@@ -36,48 +34,98 @@
         <!-- Todo: add image preview components -->
 <!--        <div class="img-preview"></div>-->
         <div class="trade-info">
+          <div class="trade-category-box">
+            <label>카테고리</label>
+            <div class="custom-select">
+              <select class="categories" th:field="*{categoryId}">
+                <option value="" disabled selected>카테고리 선택</option>
+                <th:block th:each="item: ${categories}">
+                  <option th:value="${item.id}" th:text="${item.name}"></option>
+                </th:block>
+              </select>
+            </div>
+            <div th:if="${#fields.hasErrors('categoryId')}" class="error">
+              <p th:errors="*{categoryId}"></p>
+            </div>
+          </div>
           <div class="trade-title-box">
-            <label for="title" class="form-label">글 제목</label>
-            <input id="title" name="title" class="form-input"
-                   placeholder="글 제목"
-                   required/>
+            <label for="title" class="form-label">
+              <span class="label-main">글 제목</span>
+              <span class="label-text-length">3 ~ 20자</span>
+            </label>
+            <input id="title" th:field="*{title}" class="form-input"
+                    placeholder="글 제목"
+                    minlength="3"
+                    maxlength="20"
+                    required/>
+            <div th:if="${#fields.hasErrors('title')}" class="error">
+              <p th:errors="*{title}"></p>
+            </div>
           </div>
           <div class="trade-price-box">
             <label>거래 방식</label>
             <div class="trade-selection">
-              <span class="selected">판매하기</span>
-              <span>나눔하기</span>
+              <span class="trade-type" data-trade="forSale">판매하기</span>
+              <span class="trade-type" data-trade="giveAway">나눔하기</span>
             </div>
-            <input type="number" id="price" name="price" class="form-input"
-                   placeholder="₩ 가격을 입력해주세요."
-                   required/>
+            <input type="number" id="price" th:field="*{price}" class="form-input"
+                    placeholder="₩ 가격을 입력해주세요."
+                    min="0"
+                    max="999999999"
+                    required/>
+            <div th:if="${#fields.hasErrors('price')}" class="error">
+              <p th:errors="*{price}"></p>
+            </div>
             <div class="offerable-box">
-              <input type="checkbox" id="offerable" name="isOfferable">
+              <input type="checkbox" id="offerable" th:field="*{offerable}">
               <label for="offerable">가격 제안 받기</label>
             </div>
           </div>
         </div>
       </div>
       <div class="input-group">
-        <label for="description" class="form-label">물품 설명</label>
-        <textarea id="description" name="description" class="form-input"
+        <label for="description">
+          <span class="label-main">물품 설명</span>
+          <span class="label-text-length">10 ~ 200자</span>
+        </label>
+        <textarea id="description" th:field="*{description}" class="form-input"
         placeholder="게시글 내용을 작성해주세요."
-
+                  minlength="10"
+                  maxlength="200"
                   required></textarea>
+        <div th:if="${#fields.hasErrors('description')}" class="error">
+          <p th:errors="*{description}"></p>
+        </div>
       </div>
       <div class="input-group">
-        <label for="preferred-location">거래 희망 장소</label>
-        <input id="preferred-location" name="preferredLocation" class="form-input"
-                placeholder="거래를 희망하는 장소를 입력해주세요."/>
+        <label for="preferred-location">
+          <span class="label-main">거래 희망 장소</span>
+          <span class="label-text-length">0 ~ 50자</span>
+        </label>
+        <input id="preferred-location" th:field="*{preferredLocation}" class="form-input"
+                placeholder="거래를 희망하는 장소를 입력해주세요."
+                maxlength="50"
+        />
+        <div th:if="${#fields.hasErrors('preferredLocation')}" class="error">
+          <p th:errors="*{preferredLocation}"></p>
+        </div>
       </div>
       <div class="button-wrap">
         <button type="submit" class="write-button">완료</button>
-        <!-- Todo : edit link using browser history -->
-        <a th:href="@{/trade}" class="cancel-link">취소</a>
+        <button type="button"
+                onclick="history.back()"
+                class="cancel-button">취소</button>
+      </div>
+      <div th:if="${#fields.hasErrors('status')}" class="error">
+        <p th:errors="*{status}"></p>
+      </div>
+      <div th:if="${#fields.hasErrors('offerable')}" class="error">
+        <p th:errors="*{offerable}"></p>
       </div>
     </form>
   </section>
 </main>
+<script th:src="@{/js/trade/trade_write.js}"></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 </body>
 </html>

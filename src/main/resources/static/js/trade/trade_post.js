@@ -69,14 +69,17 @@ document.addEventListener("click", function (e) {
 });
 
 // link update
-function updateLinks(queryType, queryValue, target) {
+function updateLinks(queries, target) {
   const url = new URL(window.location);
   const params = new URLSearchParams(window.location.search);
   url.pathname = "/trade";
 
-  if (!params.has(queryType)) {
-    params.set(queryType, queryValue);
-  }
+  queries.forEach(([queryType, queryValue]) => {
+    if (queryValue != null && !params.has(queryType)) {
+      params.set(queryType, queryValue);
+    }
+  });
+
   url.search = params.toString();
   target.href = url.toString();
 }
@@ -90,16 +93,20 @@ function addLinks() {
     document.getElementsByClassName("related-trade-link")[0];
 
   updateLinks(
-    "location",
-    locationSearchLink.dataset.location,
+    [["location", locationSearchLink.dataset.location]],
     locationSearchLink
   );
   updateLinks(
-    "category",
-    categorySearchLink.dataset.category,
+    [["category", categorySearchLink.dataset.category]],
     categorySearchLink
   );
-  updateLinks("keyword", keywordSearchLink.dataset.keyword, keywordSearchLink);
+  updateLinks(
+    [
+      ["keyword", keywordSearchLink.dataset.keyword],
+      ["status", keywordSearchLink.dataset.filter],
+    ],
+    keywordSearchLink
+  );
 }
 
 addLinks();

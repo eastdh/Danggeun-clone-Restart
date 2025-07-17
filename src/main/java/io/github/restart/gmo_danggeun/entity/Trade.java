@@ -1,5 +1,6 @@
 package io.github.restart.gmo_danggeun.entity;
 
+import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ public class Trade {
   @Column(name = "preferred_location", length = 50)
   private String preferredLocation;
 
-  @Column
+  @Column(nullable = false)
   private Integer price;
 
   @Column(name = "is_offerable", nullable = false)
@@ -46,10 +47,10 @@ public class Trade {
   @Column(name = "bump_count", nullable = false)
   private Integer bumpCount;
 
-  @Column(length = 10)
+  @Column(length = 10, nullable = false)
   private String status;
 
-  @Column
+  @Column(nullable = false)
   private Boolean hidden;
 
   @Column(name = "created_at", nullable = false)
@@ -57,6 +58,9 @@ public class Trade {
 
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
+
+  @Column(name = "bump_updated_at")
+  private LocalDateTime bumpUpdatedAt;
 
   public Trade() {
   }
@@ -90,7 +94,6 @@ public class Trade {
     this.isOfferable = isOfferable;
     this.status = status;
     this.hidden = hidden;
-    this.updatedAt = LocalDateTime.now();
   }
 
   public Long getId() {
@@ -197,6 +200,14 @@ public class Trade {
     this.updatedAt = updatedAt;
   }
 
+  public LocalDateTime getBumpUpdatedAt() {
+    return bumpUpdatedAt;
+  }
+
+  public void setBumpUpdatedAt(LocalDateTime bumpUpdatedAt) {
+    this.bumpUpdatedAt = bumpUpdatedAt;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) {
@@ -209,5 +220,24 @@ public class Trade {
   @Override
   public int hashCode() {
     return Objects.hashCode(id);
+  }
+
+  public TradeDto entityToDto() {
+    TradeDto dto = new TradeDto();
+    dto.setId(id);
+    dto.setCategoryId(category.getId());
+    dto.setTitle(title);
+    dto.setDescription(description);
+    dto.setPreferredLocation(preferredLocation);
+    dto.setPrice(price);
+    dto.setOfferable(isOfferable);
+    dto.setBumpCount(bumpCount);
+    dto.setStatus(status);
+    dto.setHidden(hidden);
+    dto.setCreatedAt(createdAt);
+    dto.setUpdatedAt(updatedAt);
+    dto.setBumpUpdatedAt(bumpUpdatedAt);
+
+    return dto;
   }
 }

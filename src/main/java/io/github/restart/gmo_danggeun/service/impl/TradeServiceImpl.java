@@ -1,6 +1,9 @@
 package io.github.restart.gmo_danggeun.service.impl;
 
+import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.Trade;
+import io.github.restart.gmo_danggeun.entity.User;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
@@ -12,6 +15,8 @@ import io.github.restart.gmo_danggeun.repository.readonly.TradeImageListReposito
 import io.github.restart.gmo_danggeun.repository.readonly.TradeListRepository;
 import io.github.restart.gmo_danggeun.service.TradeService;
 import io.github.restart.gmo_danggeun.util.DateUtil;
+import io.github.restart.gmo_danggeun.util.SecurityUtil;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +71,12 @@ public class TradeServiceImpl implements TradeService {
   }
 
   @Override
-  public Optional<TradeDetail> findById(Long id) {
+  public Optional<Trade> findById(Long id) {
+    return tradeRepository.findById(id);
+  }
+
+  @Override
+  public Optional<TradeDetail> findTradeViewById(Long id) {
     Optional<TradeDetail> tradeDetail = tradeDetailRepository.findById(id);
     if (tradeDetail.isEmpty()) {
       return tradeDetail;
@@ -97,7 +107,70 @@ public class TradeServiceImpl implements TradeService {
   }
 
   @Override
+  public Optional<Category> findCategoryById(Long id) {
+    return categoryRepository.findById(id);
+  }
+
+  @Override
   public List<Category> findAllCategories() {
     return categoryRepository.findAll();
+  }
+
+  @Override
+  @Transactional
+  public Trade save(User user, TradeDto tradeDto, Category category) {
+    String title = tradeDto.getTitle();
+    String description = tradeDto.getDescription();
+    String preferredLocation = tradeDto.getPreferredLocation();
+
+    title = SecurityUtil.sanitizeInput(title);
+    description = SecurityUtil.sanitizeInput(description);
+    preferredLocation = SecurityUtil.sanitizeInput(preferredLocation);
+
+    Trade trade = new Trade();
+    trade.setTitle(title);
+    trade.setUser(user);
+    trade.setCategory(category);
+    trade.setDescription(description);
+    trade.setPreferredLocation(preferredLocation);
+    trade.setPrice(tradeDto.getPrice());
+    trade.setOfferable(tradeDto.getOfferable());
+    trade.setBumpCount(0);
+    trade.setStatus("available");
+    trade.setHidden(false);
+    trade.setCreatedAt(LocalDateTime.now());
+    trade.setUpdatedAt(LocalDateTime.now());
+
+    return tradeRepository.save(trade);
+  }
+
+  @Override
+  @Transactional
+  public Trade edit(Trade trade, TradeDto tradeDto, Category category) {
+    String title = tradeDto.getTitle();
+    String description = tradeDto.getDescription();
+    String preferredLocation = tradeDto.getPreferredLocation();
+
+    title = SecurityUtil.sanitizeInput(title);
+    description = SecurityUtil.sanitizeInput(description);
+    preferredLocation = SecurityUtil.sanitizeInput(preferredLocation);
+
+    trade.setCategory(category);
+    trade.setTitle(title);
+    trade.setDescription(description);
+    if (!preferredLocation.isBlank()) trade.setPreferredLocation(preferredLocation);
+    trade.setPrice(tradeDto.getPrice());
+    trade.setOfferable(tradeDto.getOfferable());
+    if (tradeDto.getBumpCount() != null) trade.setBumpCount(tradeDto.getBumpCount());
+    if (tradeDto.getStatus() != null) trade.setStatus(tradeDto.getStatus());
+    if (tradeDto.getHidden() != null) trade.setHidden(tradeDto.getHidden());
+    trade.setUpdatedAt(LocalDateTime.now());
+
+    return tradeRepository.save(trade);
+  }
+
+  @Override
+  public void delete(Long id) {
+    tradeRepository.deleteById(id);
   }
 }
