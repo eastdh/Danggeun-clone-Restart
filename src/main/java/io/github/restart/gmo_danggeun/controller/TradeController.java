@@ -51,14 +51,14 @@ public class TradeController {
 
     if (resolvedLocation == null || resolvedLocation.isBlank()) {
       if (user == null) {
-        redirectAttributes.addAttribute("location", TradeConfig.DEFAULT_LOCATION);
+        resolvedLocation = TradeConfig.DEFAULT_LOCATION;
       } else {
         resolvedLocation = user.getLocation();
         if (resolvedLocation == null || resolvedLocation.isBlank()) {
           resolvedLocation = TradeConfig.DEFAULT_LOCATION;
         }
-        redirectAttributes.addAttribute("location", resolvedLocation);
       }
+      redirectAttributes.addAttribute("location", resolvedLocation);
       return "redirect:/trade";
     }
 
