@@ -14,6 +14,23 @@ document.addEventListener("DOMContentLoaded", () => {
   if (sendButton) {
     sendButton.addEventListener("click", sendMessage);
   }
+
+  const messageInput = document.querySelector(".room__input-area__field");
+
+  messageInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      if (event.shiftKey || event.ctrlKey) {
+        // 줄바꿈 허용
+        return;
+      }
+
+      // 기본 Enter 동작 방지 (줄바꿈 막기)
+      event.preventDefault();
+
+      // 메시지 전송 함수 호출
+      sendMessage();
+    }
+  });
 });
 
 /**
