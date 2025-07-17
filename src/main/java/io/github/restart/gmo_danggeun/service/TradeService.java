@@ -1,6 +1,7 @@
 package io.github.restart.gmo_danggeun.service;
 
 import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
@@ -21,4 +22,8 @@ public interface TradeService {
   Page<TradeList> findAllByUserId(Long userId, Pageable pageable);
 
   List<Category> findAllCategories();
+
+  void confirmTrade(Long tradeId);
+
+  Optional<Trade> findTradeEntityById(Long tradeId);
 }
