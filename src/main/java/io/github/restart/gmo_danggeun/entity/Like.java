@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "like")
+@Table(name = "\"like\"")
 @IdClass(LikeId.class)
 public class Like {
 

@@ -1,16 +1,24 @@
 package io.github.restart.gmo_danggeun.service;
 
-import io.github.restart.gmo_danggeun.entity.Trade;
+import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TradeService {
-  Page<Trade> findAllByLocation(String location, Pageable pageable);
-  Page<Trade> searchTrades(String keyword, String location, String category, int priceLowLimit, int priceHighLimit, Pageable pageable);
+  Page<TradeList> searchTrades(String keyword, String location,
+      String category, Integer priceLowLimit, Integer priceHighLimit,
+      String status, Pageable pageable);
 
-  Optional<Trade> findById(Long id);
+  Optional<TradeDetail> findById(Long id);
 
-  List<Trade> findAllByUserId(Long userId);
+  List<TradeImageList> findAllImageById(Long id);
+
+  Page<TradeList> findAllByUserId(Long userId, Pageable pageable);
+
+  List<Category> findAllCategories();
 }
