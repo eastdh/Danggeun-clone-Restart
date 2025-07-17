@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ChatMessageServiceImpl implements ChatMessageService {
@@ -85,6 +86,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
 
   @Override
+  @Transactional
   public void markMessagesAsRead(Long chatRoomId, Long userId) {
     chatMessageRepository.markUnreadMessagesAsRead(chatRoomId, userId);
   }
