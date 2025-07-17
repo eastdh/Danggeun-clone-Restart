@@ -1,11 +1,13 @@
 package io.github.restart.gmo_danggeun.controller;
 
-import io.github.restart.gmo_danggeun.config.PageConfig;
+import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.trade.FilterDto;
 import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.User;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
+import io.github.restart.gmo_danggeun.security.CustomUserDetails;
 import io.github.restart.gmo_danggeun.service.TradeService;
 import io.github.restart.gmo_danggeun.util.UserMannerUtil;
 import java.util.List;
@@ -13,16 +15,19 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class TradeController {
 
-  private TradeService tradeService;
+  private final TradeService tradeService;
 
   public TradeController(TradeService tradeService) {
     this.tradeService = tradeService;
@@ -32,11 +37,30 @@ public class TradeController {
   public String trade(
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(required = false) String keyword,
-      @RequestParam(required = true, defaultValue = "서울특별시 종로구") String location,
+      @RequestParam(required = false) String location,
       @RequestParam(required = false) String status,
       @RequestParam(required = false) String category,
       @RequestParam(name = "price", required = false) String priceRange,
+      RedirectAttributes redirectAttributes,
+      @AuthenticationPrincipal CustomUserDetails principal,
       Model model) {
+
+    User user = (principal != null) ? principal.getUser() : null;
+
+    String resolvedLocation = location;
+
+    if (resolvedLocation == null || resolvedLocation.isBlank()) {
+      if (user == null) {
+        redirectAttributes.addAttribute("location", TradeConfig.DEFAULT_LOCATION);
+      } else {
+        resolvedLocation = user.getLocation();
+        if (resolvedLocation == null || resolvedLocation.isBlank()) {
+          resolvedLocation = TradeConfig.DEFAULT_LOCATION;
+        }
+        redirectAttributes.addAttribute("location", resolvedLocation);
+      }
+      return "redirect:/trade";
+    }
 
     Integer priceLowLimit = null;
     Integer priceHighLimit = null;
@@ -46,7 +70,7 @@ public class TradeController {
       priceHighLimit = Integer.parseInt(priceRange.split("_")[1]);
     }
 
-    Pageable pageable = PageRequest.of(page, PageConfig.TRADELIST_PAGE_SIZE);
+    Pageable pageable = PageRequest.of(page, TradeConfig.TRADELIST_PAGE_SIZE);
     Page<TradeList> tradePage = tradeService.searchTrades(keyword, location, category, priceLowLimit, priceHighLimit, status, pageable);
     List<Category> categories = tradeService.findAllCategories();
 
@@ -66,8 +90,8 @@ public class TradeController {
     Optional<TradeDetail> trade = tradeService.findById(id);
     if (!trade.isEmpty() || !trade.get().getHidden()) {
       TradeDetail tradeDetail = trade.get();
-      Pageable userTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_USER_TRADE_PAGE_SIZE);
-      Pageable categoryTradePageable = PageRequest.of(0, PageConfig.TRADEDETAIL_CATEGORY_TRADE_PAGE_SIZE);
+      Pageable userTradePageable = PageRequest.of(0, TradeConfig.TRADEDETAIL_USER_TRADE_PAGE_SIZE);
+      Pageable categoryTradePageable = PageRequest.of(0, TradeConfig.TRADEDETAIL_CATEGORY_TRADE_PAGE_SIZE);
 
       Page<TradeList> sellerTrades = tradeService.findAllByUserId(tradeDetail.getUserId(), userTradePageable);
       Page<TradeList> categoryTrades = tradeService.searchTrades(null, tradeDetail.getLocation(), tradeDetail.getCategoryName(), null,
@@ -91,14 +115,24 @@ public class TradeController {
   }
 
   @GetMapping("/trade/new")
-  public String tradeWrite() {
+  public String tradeWritePage() {
     return "trade/trade_write";
   }
 
   @GetMapping("/trade/{id}/edit")
-  public String tradeEdit(@PathVariable Long id, Model model) {
+  public String tradeEditPage(@PathVariable Long id, Model model) {
     Optional<TradeDetail> trade = tradeService.findById(id);
     model.addAttribute("trade", trade);
     return "trade/trade_edit";
+  }
+
+  @PostMapping("/trade/new")
+  public String writeTrade() {
+    return "redirect:/trade/" + "";
+  }
+
+  @PostMapping("/trade/{id}/edit")
+  public String editTrade(@PathVariable Long id) {
+    return "redirect:/trade/" + "" + "edit";
   }
 }

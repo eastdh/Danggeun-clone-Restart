@@ -25,12 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TradeServiceImpl implements TradeService {
 
-  private TradeRepository tradeRepository;
-  private TradeListRepository tradeListRepository;
-  private TradeDetailRepository tradeDetailRepository;
-  private TradeImageListRepository tradeImageListRepository;
-  private CategoryRepository categoryRepository;
-  private LikeRepository likeRepository;
+  private final TradeRepository tradeRepository;
+  private final TradeListRepository tradeListRepository;
+  private final TradeDetailRepository tradeDetailRepository;
+  private final TradeImageListRepository tradeImageListRepository;
+  private final CategoryRepository categoryRepository;
+  private final LikeRepository likeRepository;
 
   public TradeServiceImpl(TradeRepository tradeRepository, TradeListRepository tradeListRepository,
       TradeDetailRepository tradeDetailRepository,
