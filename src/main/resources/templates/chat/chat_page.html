@@ -11,7 +11,7 @@
       <!-- chat-list -->
       <div class="list">
         <div class="list__header">
-          <div class="list__header__user-id" th:text="${chatPage?.userNickname} ?: '내 닉네임'">내 닉네임</div>
+          <div class="list__header__user-id" th:text="${chatPage?.userNickname} ?: '내 닉네임'" th:attr="data-user-id=${chatPage?.userId}">내 닉네임</div>
 
           <div class="list__header__toggle">
             <span>읽지 않은 채팅만 보기</span>
@@ -90,38 +90,40 @@
           </div>
           <!-- 채팅 메시지 반복 -->
           <div class="room__messages">
-            <!-- ME -->
-            <div th:each="msg : ${chatPage.messages}" th:if="${msg.senderType == 'ME'}" class="room__messages__item room__messages__item--me">
-              <div class="room__messages__item__content">
-                <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
-                <div class="room__messages__item__meta">
-                  <span class="message-read-status" th:text="${msg.isRead} ? '읽음' : '전송됨'">읽음</span>
+            <div th:each="msg : ${chatPage.messages}">
+              <!-- ME -->
+              <div th:if="${msg.senderType == 'ME'}" class="room__messages__item room__messages__item--me">
+                <div class="room__messages__item__content">
+                  <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
+                  <div class="room__messages__item__meta">
+                    <span class="message-read-status" th:text="${msg.isRead} ? '읽음' : '전송됨'">읽음</span>
+                    <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PARTNER -->
+              <div th:if="${msg.senderType == 'PARTNER'}" class="room__messages__item room__messages__item--partner">
+                <div class="room__messages__item__content">
+                  <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
+                  <div class="room__messages__item__meta">
+                    <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CHAT_BOT -->
+              <div th:if="${msg.senderType == 'CHAT_BOT'}" class="room__messages__item room__messages__item--chat-bot">
+                <div class="room__messages__item__content">
+                  <div class="room__messages__item__text" th:text="${msg.content} ?: '알림 메시지'">알림 메시지</div>
                   <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
                 </div>
               </div>
-            </div>
 
-            <!-- PARTNER -->
-            <div th:each="msg : ${chatPage.messages}" th:if="${msg.senderType == 'PARTNER'}" class="room__messages__item room__messages__item--partner">
-              <div class="room__messages__item__content">
-                <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
-                <div class="room__messages__item__meta">
-                  <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
-                </div>
+              <!-- DATE_LABEL -->
+              <div th:if="${msg.senderType == 'DATE_LABEL'}" class="room__messages__item room__messages__item--date">
+                <div class="room__messages__item__date-label" th:text="${msg.content}">2025년 7월 15일 화요일</div>
               </div>
-            </div>
-
-            <!-- CHAT_BOT -->
-            <div th:each="msg : ${chatPage.messages}" th:if="${msg.senderType == 'CHAT_BOT'}" class="room__messages__item room__messages__item--chat-bot">
-              <div class="room__messages__item__content">
-                <div class="room__messages__item__text" th:text="${msg.content} ?: '알림 메시지'">알림 메시지</div>
-                <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
-              </div>
-            </div>
-
-            <!-- DATE_LABEL -->
-            <div th:each="msg : ${chatPage.messages}" th:if="${msg.messageType == 'DATE_LABEL'}" class="room__messages__item room__messages__item--date">
-              <div class="room__messages__item__date-label" th:text="${msg.content}">2025년 7월 15일 화요일</div>
             </div>
           </div>
           <div class="room__input-area">
