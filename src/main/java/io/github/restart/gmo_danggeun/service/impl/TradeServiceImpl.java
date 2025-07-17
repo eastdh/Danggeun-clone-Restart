@@ -99,4 +99,9 @@ public class TradeServiceImpl implements TradeService {
     trade.setStatus("completed"); // 또는 ENUM 사용 가능
     tradeRepository.save(trade);
   }
+
+  @Override
+  public Optional<Trade> findTradeEntityById(Long tradeId) {
+    return tradeRepository.findById(tradeId);
+  }
 }
