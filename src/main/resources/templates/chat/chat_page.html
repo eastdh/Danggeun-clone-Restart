@@ -75,17 +75,10 @@
                 </div>
               </div>
 
-              <!-- 거래 확정 버튼: 판매자만, 거래 미완료 시 표시 -->
-              <div
-                th:if="${chatPage?.isSeller && !chatPage?.selectedRoom.isClosed}"
-                class="room__header__trade-info__status-button"
-                th:onclick="|confirmTrade(${chatPage?.selectedRoom.chatRoomId}, ${chatPage?.selectedRoom.tradeId})|"
-              >
-                거래 확정하기
-              </div>
-
-              <!-- 거래 완료된 경우 -->
-              <div th:if="${chatPage?.selectedRoom.isClosed}" class="room__header__trade-info__status-button closed" disabled>거래 완료</div>
+              <!-- 거래 상태 버튼: 항상 렌더링 -->
+              <button id="tradeStatusButton" class="room__header__trade-info__status-button" type="button" data-chat-room-id="" data-trade-id="">
+                거래 상태
+              </button>
             </div>
           </div>
           <!-- 채팅 메시지 반복 -->

@@ -1,7 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const sendButton = document.querySelector(".room__input-area__send-button");
-  const messageField = document.querySelector(".room__input-area__field");
+  // 채팅방 리스트에서 읽지 않은 메시지가 있는 방 찾기
+  const chatRooms = Array.from(document.querySelectorAll(".list__room-list__item"));
+  const unreadRooms = chatRooms.filter((room) => room.querySelector(".unread-badge"));
 
+  // 읽지 않은 방이 있으면 첫 번째 선택, 없으면 전체 중 첫 번째 선택
+  const targetRoom = unreadRooms[0] || chatRooms[0];
+  if (targetRoom) {
+    targetRoom.click();
+  }
+
+  // 메시지 전송 버튼 이벤트 연결
+  const sendButton = document.querySelector(".room__input-area__send-button");
   if (sendButton) {
     sendButton.addEventListener("click", sendMessage);
   }
@@ -11,10 +20,30 @@ document.addEventListener("DOMContentLoaded", () => {
  * 채팅방 선택 시 상세 정보 + 메시지 불러오기
  */
 function selectRoom(chatRoomId) {
+  const userId = document.querySelector(".list__header__user-id")?.dataset.userId;
+  if (!userId) return;
+
+  const roomElement = document.querySelector(`.list__room-list__item[onclick="selectRoom(${chatRoomId})"]`);
+
+  // unread-badge가 있으면 읽음 처리 요청
+  if (roomElement?.querySelector(".unread-badge")) {
+    fetch("/api/chat/message/read", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chatRoomId, userId }),
+    })
+      .then(() => {
+        // 읽음 처리 후 UI에서 뱃지 제거
+        const badge = roomElement.querySelector(".unread-badge");
+        if (badge) badge.remove();
+      })
+      .catch((error) => console.error("메시지 읽음 처리 실패:", error));
+  }
+
+  // 채팅방 상세 정보와 메시지 불러오기
   fetch(`/api/chat/room/${chatRoomId}`)
     .then((response) => response.json())
     .then((data) => {
-      // 채팅방 상세 정보와 메시지를 화면에 반영
       updateChatRoom(data.detail);
       updateMessages(data.messages);
     })
@@ -90,16 +119,30 @@ function updateChatRoom(detail) {
   const thumbnail = document.querySelector(".room__header__trade-info__product img.thumbnail");
   thumbnail.src = detail.tradeThumbnailUrl || "/assets/icon/default_product_img.svg";
 
-  const confirmButton = document.querySelector(".room__header__trade-info__status-button");
-  if (detail.isClosed) {
-    confirmButton.classList.add("closed");
-    confirmButton.textContent = "거래 완료";
-    confirmButton.disabled = true;
+  const statusButton = document.getElementById("tradeStatusButton");
+
+  // 공통 속성 설정
+  statusButton.setAttribute("data-chat-room-id", detail.chatRoomId);
+  statusButton.setAttribute("data-trade-id", detail.tradeId);
+
+  if (detail.closed) {
+    // 거래 완료 상태
+    statusButton.textContent = "거래 완료";
+    statusButton.classList.add("closed");
+    statusButton.disabled = true;
+    statusButton.onclick = null;
   } else if (detail.seller) {
-    confirmButton.classList.remove("closed");
-    confirmButton.textContent = "거래 확정하기";
-    confirmButton.disabled = false;
-    confirmButton.setAttribute("onclick", `confirmTrade(${detail.chatRoomId}, ${detail.tradeId})`);
+    // 판매자이고 거래 중일 때
+    statusButton.textContent = "거래 확정하기";
+    statusButton.classList.remove("closed");
+    statusButton.disabled = false;
+    statusButton.onclick = () => confirmTrade(detail.chatRoomId, detail.tradeId);
+  } else {
+    // 구매자이고 거래 중일 때
+    statusButton.textContent = "거래 중";
+    statusButton.classList.remove("closed");
+    statusButton.disabled = true;
+    statusButton.onclick = null;
   }
 }
 
