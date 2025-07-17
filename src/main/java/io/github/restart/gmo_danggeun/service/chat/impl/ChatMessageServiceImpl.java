@@ -25,17 +25,14 @@ public class ChatMessageServiceImpl implements ChatMessageService {
   private final ChatMessageRepository chatMessageRepository;
   private final ChatRoomRepository chatRoomRepository;
   private final UserRepository userRepository;
-  private final MessageConverter messageConverter;
 
   @Autowired
   public ChatMessageServiceImpl(ChatMessageRepository chatMessageRepository,
       ChatRoomRepository chatRoomRepository,
-      UserRepository userRepository,
-      MessageConverter messageConverter) {
+      UserRepository userRepository) {
     this.chatMessageRepository = chatMessageRepository;
     this.chatRoomRepository = chatRoomRepository;
     this.userRepository = userRepository;
-    this.messageConverter = messageConverter;
   }
 
 
@@ -56,7 +53,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     ChatMessage saved = chatMessageRepository.save(message);
 
-    return messageConverter.toDto(saved, writer.getId());
+    return MessageConverter.toDto(saved, writer.getId());
   }
 
 
@@ -76,11 +73,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
       LocalDate currentDate = created.toLocalDate();
 
       if (!currentDate.equals(previousDate)) {
-        result.add(messageConverter.toDateLabel(created));
+        result.add(MessageConverter.toDateLabel(created));
         previousDate = currentDate;
       }
 
-      result.add(messageConverter.toDto(msg, currentUserId));
+      result.add(MessageConverter.toDto(msg, currentUserId));
     }
 
     return result;
