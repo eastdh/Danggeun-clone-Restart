@@ -7,6 +7,7 @@ import io.github.restart.gmo_danggeun.dto.chat.ChatRoomDetailDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomSummaryDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatSendRequestDto;
 import io.github.restart.gmo_danggeun.dto.chat.TradeConfirmRequestDto;
+import io.github.restart.gmo_danggeun.security.CustomUserDetails;
 import io.github.restart.gmo_danggeun.service.TradeService;
 import io.github.restart.gmo_danggeun.service.chat.ChatMessageService;
 import io.github.restart.gmo_danggeun.service.chat.ChatRoomService;
@@ -45,7 +46,7 @@ public class ChatController {
   }
 
   @GetMapping("/chat")
-  public String chatPage(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
+  public String chatPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
     Long userId = userDetails.getId();
 
     ChatPageResponseDto chatPage = chatService.buildChatPage(userId);
@@ -63,7 +64,7 @@ public class ChatController {
 
   @GetMapping("/api/chat/room/{chatRoomId}")
   public ResponseEntity<Map<String, Object>> getChatRoomDetail(@PathVariable Long chatRoomId,
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+      @AuthenticationPrincipal CustomUserDetails userDetails) {
     Long userId = userDetails.getId();
 
     ChatRoomDetailDto detail = chatRoomService.getChatRoomDetail(chatRoomId, userId);

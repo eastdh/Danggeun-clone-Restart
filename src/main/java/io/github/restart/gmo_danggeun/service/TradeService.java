@@ -21,4 +21,6 @@ public interface TradeService {
   Page<TradeList> findAllByUserId(Long userId, Pageable pageable);
 
   List<Category> findAllCategories();
+
+  void confirmTrade(Long tradeId);
 }

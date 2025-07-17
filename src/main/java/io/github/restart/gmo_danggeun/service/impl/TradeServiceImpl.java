@@ -86,4 +86,17 @@ public class TradeServiceImpl implements TradeService {
   public List<Category> findAllCategories() {
     return categoryRepository.findAll();
   }
+
+  @Override
+  public void confirmTrade(Long tradeId) {
+    Trade trade = tradeRepository.findById(tradeId)
+        .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
+
+    if ("completed".equalsIgnoreCase(trade.getStatus())) {
+      throw new IllegalStateException("이미 완료된 거래입니다");
+    }
+
+    trade.setStatus("completed"); // 또는 ENUM 사용 가능
+    tradeRepository.save(trade);
+  }
 }
