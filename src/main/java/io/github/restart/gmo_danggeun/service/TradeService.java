@@ -34,4 +34,6 @@ public interface TradeService {
   Trade edit(Trade trade, TradeDto tradeDto, Category category);
 
   void delete(Long id);
+
+  void confirmTrade(Long tradeId);
 }

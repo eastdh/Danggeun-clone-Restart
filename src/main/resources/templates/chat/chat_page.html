@@ -4,49 +4,52 @@
   <head>
     <meta charset="UTF-8" />
     <title>chat page</title>
-    <link rel="stylesheet" th:href="@{/css/chat/chat_page.css}" />
+    <link rel="stylesheet" th:href="@{/css/chat/chat_page.css}" href="/src/main/resources/static/css/chat/chat_page.css" />
   </head>
   <body>
     <div class="chat-page">
       <!-- chat-list -->
       <div class="list">
         <div class="list__header">
-          <div class="list__header__user-id" th:text="${userNickname} ?: '내 닉네임'">내 닉네임</div>
+          <div class="list__header__user-id" th:text="${chatPage?.userNickname} ?: '내 닉네임'" th:attr="data-user-id=${chatPage?.userId}">내 닉네임</div>
+
           <div class="list__header__toggle">
-            <span>읽지 않은 항목</span>
+            <span>읽지 않은 채팅만 보기</span>
             <label class="list__header__toggle-switch">
-              <input type="checkbox" id="toggleOption" th:checked="${showUnreadOnly} ?: false" />
+              <input type="checkbox" th:checked="${chatPage?.showUnreadOnly}" onchange="toggleUnreadOnly(this.checked)" />
               <span class="list__header__toggle-slider"></span>
             </label>
           </div>
         </div>
         <div class="list__room-list">
           <!-- 채팅방 리스트 아이템 -->
-          <div th:if="${#lists.isEmpty(chatRooms)}" class="list__empty-message">
+          <div th:if="${#lists.isEmpty(chatPage?.chatRooms)}" class="list__empty-message">
             <p class="empty-message__title">아직 시작된 채팅이 없어요</p>
             <p class="empty-message__subtitle">
-              거래 상세 페이지에서 <strong>‘채팅하기’ 버튼</strong>을 누르면 대화를 시작할 수 있어요.<br />
+              거래 상세 페이지에서 <strong>‘채팅하기’ 버튼</strong>을 누르면 <br />
+              대화를 시작할 수 있어요.<br />
               관심 있는 상품을 먼저 둘러보는 건 어때요?
             </p>
             <a th:href="@{/trade}" class="empty-message__browse-button">거래글 둘러보기</a>
           </div>
-          <div class="list__room-list__item" th:each="room : ${chatRooms}">
+          <div class="list__room-list__item" th:each="room : ${chatPage?.chatRooms}" th:onclick="|selectRoom(${room.chatRoomId})|">
             <div class="list__room-list__item-content">
               <div class="list__room-list__item-meta">
-                <div class="list__room-list__item-meta__partner-id" th:text="${room.partnerNickname} ?: '상대방 닉네임'">상대방 닉네임</div>
-                <div class="list__room-list__item-meta__location" th:text="${room.partnerLocation} ?: '강남역'">강남역</div>
-                <div class="list__room-list__item-meta__timestamp" th:text="${room.lastMessageTime} ?: '1시간 전'">1시간 전</div>
+                <span class="list__room-list__item-meta__partner-id" th:text="${room.partnerNickname} ?: '상대방'">상대방</span>
+                <div class="list__room-list__item-meta__location" th:text="${room.partnerLocation}">강남구</div>
+                <div class="list__room-list__item-meta__timestamp" th:text="${room.lastMessageTime}">1시간 전</div>
+                <span class="unread-badge" th:if="${room.unreadCount > 0}" th:text="${room.unreadCount}">3</span>
               </div>
-              <div class="list__room-list__item__preview" th:text="${room.lastMessageContent} ?: '기본 미리보기 메시지'">기본 미리보기 메시지</div>
+              <div class="list__room-list__item__preview" th:text="${room.lastMessageContent} ?: '메시지 미리보기'">메시지 미리보기</div>
             </div>
-            <img class="thumbnail" th:src="@{${room.productThumbnail} ?: '/assets/images/chat_test_pic.jpg'}" />
+            <img class="thumbnail" th:src="@{${room.tradeThumbnailUrl} ?: '/assets/icon/default_product_img.svg'}" />
           </div>
         </div>
       </div>
 
       <!-- chat-room -->
       <div class="room">
-        <div th:if="${selectedRoom == null}" class="room__empty-message">
+        <div th:if="${chatPage?.selectedRoom == null}" class="room__empty-message">
           <p class="empty-message__title">채팅방이 선택되지 않았어요</p>
           <p class="empty-message__subtitle">
             왼쪽에서 채팅방을 선택하면<br />
@@ -54,39 +57,72 @@
           </p>
           <div class="empty-message__arrow-indicator">👈</div>
         </div>
-        <div th:unless="${selectedRoom == null}">
+        <div th:unless="${chatPage?.selectedRoom == null}" class="room__selected-room">
           <div class="room__header">
+            <!-- 상대방 정보 -->
             <div class="room__header__partner-info">
-              <div class="room__header__partner-info__id" th:text="${selectedRoom?.partnerNickname} ?: '상대방 닉네임'">상대방 닉네임</div>
-              <div class="room__header__partner-info__temperature" th:text="${selectedRoom?.partnerTemperature} ?: '36.5°C'">36.5°C</div>
+              <span class="room__header__partner-info__id" th:text="${chatPage?.selectedRoom.partnerNickname} ?: '상대방'">상대방</span>
+              <span class="room__header__partner-info__temperature" th:text="${chatPage?.selectedRoom.partnerTemperature} + '°C'">36.5°C</span>
             </div>
+
+            <!-- 거래 정보 -->
             <div class="room__header__trade-info">
               <div class="room__header__trade-info__product">
-                <img class="thumbnail" th:src="@{${selectedRoom?.productThumbnail} ?: '/assets/images/chat_test_pic.jpg'}" />
+                <img class="thumbnail" th:src="@{${chatPage?.selectedRoom.tradeThumbnailUrl} ?: '/assets/icon/default_product_img.svg'}" />
                 <div class="room__header__trade-info__product-meta">
-                  <div class="room__header__trade-info__product__name" th:text="${selectedRoom?.productName} ?: 'LG 냉장고 799L'">LG 냉장고 799L</div>
-                  <div class="room__header__trade-info__product__price" th:text="${selectedRoom?.productPrice} ?: '150,000원'">150,000원</div>
+                  <div class="room__header__trade-info__product__name" th:text="${chatPage?.selectedRoom.tradeTitle} ?: '상품명'">상품명</div>
+                  <div class="room__header__trade-info__product__price" th:text="${chatPage?.selectedRoom.tradePrice} + '원'">10,000원</div>
                 </div>
               </div>
+
+              <!-- 거래 확정 버튼: 판매자만, 거래 미완료 시 표시 -->
               <div
+                th:if="${chatPage?.isSeller && !chatPage?.selectedRoom.isClosed}"
                 class="room__header__trade-info__status-button"
-                th:class="'room__header__trade-info__status-button' + (${selectedRoom?.isClosed} ? ' closed' : '')"
-                th:disabled="${selectedRoom?.isClosed} ?: false"
+                th:onclick="|confirmTrade(${chatPage?.selectedRoom.chatRoomId}, ${chatPage?.selectedRoom.tradeId})|"
               >
-                <span th:text="${selectedRoom?.isClosed} ? '거래 완료' : '거래 확정하기'">거래 확정하기</span>
+                거래 확정하기
               </div>
+
+              <!-- 거래 완료된 경우 -->
+              <div th:if="${chatPage?.selectedRoom.isClosed}" class="room__header__trade-info__status-button closed" disabled>거래 완료</div>
             </div>
           </div>
           <!-- 채팅 메시지 반복 -->
           <div class="room__messages">
-            <div
-              th:each="msg : ${messages}"
-              th:class="'room__messages__item room__messages__item--' + ${msg.senderType.toLowerCase()}"
-              class="room__messages__item room__messages__item--me"
-            >
-              <div class="room__messages__item__content">
-                <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
-                <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+            <div th:each="msg : ${chatPage.messages}">
+              <!-- ME -->
+              <div th:if="${msg.senderType == 'ME'}" class="room__messages__item room__messages__item--me">
+                <div class="room__messages__item__content">
+                  <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
+                  <div class="room__messages__item__meta">
+                    <span class="message-read-status" th:text="${msg.isRead} ? '읽음' : '전송됨'">읽음</span>
+                    <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PARTNER -->
+              <div th:if="${msg.senderType == 'PARTNER'}" class="room__messages__item room__messages__item--partner">
+                <div class="room__messages__item__content">
+                  <div class="room__messages__item__text" th:text="${msg.content} ?: '메시지 내용'">메시지 내용</div>
+                  <div class="room__messages__item__meta">
+                    <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CHAT_BOT -->
+              <div th:if="${msg.senderType == 'CHAT_BOT'}" class="room__messages__item room__messages__item--chat-bot">
+                <div class="room__messages__item__content">
+                  <div class="room__messages__item__text" th:text="${msg.content} ?: '알림 메시지'">알림 메시지</div>
+                  <div class="message-time" th:text="${msg.timestamp} ?: '2023-07-01 12:34'">2023-07-01 12:34</div>
+                </div>
+              </div>
+
+              <!-- DATE_LABEL -->
+              <div th:if="${msg.senderType == 'DATE_LABEL'}" class="room__messages__item room__messages__item--date">
+                <div class="room__messages__item__date-label" th:text="${msg.content}">2025년 7월 15일 화요일</div>
               </div>
             </div>
           </div>
