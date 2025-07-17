@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
+@org.springframework.stereotype.Repository
 public interface ChatRoomQueryRepository extends Repository<Object, Long> {
 
   @Query(value = """

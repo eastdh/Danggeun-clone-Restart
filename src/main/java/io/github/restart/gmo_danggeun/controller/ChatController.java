@@ -2,7 +2,7 @@ package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.dto.chat.ChatFilterRequestDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatMessageDto;
-import io.github.restart.gmo_danggeun.dto.chat.ChatPageDto;
+import io.github.restart.gmo_danggeun.dto.chat.ChatPageResponseDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomDetailDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomSummaryDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatSendRequestDto;
@@ -10,6 +10,7 @@ import io.github.restart.gmo_danggeun.dto.chat.TradeConfirmRequestDto;
 import io.github.restart.gmo_danggeun.service.TradeService;
 import io.github.restart.gmo_danggeun.service.chat.ChatMessageService;
 import io.github.restart.gmo_danggeun.service.chat.ChatRoomService;
+import io.github.restart.gmo_danggeun.service.chat.ChatService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class ChatController {
   public String chatPage(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
     Long userId = userDetails.getId();
 
-    ChatPageDto chatPage = chatService.buildChatPage(userId);
+    ChatPageResponseDto chatPage = chatService.buildChatPage(userId);
     model.addAttribute("chatPage", chatPage);
 
     return "chat/chat_page";
