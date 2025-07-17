@@ -5,6 +5,8 @@ import io.github.restart.gmo_danggeun.dto.chat.ChatRoomSummaryDto;
 import io.github.restart.gmo_danggeun.entity.readonly.ChatRoomView;
 import io.github.restart.gmo_danggeun.repository.chat.ChatRoomViewRepository;
 import io.github.restart.gmo_danggeun.service.chat.ChatRoomService;
+import io.github.restart.gmo_danggeun.util.LocationUtil;
+import io.github.restart.gmo_danggeun.util.TimeFormatUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             row.getMeNickname(),
             row.getPartnerId(),
             row.getPartnerNickname(),
-            row.getPartnerLocation(),
+            LocationUtil.extractRepresentativeLocation(row.getPartnerLocation()),
             row.getPartnerTemperature(),
             row.getChatRoomId(),
             row.getTradeId(),
@@ -40,7 +42,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             row.getTradeStatus(),
             row.getTradeThumbnailUrl(),
             row.getLastMessageContent(),
-            row.getLastMessageTime(),
+            TimeFormatUtil.formatElapsedTime(row.getLastMessageTime()),
             row.getUnreadCount()
         ))
         .collect(Collectors.toList());
