@@ -155,7 +155,6 @@ function updateMessages(messages) {
     }
 
     container.appendChild(wrapper);
-    console.log("메시지 추가:", msg.isRead, msg.content, msg.senderType, msg.timestamp);
   });
 
   container.scrollTop = container.scrollHeight; // 최신 메시지로 스크롤
