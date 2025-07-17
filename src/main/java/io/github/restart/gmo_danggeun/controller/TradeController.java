@@ -3,6 +3,7 @@ package io.github.restart.gmo_danggeun.controller;
 import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.trade.FilterDto;
 import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
@@ -21,7 +22,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -86,8 +89,13 @@ public class TradeController {
   }
 
   @GetMapping("/trade/{id}")
-  public String tradeDetail(@PathVariable Long id, Model model) {
+  public String tradeDetail(
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails principal,
+      Model model) {
     Optional<TradeDetail> trade = tradeService.findById(id);
+    Long userId = (principal != null) ? principal.getUser().getId() : null;
+
     if (!trade.isEmpty() || !trade.get().getHidden()) {
       TradeDetail tradeDetail = trade.get();
       Pageable userTradePageable = PageRequest.of(0, TradeConfig.TRADEDETAIL_USER_TRADE_PAGE_SIZE);
@@ -100,6 +108,10 @@ public class TradeController {
       List<TradeImageList> images = tradeService.findAllImageById(tradeDetail.getTradeId());
 
       String emojiFileName = UserMannerUtil.setEmoji(tradeDetail.getMannerScore());
+
+      if (userId != null && userId.equals(tradeDetail.getUserId())) {
+        model.addAttribute("owner", "true");
+      }
 
       model.addAttribute("trade", tradeDetail);
       model.addAttribute("images", images);
@@ -120,19 +132,36 @@ public class TradeController {
   }
 
   @GetMapping("/trade/{id}/edit")
-  public String tradeEditPage(@PathVariable Long id, Model model) {
+  public String tradeEditPage(
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails principal,
+      Model model) {
     Optional<TradeDetail> trade = tradeService.findById(id);
+    Long userId = (principal != null) ? principal.getUser().getId() : null;
+
     model.addAttribute("trade", trade);
+    model.addAttribute("currentUserId", userId);
     return "trade/trade_edit";
   }
 
   @PostMapping("/trade/new")
-  public String writeTrade() {
+  @ResponseBody
+  public String writeTrade(
+      @RequestBody Trade trade,
+      @AuthenticationPrincipal CustomUserDetails principal
+  ) {
+    Long userId = (principal != null) ? principal.getUser().getId() : null;
     return "redirect:/trade/" + "";
   }
 
   @PostMapping("/trade/{id}/edit")
-  public String editTrade(@PathVariable Long id) {
+  @ResponseBody
+  public String editTrade(
+      @RequestBody Trade trade,
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails principal) {
+    Long userId = (principal != null) ? principal.getUser().getId() : null;
+
     return "redirect:/trade/" + "" + "edit";
   }
 }

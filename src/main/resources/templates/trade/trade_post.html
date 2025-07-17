@@ -65,7 +65,9 @@
           <div class="writer-meta">
             <div class="writer-info">
               <div class="writer-profile">
-                <a th:href="@{/profile/{id}(id=*{userId})}">
+                <a th:href="${owner != null} ?
+                  @{/profile}
+                  : @{/profile/{id}(id=*{userId})}">
                   <img class="profile-img"
                        th:src="@{/assets/icon/person-circle.svg}"
                        th:alt="*{nickname}">
@@ -73,7 +75,9 @@
               </div>
               <div>
                 <a class="writer-name"
-                   th:href="@{/profile/{id}(id=*{userId})}"
+                   th:href="${owner != null} ?
+                    @{/profile}
+                    : @{/profile/{id}(id=*{userId})}"
                    th:text="*{nickname}"
                 >사용자이름</a>
                 <a class="writer-location"
@@ -150,16 +154,17 @@
             <span>∙</span>
             <span th:text="'관심 ' + *{likeCounts}">관심 0</span>
           </div>
-          <!-- Todo : check logged in user and trade owner
-            add th:if and th:unless for each components
-          -->
-          <div class="action-button-wrap owner">
-            <a th:href="@{/trade/{id}/edit(id=${id})}">수정하기</a>
-            <button type="button">삭제하기</button>
-          </div>
-          <div class="action-button-wrap">
-            <a th:href="@{/chat}">채팅하기</a>
-          </div>
+          <th:block th:if="${owner != null}">
+            <div class="action-button-wrap owner">
+              <a th:href="@{/trade/{id}/edit(id=${id})}">수정하기</a>
+              <button type="button">삭제하기</button>
+            </div>
+          </th:block>
+          <th:block th:unless="${owner != null}">
+            <div class="action-button-wrap">
+              <a th:href="@{/chat}">채팅하기</a>
+            </div>
+          </th:block>
         </section>
       </div>
     </div>
@@ -169,7 +174,9 @@
         <div>
           <h2 th:text="${trade.nickname} + ' 의 판매물품'">당근당근 의 판매물품</h2>
         </div>
-        <a th:href="@{/profile/{id}(id=${trade.userId})}">
+        <a th:href="${owner != null} ?
+                  @{/profile}
+                  : @{/profile/{id}(id=${trade.userId})}">
           <span>더 구경하기</span>
           <span>&gt;</span>
         </a>
