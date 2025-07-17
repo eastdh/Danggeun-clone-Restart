@@ -204,6 +204,12 @@ input:checked + .list__header__toggle-slider::before {
   background-color: white;
 }
 
+.room__selected-room {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .room__header {
   display: flex;
   flex-direction: column;
