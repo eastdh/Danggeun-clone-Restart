@@ -8,6 +8,7 @@ import io.github.restart.gmo_danggeun.entity.ChatRoom;
 import io.github.restart.gmo_danggeun.entity.ChatUser;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
+import io.github.restart.gmo_danggeun.repository.UserRepository;
 import io.github.restart.gmo_danggeun.repository.chat.ChatRoomRepository;
 import io.github.restart.gmo_danggeun.repository.chat.ChatUserRepository;
 import io.github.restart.gmo_danggeun.service.TradeService;
@@ -55,7 +56,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     // 채팅방 생성
-    Trade trade = tradeService.findById(tradeId)
+    Trade trade = tradeService.findTradeEntityById(tradeId)
         .orElseThrow(() -> new RuntimeException("거래글이 존재하지 않습니다"));
 
     ChatRoom chatRoom = new ChatRoom();

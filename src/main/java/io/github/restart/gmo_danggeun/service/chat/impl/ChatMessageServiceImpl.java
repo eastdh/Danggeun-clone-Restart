@@ -6,6 +6,7 @@ import io.github.restart.gmo_danggeun.dto.chat.ChatSendRequestDto;
 import io.github.restart.gmo_danggeun.entity.ChatMessage;
 import io.github.restart.gmo_danggeun.entity.ChatRoom;
 import io.github.restart.gmo_danggeun.entity.User;
+import io.github.restart.gmo_danggeun.repository.UserRepository;
 import io.github.restart.gmo_danggeun.repository.chat.ChatMessageRepository;
 import io.github.restart.gmo_danggeun.repository.chat.ChatRoomRepository;
 import io.github.restart.gmo_danggeun.service.chat.ChatMessageService;
