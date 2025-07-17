@@ -1,8 +1,6 @@
 package io.github.restart.gmo_danggeun.service.impl;
 
-import io.github.restart.gmo_danggeun.dto.FilterDto;
 import io.github.restart.gmo_danggeun.entity.Category;
-import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
@@ -69,7 +67,23 @@ public class TradeServiceImpl implements TradeService {
 
   @Override
   public Optional<TradeDetail> findById(Long id) {
-    return tradeDetailRepository.findById(id);
+    Optional<TradeDetail> tradeDetail = tradeDetailRepository.findById(id);
+    if (tradeDetail.isEmpty()) {
+      return tradeDetail;
+    } else {
+      TradeDetail trade = tradeDetail.get();
+      String updateTerm = DateUtil.getMaxDateTerm(trade.getUpdateTerm());
+      String bumpUpdateTerm = DateUtil.getMaxDateTerm(trade.getBumpUpdateTerm());
+
+      TradeDetail newTrade = new TradeDetail(
+          trade.getTradeId(), trade.getCategoryId(), trade.getCategoryName(), trade.getTitle(), trade.getDescription(),
+          trade.getPreferredLocation(), trade.getPrice(), trade.getOfferable(), trade.getStatus(), trade.getHidden(),
+          trade.getCreatedAt(), trade.getUpdatedAt(), trade.getBumpUpdatedAt(), updateTerm, bumpUpdateTerm,
+          trade.getLikeCounts(), trade.getChatCounts(), trade.getUserId(), trade.getNickname(), trade.getLocation(),
+          trade.getMannerScore()
+      );
+      return Optional.of(newTrade);
+    }
   }
 
   @Override
