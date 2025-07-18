@@ -1,12 +1,10 @@
 package io.github.restart.gmo_danggeun.controller;
 
-import io.github.restart.gmo_danggeun.dto.chat.ChatFilterRequestDto;
+import io.github.restart.gmo_danggeun.dto.chat.ChatRoomFilterDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatMessageDto;
-import io.github.restart.gmo_danggeun.dto.chat.ChatPageResponseDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomDetailDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomSummaryDto;
-import io.github.restart.gmo_danggeun.dto.chat.ChatSendRequestDto;
-import io.github.restart.gmo_danggeun.dto.chat.TradeConfirmRequestDto;
+import io.github.restart.gmo_danggeun.dto.chat.ConfirmTradeDto;
 import io.github.restart.gmo_danggeun.security.CustomUserDetails;
 import io.github.restart.gmo_danggeun.service.TradeService;
 import io.github.restart.gmo_danggeun.service.chat.ChatMessageService;
@@ -65,7 +63,7 @@ public class ChatController {
   }
 
   @PostMapping("/api/chat/list")
-  public ResponseEntity<List<ChatRoomSummaryDto>> getChatList(@RequestBody ChatFilterRequestDto request) {
+  public ResponseEntity<List<ChatRoomSummaryDto>> getChatList(@RequestBody ChatRoomFilterDto request) {
     List<ChatRoomSummaryDto> chatRooms = chatRoomService.getChatRoomSummaries(request.getUserId(),
         request.isShowUnreadOnly());
     return ResponseEntity.ok(chatRooms);
@@ -94,7 +92,7 @@ public class ChatController {
 //  }
 
   @PostMapping("/api/chat/confirm-trade")
-  public ResponseEntity<?> confirmTrade(@RequestBody TradeConfirmRequestDto request) {
+  public ResponseEntity<?> confirmTrade(@RequestBody ConfirmTradeDto request) {
     tradeService.confirmTrade(request.getTradeId());
 
     return ResponseEntity.ok().build();
