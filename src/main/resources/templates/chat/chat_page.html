@@ -54,7 +54,8 @@
 
       <!-- chat-room -->
       <div class="room">
-        <div class="room__empty-message" id="roomEmptyMessage">
+        <!-- 선택된 채팅방 없음 -->
+        <div class="room__empty-message" id="roomEmptyMessage" style="display: none">
           <p class="empty-message__title">채팅방이 선택되지 않았어요</p>
           <p class="empty-message__subtitle">
             왼쪽에서 채팅방을 선택하면<br />
@@ -62,6 +63,12 @@
           </p>
           <div class="empty-message__arrow-indicator">👈</div>
         </div>
+        <!-- 로딩 컴포넌트 -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none">
+          <div class="spinner"></div>
+          <p class="loading-message">채팅방을 불러오는 중입니다...</p>
+        </div>
+        <!-- 채팅방 -->
         <div class="room__selected-room" id="roomSelected" style="display: none">
           <div class="room__header">
             <!-- 상대방 정보 -->

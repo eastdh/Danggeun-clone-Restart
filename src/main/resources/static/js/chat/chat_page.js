@@ -40,6 +40,9 @@ function selectRoom(chatRoomId) {
   const userId = document.querySelector(".list__header__user-id")?.dataset.userId;
   if (!userId) return;
 
+  showLoading("채팅방을 불러오는 중입니다...");
+  document.getElementById("roomSelected").style.display = "none";
+
   const roomElement = document.querySelector(`.list__room-list__item[onclick="selectRoom(${chatRoomId})"]`);
 
   // unread-badge가 있으면 읽음 처리 요청
@@ -66,12 +69,17 @@ function selectRoom(chatRoomId) {
       updateMessages(data.messages);
       document.getElementById("roomEmptyMessage").style.display = "none";
       document.getElementById("roomSelected").style.display = "flex";
+      hideLoading();
     })
     .then(() => {
       const container = document.querySelector(".room__messages");
       container.scrollTop = container.scrollHeight; // 최신 메시지로 스크롤
     })
-    .catch((error) => console.error("채팅방 로딩 실패:", error));
+    .catch((error) => {
+      console.error("채팅방 로딩 실패:", error);
+      hideLoading();
+      document.getElementById("roomEmptyMessage").style.display = "block";
+    });
 }
 
 /**
@@ -422,4 +430,15 @@ function createMessageElement(msg) {
   const dummyContainer = document.createElement("div");
   appendMessage(msg, dummyContainer);
   return dummyContainer.firstChild;
+}
+
+function showLoading(message = "로딩 중입니다...") {
+  const indicator = document.getElementById("loadingIndicator");
+  indicator.querySelector(".loading-message").textContent = message;
+  indicator.style.display = "flex";
+}
+
+function hideLoading() {
+  const indicator = document.getElementById("loadingIndicator");
+  indicator.style.display = "none";
 }
