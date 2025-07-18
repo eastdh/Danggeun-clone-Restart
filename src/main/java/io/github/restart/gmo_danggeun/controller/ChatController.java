@@ -49,8 +49,17 @@ public class ChatController {
   public String chatPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
     Long userId = userDetails.getId();
 
-    ChatPageResponseDto chatPage = chatService.buildChatPage(userId);
-    model.addAttribute("chatPage", chatPage);
+    // 채팅방 리스트만 조회
+    List<ChatRoomSummaryDto> chatRooms = chatRoomService.getChatRoomSummaries(userId, false);
+
+    // 사용자 정보는 첫 채팅방에서 추출
+    Long meId = chatRooms.isEmpty() ? userId : chatRooms.get(0).getMeId();
+    String meNickname = chatRooms.isEmpty() ? "나" : chatRooms.get(0).getMeNickname();
+
+    model.addAttribute("chatRooms", chatRooms);
+    model.addAttribute("userId", meId);
+    model.addAttribute("userNickname", meNickname);
+    model.addAttribute("showUnreadOnly", false); // 기본값
 
     return "chat/chat_page";
   }
