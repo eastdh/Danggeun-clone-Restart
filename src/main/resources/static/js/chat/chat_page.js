@@ -113,21 +113,34 @@ function toggleUnreadOnly(checked) {
 function sendMessage() {
   const chatRoomId = document.querySelector(".room__header__trade-info__status-button")?.dataset.chatRoomId;
   const senderId = document.querySelector(".list__header__user-id")?.dataset.userId;
-  var content = document.querySelector(".room__input-area__field")?.value;
-  content = content.trim(); // 공백 메시지 방지
+  const input = document.querySelector(".room__input-area__field");
+  const content = input?.value.trim();
+
   if (!chatRoomId || !senderId || !content) return;
 
+  // Optimistic UI - 실제 메시지 전송 전에 임시 메시지 추가
+  const tempMessage = {
+    content,
+    timestamp: new Date(),
+    senderType: "ME",
+    isRead: false,
+    messageType: "TEXT",
+    temp: true,
+  };
+  appendMessage(tempMessage);
+  input.value = "";
+
+  // 서버 전송
   fetch("/api/chat/message", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chatRoomId, senderId, content }),
   })
-    .then((response) => response.json())
+    .then((res) => res.json())
     .then((msg) => {
-      appendMessage(msg);
-      document.querySelector(".room__input-area__field").value = "";
-    })
-    .catch((error) => console.error("메시지 전송 실패:", error));
+      // 정확한 메시지로 교체 또는 삽입
+      replaceOrInsertMessage(msg);
+    });
 }
 
 /**
@@ -302,10 +315,12 @@ function updateChatList(chatRooms) {
 /**
  * 메시지 추가
  */
-function appendMessage(msg) {
-  const container = document.querySelector(".room__messages");
+function appendMessage(msg, container = document.querySelector(".room__messages")) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("room__messages__item");
+
+  if (msg.temp) wrapper.classList.add("temp-message");
+  if (msg.id) wrapper.setAttribute("data-message-id", msg.id);
 
   if (msg.messageType === "DATE_LABEL") {
     wrapper.classList.add("room__messages__item--date");
@@ -326,7 +341,7 @@ function appendMessage(msg) {
 
     const time = document.createElement("div");
     time.classList.add("message-time");
-    time.textContent = msg.timestamp || "";
+    time.textContent = formatTime(msg.timestamp) || "";
 
     if (msg.senderType === "ME") {
       wrapper.classList.add("room__messages__item--me");
@@ -347,5 +362,64 @@ function appendMessage(msg) {
   }
 
   container.appendChild(wrapper);
-  container.scrollTop = container.scrollHeight; // 최신 메시지로 스크롤
+  wrapper.scrollIntoView({ behavior: "smooth" });
+}
+
+function replaceOrInsertMessage(msg) {
+  const container = document.querySelector(".room__messages");
+
+  // temp 메시지 교체
+  const temp = container.querySelector(".temp-message");
+  if (temp) {
+    temp.replaceWith(createMessageElement(msg));
+    return;
+  }
+
+  // temp 메시지가 없으면 정렬 기준으로 삽입
+  const newElement = createMessageElement(msg);
+  const timestamp = new Date(msg.timestamp).getTime();
+
+  const items = Array.from(container.querySelectorAll(".room__messages__item"))
+    .filter((el) => el.dataset.messageId)
+    .sort((a, b) => {
+      const ta = new Date(a.querySelector(".message-time")?.textContent).getTime();
+      const tb = new Date(b.querySelector(".message-time")?.textContent).getTime();
+      return ta - tb;
+    });
+
+  let inserted = false;
+  for (const item of items) {
+    const itemTime = new Date(item.querySelector(".message-time")?.textContent).getTime();
+    if (timestamp < itemTime) {
+      container.insertBefore(newElement, item);
+      inserted = true;
+      break;
+    }
+  }
+
+  if (!inserted) container.appendChild(newElement);
+  container.scrollTop = container.scrollHeight;
+}
+
+function formatTime(raw) {
+  if (!raw) return "시간 정보 없음";
+
+  const date = new Date(raw);
+  if (isNaN(date.getTime())) {
+    return raw;
+  }
+
+  const hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const isPM = hours >= 12;
+  const hour12 = hours % 12 || 12;
+
+  return `${isPM ? "오후" : "오전"} ${hour12}:${minutes}`;
+}
+
+function createMessageElement(msg) {
+  // 기존 appendMessage 로직을 재사용 가능하게 분리
+  const dummyContainer = document.createElement("div");
+  appendMessage(msg, dummyContainer);
+  return dummyContainer.firstChild;
 }
