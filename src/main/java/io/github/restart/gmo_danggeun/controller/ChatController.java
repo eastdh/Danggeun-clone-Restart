@@ -86,11 +86,12 @@ public class ChatController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/api/chat/message")
-  public ResponseEntity<ChatMessageDto> sendMessage(@RequestBody ChatSendRequestDto request) {
-    ChatMessageDto savedMessage = chatMessageService.sendMessage(request);
-    return ResponseEntity.ok(savedMessage);
-  }
+//  TODO: WebSocket 추가 완료 후 삭제
+//  @PostMapping("/api/chat/message")
+//  public ResponseEntity<ChatMessageDto> sendMessage(@RequestBody ChatSendRequestDto request) {
+//    ChatMessageDto savedMessage = chatMessageService.sendMessage(request);
+//    return ResponseEntity.ok(savedMessage);
+//  }
 
   @PostMapping("/api/chat/confirm-trade")
   public ResponseEntity<?> confirmTrade(@RequestBody TradeConfirmRequestDto request) {

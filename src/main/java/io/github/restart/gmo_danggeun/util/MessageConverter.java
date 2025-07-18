@@ -15,6 +15,7 @@ public class MessageConverter {
   public static ChatMessageDto toDto(ChatMessage message, Long currentUserId) {
     ChatMessageDto dto = new ChatMessageDto();
 
+    dto.setChatRoomId(message.getChatRoom().getId());
     dto.setMessageId(message.getId());
 
     User writer = message.getWriter();

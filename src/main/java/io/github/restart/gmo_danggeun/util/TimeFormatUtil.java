@@ -21,6 +21,7 @@ public class TimeFormatUtil {
    * 경과 시간 표시 ("5분 전", "3시간 전", "2일 전", ...)
    */
   public static String formatElapsedTime(LocalDateTime past) {
+    if (past == null) return " - "; // ✅ null 방어
     LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     long minutes = ChronoUnit.MINUTES.between(past, now);
     long hours = ChronoUnit.HOURS.between(past, now);
