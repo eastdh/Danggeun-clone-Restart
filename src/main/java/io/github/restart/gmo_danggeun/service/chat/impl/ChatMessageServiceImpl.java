@@ -78,7 +78,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     for (ChatMessage msg : messages) {
       LocalDateTime created = msg.getCreatedAt();
-      if (created == null) continue; // ✅ null 방어
+      if (created == null) {
+        continue; // ✅ null 방어
+      }
       LocalDate currentDate = created.toLocalDate();
 
       if (!currentDate.equals(previousDate)) {

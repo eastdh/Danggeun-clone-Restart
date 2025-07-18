@@ -1,14 +1,10 @@
 package io.github.restart.gmo_danggeun.dto.chat;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Getter
-@Setter
 public class ChatRoomSummaryDto {
 
   // 내 정보
