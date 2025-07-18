@@ -482,7 +482,6 @@ function replaceOrInsertMessage(msg) {
 
   if (!inserted) container.appendChild(newElement);
   newElement.scrollIntoView({ behavior: "smooth" });
-  // container.scrollTop = container.scrollHeight;
 }
 
 function createMessageElement(msg) {
