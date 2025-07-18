@@ -12,7 +12,9 @@ import org.springframework.stereotype.Repository;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
   // 채팅방의 메시지를 생성 시간 기준으로 정렬하여 조회
-  List<ChatMessage> findByChatRoomIdOrderByCreatedAt(Long chatRoomId);
+  @Query("SELECT cm FROM ChatMessage cm WHERE cm.chatRoom.id = :chatRoomId ORDER BY cm.createdAt")
+  List<ChatMessage> findMessagesByChatRoomId(@Param("chatRoomId") Long chatRoomId);
+
 
   // 읽지 않은 메시지를 읽음 처리 (작성자가 아닌 유저 기준)
   @Modifying

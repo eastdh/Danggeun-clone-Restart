@@ -53,6 +53,7 @@ function selectRoom(chatRoomId) {
         // 읽음 처리 후 UI에서 뱃지 제거
         const badge = roomElement.querySelector(".unread-badge");
         if (badge) badge.remove();
+        console.log("메시지 읽음 처리 완료");
       })
       .catch((error) => console.error("메시지 읽음 처리 실패:", error));
   }
@@ -63,6 +64,12 @@ function selectRoom(chatRoomId) {
     .then((data) => {
       updateChatRoom(data.detail);
       updateMessages(data.messages);
+      document.getElementById("roomEmptyMessage").style.display = "none";
+      document.getElementById("roomSelected").style.display = "flex";
+    })
+    .then(() => {
+      const container = document.querySelector(".room__messages");
+      container.scrollTop = container.scrollHeight; // 최신 메시지로 스크롤
     })
     .catch((error) => console.error("채팅방 로딩 실패:", error));
 }
@@ -106,8 +113,8 @@ function toggleUnreadOnly(checked) {
 function sendMessage() {
   const chatRoomId = document.querySelector(".room__header__trade-info__status-button")?.dataset.chatRoomId;
   const senderId = document.querySelector(".list__header__user-id")?.dataset.userId;
-  const content = document.querySelector(".room__input-area__field")?.value;
-
+  var content = document.querySelector(".room__input-area__field")?.value;
+  content = content.trim(); // 공백 메시지 방지
   if (!chatRoomId || !senderId || !content) return;
 
   fetch("/api/chat/message", {
@@ -216,8 +223,6 @@ function updateMessages(messages) {
 
     container.appendChild(wrapper);
   });
-
-  container.scrollTop = container.scrollHeight; // 최신 메시지로 스크롤
 }
 
 /**
@@ -298,5 +303,49 @@ function updateChatList(chatRooms) {
  * 메시지 추가
  */
 function appendMessage(msg) {
-  // TODO: 새 메시지를 DOM에 추가
+  const container = document.querySelector(".room__messages");
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("room__messages__item");
+
+  if (msg.messageType === "DATE_LABEL") {
+    wrapper.classList.add("room__messages__item--date");
+    const label = document.createElement("div");
+    label.classList.add("room__messages__item__date-label");
+    label.textContent = msg.content;
+    wrapper.appendChild(label);
+  } else {
+    const contentWrapper = document.createElement("div");
+    contentWrapper.classList.add("room__messages__item__content");
+
+    const text = document.createElement("div");
+    text.classList.add("room__messages__item__text");
+    text.textContent = msg.content || "메시지 내용";
+
+    const meta = document.createElement("div");
+    meta.classList.add("room__messages__item__meta");
+
+    const time = document.createElement("div");
+    time.classList.add("message-time");
+    time.textContent = msg.timestamp || "";
+
+    if (msg.senderType === "ME") {
+      wrapper.classList.add("room__messages__item--me");
+      const readStatus = document.createElement("span");
+      readStatus.classList.add("message-read-status");
+      readStatus.textContent = msg.isRead ? "읽음" : "전송됨";
+      meta.appendChild(readStatus);
+    } else if (msg.senderType === "PARTNER") {
+      wrapper.classList.add("room__messages__item--partner");
+    } else if (msg.senderType === "CHAT_BOT") {
+      wrapper.classList.add("room__messages__item--chat-bot");
+    }
+
+    meta.appendChild(time);
+    contentWrapper.appendChild(text);
+    contentWrapper.appendChild(meta);
+    wrapper.appendChild(contentWrapper);
+  }
+
+  container.appendChild(wrapper);
+  container.scrollTop = container.scrollHeight; // 최신 메시지로 스크롤
 }
