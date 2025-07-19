@@ -315,66 +315,45 @@ function connectWebSocket(chatRoomId, userId) {
   stompClient = Stomp.over(socket);
   stompClient.debug = (msg) => console.log("STOMP ▶", msg);
 
-  // 요약 캐시: roomId → summary 객체
+  // summary 캐시: roomId → 이전 summary
   const summaryCache = new Map();
 
   stompClient.connect({}, () => {
-    // 1) 개인 채팅 리스트 업데이트 먼저 구독
+    // 1) 채팅 리스트 요약만 이곳에서 처리
     stompClient.subscribe("/user/queue/chat-list", ({ body }) => {
       const summary = JSON.parse(body);
+      const prev = summaryCache.get(summary.chatRoomId);
+
+      // 이전이 있고, 시간이 바뀌었을 때만 맨 위로 이동
+      const isNew =
+        prev !== undefined && (prev.lastMessageContent !== summary.lastMessageContent || prev.unreadCount !== summary.unreadCount || summary.unreadCount > 0);
+
       summaryCache.set(summary.chatRoomId, summary);
-      handleChatListUpdate(summary, false);
+      handleChatListUpdate(summary, isNew);
     });
 
-    // 2) 읽음 이벤트 구독
-    stompClient.subscribe(`/topic/chat/${chatRoomId}/read`, ({ body }) => handleReadReceipt(JSON.parse(body)));
-
-    // 3) 메시지 수신 구독
+    // 2) 실제 메시지 수신 구독: 화면 렌더링 + 읽음 전송만
     stompClient.subscribe(`/topic/chat/${chatRoomId}`, ({ body }) => {
       const message = JSON.parse(body);
       replaceOrInsertMessage(message);
 
-      // 이전 요약 꺼내기
-      const prev = summaryCache.get(message.chatRoomId) || {};
-
-      // unreadCount는 “내가 보낸 메시지”면 그대로, “상대가 보낸 메시지”면 +1
-      const newUnread = message.senderId === Number(userId) ? prev.unreadCount || 0 : (prev.unreadCount || 0) + 1;
-
-      // 업데이트할 summary 구성
-      const updatedSummary = {
-        chatRoomId: message.chatRoomId,
-        partnerNickname: prev.partnerNickname,
-        lastMessageContent: message.content,
-        lastMessageTime: message.timestamp,
-        unreadCount: newUnread,
-        tradeThumbnailUrl: prev.tradeThumbnailUrl,
-      };
-
-      // 캐시 갱신 & UI 업데이트 (isNew=true)
-      summaryCache.set(message.chatRoomId, updatedSummary);
-      handleChatListUpdate(updatedSummary, true);
-
-      // 다른 사람이 보낸 메시지면 즉시 읽음 전송
-      if (message.senderId !== Number(userId)) {
-        sendReadReceipt([message.messageId]);
-      }
+      // 내가 보내든 받든 항상 ACK → 요약 이벤트 발생
+      sendReadReceipt([message.messageId]);
     });
 
-    // 4) 초기 읽음 처리: 이미 불러온 메시지들에 대해서도 읽음 전송
+    // 3) 읽음 ACK 이벤트 구독 (채팅창 내 뱃지 업데이트 등)
+    stompClient.subscribe(`/topic/chat/${chatRoomId}/read`, ({ body }) => {
+      handleReadReceipt(JSON.parse(body));
+    });
+
+    // 4) 페이지 진입 시 초기 읽음 처리
     sendReadReceipt();
   });
 
-  // helper: stompClient 가 연결된 이후에만 호출
   function sendReadReceipt(messageIds) {
     if (!stompClient?.connected) return;
-
-    const payload = {
-      chatRoomId,
-      readerId: Number(userId),
-    };
-    if (Array.isArray(messageIds)) {
-      payload.messageIds = messageIds;
-    }
+    const payload = { chatRoomId, readerId: Number(userId) };
+    if (Array.isArray(messageIds)) payload.messageIds = messageIds;
     stompClient.send("/app/read", {}, JSON.stringify(payload));
   }
 }
