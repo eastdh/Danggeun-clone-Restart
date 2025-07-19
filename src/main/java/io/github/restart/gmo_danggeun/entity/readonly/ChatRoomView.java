@@ -1,7 +1,9 @@
 package io.github.restart.gmo_danggeun.entity.readonly;
 
+import io.github.restart.gmo_danggeun.entity.id.ChatRoomViewId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -12,6 +14,7 @@ import org.hibernate.annotations.Immutable;
 @Immutable
 @Entity
 @Table(name = "chat_room_view")
+@IdClass(ChatRoomViewId.class)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

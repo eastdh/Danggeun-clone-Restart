@@ -312,38 +312,43 @@ let stompClient = null;
 function connectWebSocket(chatRoomId, userId) {
   const socket = new SockJS("/ws-chat");
   stompClient = Stomp.over(socket);
-  stompClient.debug = () => {}; // 로그 비활성화
+  stompClient.debug = (msg) => console.log("STOMP ▶", msg);
 
   stompClient.connect({}, () => {
-    // 메시지 수신
-    stompClient.subscribe(`/topic/chat/${chatRoomId}`, (msg) => {
-      const message = JSON.parse(msg.body);
-      replaceOrInsertMessage(message); // temp 메시지 교체 또는 삽입
+    // 1) 개인 채팅 리스트 업데이트 먼저 구독
+    stompClient.subscribe("/user/queue/chat-list", ({ body }) => handleChatListUpdate(JSON.parse(body)));
 
-      // 상대방이 보낸 메시지라면
-      if (msg.senderId !== Number(userId)) {
-        // 즉시 읽음 요청 전송
-        stompClient.send(
-          "/app/read",
-          {},
-          JSON.stringify({
-            chatRoomId,
-            readerId: Number(userId),
-            messageIds: [msg.messageId],
-          })
-        );
+    // 2) 읽음 이벤트 구독
+    stompClient.subscribe(`/topic/chat/${chatRoomId}/read`, ({ body }) => handleReadReceipt(JSON.parse(body)));
+
+    // 3) 메시지 수신 구독
+    stompClient.subscribe(`/topic/chat/${chatRoomId}`, ({ body }) => {
+      const message = JSON.parse(body);
+      replaceOrInsertMessage(message);
+
+      // 다른 사람이 보낸 메시지면 즉시 읽음 전송
+      if (message.senderId !== Number(userId)) {
+        sendReadReceipt([message.messageId]);
       }
     });
 
-    // 읽음 이벤트 수신
-    stompClient.subscribe(`/topic/chat/${chatRoomId}/read`, ({ body }) => {
-      const receipt = JSON.parse(body);
-      handleReadReceipt(receipt);
-    });
-
-    // 읽음 처리 요청
-    stompClient.send("/app/read", {}, JSON.stringify({ chatRoomId, readerId: Number(userId) }));
+    // 4) 초기 읽음 처리: 이미 불러온 메시지들에 대해서도 읽음 전송
+    sendReadReceipt();
   });
+
+  // helper: stompClient 가 연결된 이후에만 호출
+  function sendReadReceipt(messageIds) {
+    if (!stompClient?.connected) return;
+
+    const payload = {
+      chatRoomId,
+      readerId: Number(userId),
+    };
+    if (Array.isArray(messageIds)) {
+      payload.messageIds = messageIds;
+    }
+    stompClient.send("/app/read", {}, JSON.stringify(payload));
+  }
 }
 
 function sendMessage() {
@@ -548,6 +553,61 @@ function handleReadReceipt(receipt) {
       if (statusEl) statusEl.textContent = "읽음";
     });
   }
+}
+
+/**
+ * 서버 푸시로 받은 ChatRoomSummaryDto를 바탕으로
+ *  - 이미 존재하는 아이템이면 lastMessage, time, badge만 갱신
+ *  - 없으면 맨 위에 새 아이템 삽입
+ */
+function handleChatListUpdate(summary) {
+  const { chatRoomId, partnerId, partnerNickname, lastMessageContent, lastMessageTime, unreadCount, tradeThumbnailUrl } = summary;
+
+  // 1) 기존 아이템 찾기
+  let item = document.querySelector(`.list__room-list__item[data-chat-room-id="${chatRoomId}"]`);
+
+  if (!item) {
+    // 2) 새 아이템 생성 (템플릿 리터럴로 빠르게!)
+    const html = `
+      <div class="list__room-list__item"
+           data-chat-room-id="${chatRoomId}"
+           onclick="selectRoom(${chatRoomId})">
+        <div class="list__room-list__item-content">
+          <div class="list__room-list__item-meta">
+            <span class="list__room-list__item-meta__partner-id">${partnerNickname}</span>
+            <div class="list__room-list__item-meta__timestamp">${lastMessageTime}</div>
+            ${unreadCount > 0 ? `<span class="unread-badge">${unreadCount}</span>` : ``}
+          </div>
+          <div class="list__room-list__item__preview">${lastMessageContent}</div>
+        </div>
+        <img class="thumbnail" src="${tradeThumbnailUrl}" />
+      </div>
+    `;
+    document.querySelector(".list__room-list").insertAdjacentHTML("afterbegin", html);
+    return;
+  }
+
+  // 3) 업데이트: 마지막 메시지·시간
+  item.querySelector(".list__room-list__item__preview").textContent = lastMessageContent;
+  item.querySelector(".list__room-list__item-meta__timestamp").textContent = lastMessageTime;
+
+  // 4) badge 갱신
+  const badge = item.querySelector(".unread-badge");
+  if (unreadCount > 0) {
+    if (badge) {
+      badge.textContent = unreadCount;
+    } else {
+      const span = document.createElement("span");
+      span.classList.add("unread-badge");
+      span.textContent = unreadCount;
+      item.querySelector(".list__room-list__item-meta").append(span);
+    }
+  } else if (badge) {
+    badge.remove();
+  }
+
+  // 5) 아이템을 맨 위로 올리기 (최신 순)
+  item.parentNode.prepend(item);
 }
 
 // #endregion
