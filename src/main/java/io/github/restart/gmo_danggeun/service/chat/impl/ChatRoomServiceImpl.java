@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 @Service
 public class ChatRoomServiceImpl implements ChatRoomService {
 
@@ -24,27 +23,28 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   @Override
   public List<ChatRoomSummaryDto> getChatRoomSummaries(Long userId, boolean showUnreadOnly) {
-    List<ChatRoomView> rows = chatRoomViewRepository.findAllByMeId(userId);
-
-    return rows.stream()
+    return chatRoomViewRepository.findAllByMeId(userId).stream()
         .filter(row -> !showUnreadOnly || row.getUnreadCount() > 0)
-        .map(row -> new ChatRoomSummaryDto(
-            row.getMeId(),
-            row.getMeNickname(),
-            row.getPartnerId(),
-            row.getPartnerNickname(),
-            LocationUtil.extractRepresentativeLocation(row.getPartnerLocation()),
-            row.getPartnerTemperature(),
-            row.getChatRoomId(),
-            row.getTradeId(),
-            row.getTradeTitle(),
-            row.getTradePrice(),
-            row.getTradeStatus(),
-            row.getTradeThumbnailUrl(),
-            row.getLastMessageContent(),
-            TimeFormatUtil.formatElapsedTime(row.getLastMessageTime()),
-            row.getUnreadCount()
-        ))
+        .map(row -> ChatRoomSummaryDto
+            .builder()
+            // -- BaseDto 필드 --
+            .chatRoomId(row.getChatRoomId())
+            .tradeId(row.getTradeId())
+            .tradeTitle(row.getTradeTitle())
+            .tradePrice(row.getTradePrice())
+            .tradeStatus(row.getTradeStatus())
+            .tradeThumbnailUrl(row.getTradeThumbnailUrl())
+            .partnerNickname(row.getPartnerNickname())
+            .partnerLocation(LocationUtil.extractRepresentativeLocation(row.getPartnerLocation()))
+            .partnerTemperature(row.getPartnerTemperature())
+            // -- SummaryDto 필드 --
+            .meId(row.getMeId())
+            .meNickname(row.getMeNickname())
+            .lastMessageContent(row.getLastMessageContent())
+            .lastMessageTime(TimeFormatUtil.formatElapsedTime(row.getLastMessageTime()))
+            .unreadCount(row.getUnreadCount())
+            .build()
+        )
         .collect(Collectors.toList());
   }
 
@@ -54,16 +54,21 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .findByChatRoomIdAndMeId(chatRoomId, userId)
         .orElseThrow(() -> new RuntimeException("해당 채팅방 정보가 없습니다."));
 
-    return new ChatRoomDetailDto(
-        row.getChatRoomId(),
-        row.getPartnerNickname(),
-        row.getPartnerTemperature(),
-        row.getTradeId(),
-        row.getTradeThumbnailUrl(),
-        row.getTradeTitle(),
-        row.getTradePrice(),
-        Boolean.TRUE.equals(row.getIsSeller()),
-        "completed".equalsIgnoreCase(row.getTradeStatus())
-    );
+    return ChatRoomDetailDto
+        .builder()
+        // -- BaseDto 필드 --
+        .chatRoomId(row.getChatRoomId())
+        .tradeId(row.getTradeId())
+        .tradeTitle(row.getTradeTitle())
+        .tradePrice(row.getTradePrice())
+        .tradeStatus(row.getTradeStatus())
+        .tradeThumbnailUrl(row.getTradeThumbnailUrl())
+        .partnerNickname(row.getPartnerNickname())
+        .partnerLocation(LocationUtil.extractRepresentativeLocation(row.getPartnerLocation()))
+        .partnerTemperature(row.getPartnerTemperature())
+        .isSeller(Boolean.TRUE.equals(row.getIsSeller()))
+        // -- DetailDto 필드 --
+        .isClosed("completed".equalsIgnoreCase(row.getTradeStatus()))
+        .build();
   }
 }

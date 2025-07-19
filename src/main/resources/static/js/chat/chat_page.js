@@ -1,3 +1,4 @@
+// #region chat 페이지 초기화
 document.addEventListener("DOMContentLoaded", () => {
   // 채팅방 리스트에서 읽지 않은 메시지가 있는 방 찾기
   const chatRooms = Array.from(document.querySelectorAll(".list__room-list__item"));
@@ -32,72 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+// #endregion
 
-/**
- * 채팅방 선택 시 상세 정보 + 메시지 불러오기
- */
-function selectRoom(chatRoomId) {
-  const userId = document.querySelector(".list__header__user-id")?.dataset.userId;
-  if (!userId) return;
-
-  showLoading("채팅방을 불러오는 중입니다...");
-  document.getElementById("roomSelected").style.display = "none";
-
-  const roomElement = document.querySelector(`.list__room-list__item[onclick="selectRoom(${chatRoomId})"]`);
-
-  // unread-badge가 있으면 읽음 처리 요청
-  if (roomElement?.querySelector(".unread-badge")) {
-    fetch("/api/chat/message/read", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chatRoomId, userId }),
-    })
-      .then(() => {
-        // 읽음 처리 후 UI에서 뱃지 제거
-        const badge = roomElement.querySelector(".unread-badge");
-        if (badge) badge.remove();
-        console.log("메시지 읽음 처리 완료");
-      })
-      .catch((error) => console.error("메시지 읽음 처리 실패:", error));
-  }
-
-  // 채팅방 상세 정보와 메시지 불러오기
-  fetch(`/api/chat/room/${chatRoomId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      updateChatRoom(data.detail);
-      updateMessages(data.messages);
-      document.getElementById("roomEmptyMessage").style.display = "none";
-      document.getElementById("roomSelected").style.display = "flex";
-      hideLoading();
-    })
-    .then(() => {
-      const container = document.querySelector(".room__messages");
-      container.scrollTop = container.scrollHeight; // 최신 메시지로 스크롤
-    })
-    .catch((error) => {
-      console.error("채팅방 로딩 실패:", error);
-      hideLoading();
-      document.getElementById("roomEmptyMessage").style.display = "block";
-    });
-}
-
-/**
- * 거래 확정 요청
- */
-function confirmTrade(chatRoomId, tradeId) {
-  fetch("/api/chat/confirm-trade", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ tradeId }),
-  })
-    .then(() => {
-      alert("거래가 확정되었습니다.");
-      selectRoom(chatRoomId); // 채팅방 다시 로딩
-    })
-    .catch((error) => console.error("거래 확정 실패:", error));
-}
-
+// #region 채팅방 리스트 관련 코드
 /**
  * 읽지 않은 채팅만 보기 토글
  */
@@ -116,38 +54,123 @@ function toggleUnreadOnly(checked) {
 }
 
 /**
- * 메시지 전송
+ * 채팅방 리스트 업데이트
  */
-function sendMessage() {
-  const chatRoomId = document.querySelector(".room__header__trade-info__status-button")?.dataset.chatRoomId;
-  const senderId = document.querySelector(".list__header__user-id")?.dataset.userId;
-  const input = document.querySelector(".room__input-area__field");
-  const content = input?.value.trim();
+function updateChatList(chatRooms) {
+  const listContainer = document.querySelector(".list__room-list");
+  listContainer.innerHTML = ""; // 기존 리스트 제거
 
-  if (!chatRoomId || !senderId || !content) return;
+  if (chatRooms.length === 0) {
+    listContainer.innerHTML = `
+      <div class="list__empty-message">
+        <p class="empty-message__title">아직 시작된 채팅이 없어요</p>
+        <p class="empty-message__subtitle">
+          거래 상세 페이지에서 <strong>‘채팅하기’ 버튼</strong>을 누르면 <br />
+          대화를 시작할 수 있어요.<br />
+          관심 있는 상품을 먼저 둘러보는 건 어때요?
+        </p>
+        <a href="/trade" class="empty-message__browse-button">거래글 둘러보기</a>
+      </div>
+    `;
+    return;
+  }
 
-  // Optimistic UI - 실제 메시지 전송 전에 임시 메시지 추가
-  const tempMessage = {
-    content,
-    timestamp: new Date(),
-    senderType: "ME",
-    isRead: false,
-    messageType: "TEXT",
-    temp: true,
-  };
-  appendMessage(tempMessage);
-  input.value = "";
+  chatRooms.forEach((room) => {
+    const item = document.createElement("div");
+    item.classList.add("list__room-list__item");
+    item.dataset.chatRoomId = room.chatRoomId;
+    item.setAttribute("onclick", `selectRoom(${room.chatRoomId})`);
 
-  // 서버 전송
-  fetch("/api/chat/message", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chatRoomId, senderId, content }),
-  })
-    .then((res) => res.json())
-    .then((msg) => {
-      // 정확한 메시지로 교체 또는 삽입
-      replaceOrInsertMessage(msg);
+    const content = document.createElement("div");
+    content.classList.add("list__room-list__item-content");
+
+    const meta = document.createElement("div");
+    meta.classList.add("list__room-list__item-meta");
+
+    const nickname = document.createElement("span");
+    nickname.classList.add("list__room-list__item-meta__partner-id");
+    nickname.textContent = room.partnerNickname || "상대방";
+
+    const location = document.createElement("div");
+    location.classList.add("list__room-list__item-meta__location");
+    location.textContent = room.partnerLocation;
+
+    const time = document.createElement("div");
+    time.classList.add("list__room-list__item-meta__timestamp");
+    time.textContent = room.lastMessageTime;
+
+    meta.appendChild(nickname);
+    meta.appendChild(location);
+    meta.appendChild(time);
+
+    if (room.unreadCount > 0) {
+      const badge = document.createElement("span");
+      badge.classList.add("unread-badge");
+      badge.textContent = room.unreadCount;
+      meta.appendChild(badge);
+    }
+
+    const preview = document.createElement("div");
+    preview.classList.add("list__room-list__item__preview");
+    preview.textContent = room.lastMessageContent || "메시지 미리보기";
+
+    content.appendChild(meta);
+    content.appendChild(preview);
+
+    const thumbnail = document.createElement("img");
+    thumbnail.classList.add("thumbnail");
+    thumbnail.src = room.tradeThumbnailUrl || "/assets/icon/default_product_img.svg";
+
+    item.appendChild(content);
+    item.appendChild(thumbnail);
+
+    listContainer.appendChild(item);
+  });
+}
+// #endregion
+
+// #region 채팅방 선택 및 로딩 관련 코드
+/**
+ * 채팅방 선택 시 상세 정보 + 메시지 불러오기
+ */
+function selectRoom(chatRoomId) {
+  const userId = document.querySelector(".list__header__user-id")?.dataset.userId;
+  if (!userId) return;
+
+  // 기존 WebSocket 연결 해제
+  if (stompClient?.connected) {
+    stompClient.disconnect(() => {
+      stompClient = null;
+    });
+  }
+
+  showLoading("채팅방을 불러오는 중입니다...");
+  document.getElementById("roomSelected").style.display = "none";
+  document.getElementById("roomEmptyMessage").style.display = "none";
+
+  const roomElement = document.querySelector(`.list__room-list__item[onclick="selectRoom(${chatRoomId})"]`);
+
+  // 채팅방 상세 정보와 메시지 불러오기
+  fetch(`/api/chat/room/${chatRoomId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      updateChatRoom(data.detail);
+      updateMessages(data.messages);
+
+      hideLoading();
+      document.getElementById("roomSelected").style.display = "flex";
+
+      // WebSocket 연결 시작
+      connectWebSocket(chatRoomId, userId);
+    })
+    .then(() => {
+      const container = document.querySelector(".room__messages");
+      container.scrollTop = container.scrollHeight; // 최신 메시지로 스크롤
+    })
+    .catch((error) => {
+      console.error("채팅방 로딩 실패:", error);
+      hideLoading();
+      document.getElementById("roomEmptyMessage").style.display = "block";
     });
 }
 
@@ -247,77 +270,140 @@ function updateMessages(messages) {
 }
 
 /**
- * 채팅방 리스트 업데이트
+ * 채팅방 로딩 화면 표시
  */
-function updateChatList(chatRooms) {
-  const listContainer = document.querySelector(".list__room-list");
-  listContainer.innerHTML = ""; // 기존 리스트 제거
+function showLoading(message = "로딩 중입니다...") {
+  const indicator = document.getElementById("loadingIndicator");
+  indicator.querySelector(".loading-message").textContent = message;
+  indicator.style.display = "flex";
+}
 
-  if (chatRooms.length === 0) {
-    listContainer.innerHTML = `
-      <div class="list__empty-message">
-        <p class="empty-message__title">아직 시작된 채팅이 없어요</p>
-        <p class="empty-message__subtitle">
-          거래 상세 페이지에서 <strong>‘채팅하기’ 버튼</strong>을 누르면 <br />
-          대화를 시작할 수 있어요.<br />
-          관심 있는 상품을 먼저 둘러보는 건 어때요?
-        </p>
-        <a href="/trade" class="empty-message__browse-button">거래글 둘러보기</a>
-      </div>
-    `;
-    return;
-  }
+function hideLoading() {
+  const indicator = document.getElementById("loadingIndicator");
+  indicator.style.display = "none";
+}
 
-  chatRooms.forEach((room) => {
-    const item = document.createElement("div");
-    item.classList.add("list__room-list__item");
-    item.setAttribute("onclick", `selectRoom(${room.chatRoomId})`);
+// #endregion
 
-    const content = document.createElement("div");
-    content.classList.add("list__room-list__item-content");
+// #region 거래 관련 코드
+/**
+ * 거래 확정 요청
+ */
+function confirmTrade(chatRoomId, tradeId) {
+  fetch("/api/chat/confirm-trade", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tradeId }),
+  })
+    .then(() => {
+      alert("거래가 확정되었습니다.");
+      selectRoom(chatRoomId); // 채팅방 다시 로딩
+    })
+    .catch((error) => console.error("거래 확정 실패:", error));
+}
 
-    const meta = document.createElement("div");
-    meta.classList.add("list__room-list__item-meta");
+// #endregion
 
-    const nickname = document.createElement("span");
-    nickname.classList.add("list__room-list__item-meta__partner-id");
-    nickname.textContent = room.partnerNickname || "상대방";
+// #region WebSocket 관련 코드
+/**
+ * 메시지 전송
+ */
+let stompClient = null;
 
-    const location = document.createElement("div");
-    location.classList.add("list__room-list__item-meta__location");
-    location.textContent = room.partnerLocation;
+function connectWebSocket(chatRoomId, userId) {
+  const socket = new SockJS("/ws-chat");
+  stompClient = Stomp.over(socket);
+  stompClient.debug = (msg) => console.log("STOMP ▶", msg);
 
-    const time = document.createElement("div");
-    time.classList.add("list__room-list__item-meta__timestamp");
-    time.textContent = room.lastMessageTime;
+  // summary 캐시: roomId → 이전 summary
+  const summaryCache = new Map();
 
-    meta.appendChild(nickname);
-    meta.appendChild(location);
-    meta.appendChild(time);
+  stompClient.connect({}, () => {
+    // 1) 채팅 리스트 요약만 이곳에서 처리
+    stompClient.subscribe("/user/queue/chat-list", ({ body }) => {
+      const summary = JSON.parse(body);
+      const prev = summaryCache.get(summary.chatRoomId);
 
-    if (room.unreadCount > 0) {
-      const badge = document.createElement("span");
-      badge.classList.add("unread-badge");
-      badge.textContent = room.unreadCount;
-      meta.appendChild(badge);
-    }
+      // 이전이 있고, 시간이 바뀌었을 때만 맨 위로 이동
+      const isNew =
+        prev !== undefined && (prev.lastMessageContent !== summary.lastMessageContent || prev.unreadCount !== summary.unreadCount || summary.unreadCount > 0);
 
-    const preview = document.createElement("div");
-    preview.classList.add("list__room-list__item__preview");
-    preview.textContent = room.lastMessageContent || "메시지 미리보기";
+      summaryCache.set(summary.chatRoomId, summary);
+      handleChatListUpdate(summary, isNew);
+    });
 
-    content.appendChild(meta);
-    content.appendChild(preview);
+    // 2) 실제 메시지 수신 구독: 화면 렌더링 + 읽음 전송만
+    stompClient.subscribe(`/topic/chat/${chatRoomId}`, ({ body }) => {
+      const message = JSON.parse(body);
+      replaceOrInsertMessage(message);
 
-    const thumbnail = document.createElement("img");
-    thumbnail.classList.add("thumbnail");
-    thumbnail.src = room.tradeThumbnailUrl || "/assets/icon/default_product_img.svg";
+      // 내가 보내든 받든 항상 ACK → 요약 이벤트 발생
+      sendReadReceipt([message.messageId]);
+    });
 
-    item.appendChild(content);
-    item.appendChild(thumbnail);
+    // 3) 읽음 ACK 이벤트 구독 (채팅창 내 뱃지 업데이트 등)
+    stompClient.subscribe(`/topic/chat/${chatRoomId}/read`, ({ body }) => {
+      handleReadReceipt(JSON.parse(body));
+    });
 
-    listContainer.appendChild(item);
+    // 4) 페이지 진입 시 초기 읽음 처리
+    sendReadReceipt();
   });
+
+  function sendReadReceipt(messageIds) {
+    if (!stompClient?.connected) return;
+    const payload = { chatRoomId, readerId: Number(userId) };
+    if (Array.isArray(messageIds)) payload.messageIds = messageIds;
+    stompClient.send("/app/read", {}, JSON.stringify(payload));
+  }
+}
+
+function sendMessage() {
+  const chatRoomIdRaw = document.querySelector(".room__header__trade-info__status-button")?.dataset.chatRoomId;
+  const senderIdRaw = document.querySelector(".list__header__user-id")?.dataset.userId;
+  const input = document.querySelector(".room__input-area__field");
+  const content = input?.value.trim();
+
+  if (!chatRoomIdRaw || !senderIdRaw || !content || !stompClient?.connected) return;
+
+  const chatRoomId = Number(chatRoomIdRaw);
+  const senderId = Number(senderIdRaw);
+
+  // Optimistic UI - temp 메시지 추가
+  const tempMessage = {
+    chatRoomId,
+    senderId,
+    content,
+    timestamp: new Date(),
+    senderType: "ME",
+    messageType: "TEXT",
+    isRead: false,
+    temp: true,
+  };
+  appendMessage(tempMessage);
+  input.value = "";
+
+  // 실제 메시지 전송
+  const message = {
+    chatRoomId,
+    senderId,
+    senderType: "ME",
+    content,
+    messageType: "TEXT",
+  };
+
+  try {
+    stompClient.send("/app/send", {}, JSON.stringify(message));
+  } catch (err) {
+    console.error("메시지 전송 실패:", err);
+    removeTempMessage(); // 실패 시 temp 메시지 제거
+  }
+}
+
+function removeTempMessage() {
+  const container = document.querySelector(".room__messages");
+  const temp = container.querySelector(".temp-message");
+  if (temp) temp.remove();
 }
 
 /**
@@ -328,46 +414,55 @@ function appendMessage(msg, container = document.querySelector(".room__messages"
   wrapper.classList.add("room__messages__item");
 
   if (msg.temp) wrapper.classList.add("temp-message");
-  if (msg.id) wrapper.setAttribute("data-message-id", msg.id);
+  if (msg.messageId) wrapper.setAttribute("data-message-id", msg.messageId);
 
+  // 날짜 라벨 메시지 처리
   if (msg.messageType === "DATE_LABEL") {
     wrapper.classList.add("room__messages__item--date");
     const label = document.createElement("div");
     label.classList.add("room__messages__item__date-label");
     label.textContent = msg.content;
     wrapper.appendChild(label);
-  } else {
-    const contentWrapper = document.createElement("div");
-    contentWrapper.classList.add("room__messages__item__content");
-
-    const text = document.createElement("div");
-    text.classList.add("room__messages__item__text");
-    text.textContent = msg.content || "메시지 내용";
-
-    const meta = document.createElement("div");
-    meta.classList.add("room__messages__item__meta");
-
-    const time = document.createElement("div");
-    time.classList.add("message-time");
-    time.textContent = formatTime(msg.timestamp) || "";
-
-    if (msg.senderType === "ME") {
-      wrapper.classList.add("room__messages__item--me");
-      const readStatus = document.createElement("span");
-      readStatus.classList.add("message-read-status");
-      readStatus.textContent = msg.isRead ? "읽음" : "전송됨";
-      meta.appendChild(readStatus);
-    } else if (msg.senderType === "PARTNER") {
-      wrapper.classList.add("room__messages__item--partner");
-    } else if (msg.senderType === "CHAT_BOT") {
-      wrapper.classList.add("room__messages__item--chat-bot");
-    }
-
-    meta.appendChild(time);
-    contentWrapper.appendChild(text);
-    contentWrapper.appendChild(meta);
-    wrapper.appendChild(contentWrapper);
+    container.appendChild(wrapper);
+    wrapper.scrollIntoView({ behavior: "smooth" });
+    return;
   }
+
+  // 실제 메시지 렌더링
+  const contentWrapper = document.createElement("div");
+  contentWrapper.classList.add("room__messages__item__content");
+
+  const text = document.createElement("div");
+  text.classList.add("room__messages__item__text");
+  text.textContent = msg.content || "메시지 내용";
+
+  const meta = document.createElement("div");
+  meta.classList.add("room__messages__item__meta");
+
+  const time = document.createElement("div");
+  time.classList.add("message-time");
+  time.textContent = formatTime(msg.timestamp) || "";
+
+  // senderId 기준으로 스타일 결정
+  const currentUserId = document.querySelector(".list__header__user-id")?.dataset.userId;
+  const isMe = Number(msg.senderId) === Number(currentUserId);
+
+  if (isMe) {
+    wrapper.classList.add("room__messages__item--me");
+    const readStatus = document.createElement("span");
+    readStatus.classList.add("message-read-status");
+    readStatus.textContent = msg.isRead ? "읽음" : "전송됨";
+    meta.appendChild(readStatus);
+  } else if (msg.senderType === "CHAT_BOT") {
+    wrapper.classList.add("room__messages__item--chat-bot");
+  } else {
+    wrapper.classList.add("room__messages__item--partner");
+  }
+
+  meta.appendChild(time);
+  contentWrapper.appendChild(text);
+  contentWrapper.appendChild(meta);
+  wrapper.appendChild(contentWrapper);
 
   container.appendChild(wrapper);
   wrapper.scrollIntoView({ behavior: "smooth" });
@@ -385,19 +480,19 @@ function replaceOrInsertMessage(msg) {
 
   // temp 메시지가 없으면 정렬 기준으로 삽입
   const newElement = createMessageElement(msg);
-  const timestamp = new Date(msg.timestamp).getTime();
+  const timestamp = new Date(formatTimestamp(msg.timestamp)).getTime();
 
   const items = Array.from(container.querySelectorAll(".room__messages__item"))
     .filter((el) => el.dataset.messageId)
     .sort((a, b) => {
-      const ta = new Date(a.querySelector(".message-time")?.textContent).getTime();
-      const tb = new Date(b.querySelector(".message-time")?.textContent).getTime();
+      const ta = new Date(formatTimestamp(a.querySelector(".message-time")?.textContent)).getTime();
+      const tb = new Date(formatTimestamp(b.querySelector(".message-time")?.textContent)).getTime();
       return ta - tb;
     });
 
   let inserted = false;
   for (const item of items) {
-    const itemTime = new Date(item.querySelector(".message-time")?.textContent).getTime();
+    const itemTime = new Date(formatTimestamp(item.querySelector(".message-time")?.textContent)).getTime();
     if (timestamp < itemTime) {
       container.insertBefore(newElement, item);
       inserted = true;
@@ -406,16 +501,30 @@ function replaceOrInsertMessage(msg) {
   }
 
   if (!inserted) container.appendChild(newElement);
-  container.scrollTop = container.scrollHeight;
+  newElement.scrollIntoView({ behavior: "smooth" });
+}
+
+function createMessageElement(msg) {
+  const dummyContainer = document.createElement("div");
+  appendMessage(msg, dummyContainer);
+  return dummyContainer.firstChild;
 }
 
 function formatTime(raw) {
+  let date;
+
   if (!raw) return "시간 정보 없음";
 
-  const date = new Date(raw);
-  if (isNaN(date.getTime())) {
+  if (typeof raw === "string") {
+    const cleaned = raw.replace(" ", "T").split(".")[0];
+    date = new Date(cleaned);
+  } else if (raw instanceof Date) {
+    date = raw;
+  } else {
     return raw;
   }
+
+  if (isNaN(date.getTime())) return raw;
 
   const hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, "0");
@@ -425,20 +534,90 @@ function formatTime(raw) {
   return `${isPM ? "오후" : "오전"} ${hour12}:${minutes}`;
 }
 
-function createMessageElement(msg) {
-  // 기존 appendMessage 로직을 재사용 가능하게 분리
-  const dummyContainer = document.createElement("div");
-  appendMessage(msg, dummyContainer);
-  return dummyContainer.firstChild;
+function formatTimestamp(raw) {
+  return raw.replace(" ", "T").split(".")[0];
 }
 
-function showLoading(message = "로딩 중입니다...") {
-  const indicator = document.getElementById("loadingIndicator");
-  indicator.querySelector(".loading-message").textContent = message;
-  indicator.style.display = "flex";
+/**
+ * 읽음 이벤트 수신 시 UI 갱신
+ *  - readerId === 나  → 내가 읽은 것: 채팅 리스트에서 badge 제거
+ *  - readerId !== 나  → 상대가 읽음: 채팅창 안의 메시지에 “읽음” 표시
+ */
+function handleReadReceipt(receipt) {
+  const currentUserId = Number(document.querySelector(".list__header__user-id").dataset.userId);
+
+  // 1) 내가 읽었을 때: 채팅 리스트의 badge 제거
+  if (receipt.readerId === currentUserId) {
+    const listItem = document.querySelector(`.list__room-list__item[data-chat-room-id="${receipt.chatRoomId}"]`);
+    const badge = listItem?.querySelector(".unread-badge");
+    if (badge) badge.remove();
+  }
+
+  // 2) 상대가 읽었을 때: 채팅창 내 메시지 read-status 갱신
+  if (receipt.readerId !== currentUserId) {
+    receipt.messageIds.forEach((mid) => {
+      const statusEl = document.querySelector(`.room__messages__item[data-message-id="${mid}"] .message-read-status`);
+      if (statusEl) statusEl.textContent = "읽음";
+    });
+  }
 }
 
-function hideLoading() {
-  const indicator = document.getElementById("loadingIndicator");
-  indicator.style.display = "none";
+/**
+ * 서버 푸시로 받은 ChatRoomSummaryDto를 바탕으로
+ *  - 이미 존재하는 아이템이면 lastMessage, time, badge만 갱신
+ *  - 없으면 맨 위에 새 아이템 삽입
+ */
+function handleChatListUpdate(summary, isNew = false) {
+  const { chatRoomId, partnerId, partnerNickname, lastMessageContent, lastMessageTime, unreadCount, tradeThumbnailUrl } = summary;
+
+  // 1) 기존 아이템 찾기
+  let item = document.querySelector(`.list__room-list__item[data-chat-room-id="${chatRoomId}"]`);
+
+  if (!item) {
+    // 2) 새 아이템 생성
+    const html = `
+      <div class="list__room-list__item"
+           data-chat-room-id="${chatRoomId}"
+           onclick="selectRoom(${chatRoomId})">
+        <div class="list__room-list__item-content">
+          <div class="list__room-list__item-meta">
+            <span class="list__room-list__item-meta__partner-id">${partnerNickname}</span>
+            <div class="list__room-list__item-meta__location">${room.partnerLocation}</div>
+            <div class="list__room-list__item-meta__timestamp">${lastMessageTime}</div>
+            ${unreadCount > 0 ? `<span class="unread-badge">${unreadCount}</span>` : ``}
+          </div>
+          <div class="list__room-list__item__preview">${lastMessageContent}</div>
+        </div>
+        <img class="thumbnail" src="${tradeThumbnailUrl}" />
+      </div>
+    `;
+    document.querySelector(".list__room-list").insertAdjacentHTML("afterbegin", html);
+    return;
+  }
+
+  // 3) 업데이트: 마지막 메시지·시간
+  item.querySelector(".list__room-list__item__preview").textContent = lastMessageContent;
+  item.querySelector(".list__room-list__item-meta__timestamp").textContent = lastMessageTime;
+
+  // 4) badge 갱신
+  const badge = item.querySelector(".unread-badge");
+  if (unreadCount > 0) {
+    if (badge) {
+      badge.textContent = unreadCount;
+    } else {
+      const span = document.createElement("span");
+      span.classList.add("unread-badge");
+      span.textContent = unreadCount;
+      item.querySelector(".list__room-list__item-meta").append(span);
+    }
+  } else if (badge) {
+    badge.remove();
+  }
+
+  // 5) 아이템을 맨 위로 올리기 (최신 순)
+  if (isNew) {
+    item.parentNode.prepend(item);
+  }
 }
+
+// #endregion

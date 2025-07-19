@@ -2,7 +2,6 @@ package io.github.restart.gmo_danggeun.service.chat.impl;
 
 
 import io.github.restart.gmo_danggeun.dto.chat.ChatMessageDto;
-import io.github.restart.gmo_danggeun.dto.chat.ChatSendRequestDto;
 import io.github.restart.gmo_danggeun.entity.ChatMessage;
 import io.github.restart.gmo_danggeun.entity.ChatRoom;
 import io.github.restart.gmo_danggeun.entity.User;
@@ -41,24 +40,22 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
 
   @Override
-  public ChatMessageDto sendMessage(ChatSendRequestDto request) {
-    // 존재 여부 확인
-    if (!chatRoomRepository.existsById(request.getChatRoomId())) {
+  public ChatMessageDto sendMessage(ChatMessageDto dto) {
+    if (!chatRoomRepository.existsById(dto.getChatRoomId())) {
       throw new IllegalArgumentException("채팅방이 존재하지 않습니다");
     }
 
-    if (!userRepository.existsById(request.getSenderId())) {
+    if (!userRepository.existsById(dto.getSenderId())) {
       throw new IllegalArgumentException("보낸 사람 정보가 없습니다");
     }
 
-    // 프록시 객체로 설정
-    ChatRoom roomRef = entityManager.getReference(ChatRoom.class, request.getChatRoomId());
-    User writerRef = entityManager.getReference(User.class, request.getSenderId());
+    ChatRoom roomRef = entityManager.getReference(ChatRoom.class, dto.getChatRoomId());
+    User writerRef = entityManager.getReference(User.class, dto.getSenderId());
 
     ChatMessage message = new ChatMessage();
     message.setChatRoom(roomRef);
     message.setWriter(writerRef);
-    message.setContent(request.getContent());
+    message.setContent(dto.getContent());
     message.setCreatedAt(LocalDateTime.now());
     message.setReadOrNot(false);
 
@@ -81,6 +78,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     for (ChatMessage msg : messages) {
       LocalDateTime created = msg.getCreatedAt();
+      if (created == null) {
+        continue; // ✅ null 방어
+      }
       LocalDate currentDate = created.toLocalDate();
 
       if (!currentDate.equals(previousDate)) {
@@ -99,6 +99,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
   @Transactional
   public void markMessagesAsRead(Long chatRoomId, Long userId) {
     chatMessageRepository.markUnreadMessagesAsRead(chatRoomId, userId);
+  }
+
+  @Override
+  public List<Long> getLastReadMessageIds(Long chatRoomId, Long readerId) {
+    return chatMessageRepository.findMessageIdsByChatRoomIdAndReader(
+        chatRoomId, readerId
+    );
   }
 
 }

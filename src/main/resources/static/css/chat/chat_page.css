@@ -33,8 +33,12 @@ body {
 }
 
 .list__header__user-id {
+  max-width: 12rem;
   font-size: 1.4rem;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .list__header__toggle {
@@ -126,8 +130,12 @@ input:checked + .list__header__toggle-slider::before {
 }
 
 .list__room-list__item-meta__partner-id {
+  max-width: 9rem;
   font-size: 1.2rem;
   font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .list__room-list__item-meta__location,

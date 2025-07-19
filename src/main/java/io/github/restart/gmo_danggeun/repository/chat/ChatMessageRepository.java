@@ -14,7 +14,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
   // 채팅방의 메시지를 생성 시간 기준으로 정렬하여 조회
   @Query("SELECT cm FROM ChatMessage cm WHERE cm.chatRoom.id = :chatRoomId ORDER BY cm.createdAt")
   List<ChatMessage> findMessagesByChatRoomId(@Param("chatRoomId") Long chatRoomId);
-
+// TODO: 페이지네이션 도입
 
   // 읽지 않은 메시지를 읽음 처리 (작성자가 아닌 유저 기준)
   @Modifying
@@ -27,5 +27,17 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
       """)
   void markUnreadMessagesAsRead(@Param("chatRoomId") Long chatRoomId,
       @Param("userId") Long userId);
+
+  @Query("""
+        SELECT m.id
+          FROM ChatMessage m
+         WHERE m.chatRoom.id = :chatRoomId
+           AND m.writer.id <> :readerId
+           AND m.readOrNot = true
+      """)
+  List<Long> findMessageIdsByChatRoomIdAndReader(
+      @Param("chatRoomId") Long chatRoomId,
+      @Param("readerId") Long readerId
+  );
 }
 

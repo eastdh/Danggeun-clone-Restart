@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class ChatMessageDto {
 
+  private Long chatRoomId;
   private Long messageId;
   private Long senderId;
   private String senderType; // ME, PARTNER, CHAT_BOT, DATE_LABEL
