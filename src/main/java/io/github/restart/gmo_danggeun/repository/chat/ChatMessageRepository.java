@@ -27,5 +27,17 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
       """)
   void markUnreadMessagesAsRead(@Param("chatRoomId") Long chatRoomId,
       @Param("userId") Long userId);
+
+  @Query("""
+        SELECT m.id
+          FROM ChatMessage m
+         WHERE m.chatRoom.id = :chatRoomId
+           AND m.writer.id <> :readerId
+           AND m.readOrNot = true
+      """)
+  List<Long> findMessageIdsByChatRoomIdAndReader(
+      @Param("chatRoomId") Long chatRoomId,
+      @Param("readerId") Long readerId
+  );
 }
 

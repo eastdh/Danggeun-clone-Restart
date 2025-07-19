@@ -149,22 +149,6 @@ function selectRoom(chatRoomId) {
 
   const roomElement = document.querySelector(`.list__room-list__item[onclick="selectRoom(${chatRoomId})"]`);
 
-  // unread-badge가 있으면 읽음 처리 요청
-  if (roomElement?.querySelector(".unread-badge")) {
-    fetch("/api/chat/message/read", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chatRoomId, userId }),
-    })
-      .then(() => {
-        // 읽음 처리 후 UI에서 뱃지 제거
-        const badge = roomElement.querySelector(".unread-badge");
-        if (badge) badge.remove();
-        console.log("메시지 읽음 처리 완료");
-      })
-      .catch((error) => console.error("메시지 읽음 처리 실패:", error));
-  }
-
   // 채팅방 상세 정보와 메시지 불러오기
   fetch(`/api/chat/room/${chatRoomId}`)
     .then((response) => response.json())
@@ -331,10 +315,34 @@ function connectWebSocket(chatRoomId, userId) {
   stompClient.debug = () => {}; // 로그 비활성화
 
   stompClient.connect({}, () => {
+    // 메시지 수신
     stompClient.subscribe(`/topic/chat/${chatRoomId}`, (msg) => {
       const message = JSON.parse(msg.body);
       replaceOrInsertMessage(message); // temp 메시지 교체 또는 삽입
+
+      // 상대방이 보낸 메시지라면
+      if (msg.senderId !== Number(userId)) {
+        // 즉시 읽음 요청 전송
+        stompClient.send(
+          "/app/read",
+          {},
+          JSON.stringify({
+            chatRoomId,
+            readerId: Number(userId),
+            messageIds: [msg.messageId],
+          })
+        );
+      }
     });
+
+    // 읽음 이벤트 수신
+    stompClient.subscribe(`/topic/chat/${chatRoomId}/read`, ({ body }) => {
+      const receipt = JSON.parse(body);
+      handleReadReceipt(receipt);
+    });
+
+    // 읽음 처리 요청
+    stompClient.send("/app/read", {}, JSON.stringify({ chatRoomId, readerId: Number(userId) }));
   });
 }
 
@@ -516,6 +524,30 @@ function formatTime(raw) {
 
 function formatTimestamp(raw) {
   return raw.replace(" ", "T").split(".")[0];
+}
+
+/**
+ * 읽음 이벤트 수신 시 UI 갱신
+ *  - readerId === 나  → 내가 읽은 것: 채팅 리스트에서 badge 제거
+ *  - readerId !== 나  → 상대가 읽음: 채팅창 안의 메시지에 “읽음” 표시
+ */
+function handleReadReceipt(receipt) {
+  const currentUserId = Number(document.querySelector(".list__header__user-id").dataset.userId);
+
+  // 1) 내가 읽었을 때: 채팅 리스트의 badge 제거
+  if (receipt.readerId === currentUserId) {
+    const listItem = document.querySelector(`.list__room-list__item[data-chat-room-id="${receipt.chatRoomId}"]`);
+    const badge = listItem?.querySelector(".unread-badge");
+    if (badge) badge.remove();
+  }
+
+  // 2) 상대가 읽었을 때: 채팅창 내 메시지 read-status 갱신
+  if (receipt.readerId !== currentUserId) {
+    receipt.messageIds.forEach((mid) => {
+      const statusEl = document.querySelector(`.room__messages__item[data-message-id="${mid}"] .message-read-status`);
+      if (statusEl) statusEl.textContent = "읽음";
+    });
+  }
 }
 
 // #endregion

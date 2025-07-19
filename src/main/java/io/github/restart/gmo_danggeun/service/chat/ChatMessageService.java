@@ -11,4 +11,6 @@ public interface ChatMessageService {
 
   void markMessagesAsRead(Long chatRoomId, Long userId);
 
+  List<Long> getLastReadMessageIds(Long chatRoomId, Long readerId);
+
 }

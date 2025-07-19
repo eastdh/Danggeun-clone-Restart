@@ -101,4 +101,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     chatMessageRepository.markUnreadMessagesAsRead(chatRoomId, userId);
   }
 
+  @Override
+  public List<Long> getLastReadMessageIds(Long chatRoomId, Long readerId) {
+    return chatMessageRepository.findMessageIdsByChatRoomIdAndReader(
+        chatRoomId, readerId
+    );
+  }
+
 }
