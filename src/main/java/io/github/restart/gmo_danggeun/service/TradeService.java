@@ -1,6 +1,7 @@
 package io.github.restart.gmo_danggeun.service;
 
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
+import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
@@ -31,7 +32,7 @@ public interface TradeService {
 
   Trade save(User user, TradeDto tradeDto, Category category);
 
-  Trade edit(Trade trade, TradeDto tradeDto, Category category);
+  Trade edit(Trade trade, TradeEditDto tradeEditDto, Category category);
 
   void delete(Long id);
 

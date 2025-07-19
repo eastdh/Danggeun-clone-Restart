@@ -2,42 +2,45 @@ package io.github.restart.gmo_danggeun.dto.trade;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
-public class TradeDto {
-  @NotNull(message = "카테고리는 필수입니다.")
+public class TradeEditDto {
+  @NotNull
+  private Long id;
+
   private Long categoryId;
 
-  @NotBlank(message = "제목은 필수입니다.")
   @Size(min = 3, max = 20, message = "제목은 3자 이상 20자 이하여야 합니다.")
   private String title;
 
-  @NotBlank(message = "설명은 필수입니다.")
   @Size(min = 10, max = 200, message = "설명은 10자 이상 200자 이하여야 합니다.")
   private String description;
 
   @Size(max = 50, message = "거래 희망 장소는 50자 이하여야 합니다.")
   private String preferredLocation;
 
-  @NotNull(message = "가격은 필수입니다.")
   @Min(value = 0, message = "가격은 0원 이상이어야 합니다.")
   @Max(value = 999999999, message = "가격은 999,999,999원 이하여야 합니다.")
   private Integer price;
 
-  @NotNull(message = "가격 제안 여부를 선택해주세요.")
   private Boolean offerable;
 
-  @Pattern(regexp = "^(available|completed|reserved)$", message = "상태는 판매중, 거래오나료, 예약중만 가능합니다.")
+  @Pattern(regexp = "^(available|completed|reserved)$", message = "상태는 판매중, 거래완료, 예약중만 가능합니다.")
   private String status;
+
+  private Boolean hidden;
 
   private List<MultipartFile> files;
 
-  public TradeDto() {
+  public TradeEditDto() {
+  }
+
+  public Long getId() {
+    return id;
   }
 
   public Long getCategoryId() {
@@ -68,8 +71,16 @@ public class TradeDto {
     return status;
   }
 
+  public Boolean getHidden() {
+    return hidden;
+  }
+
   public List<MultipartFile> getFiles() {
     return files;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public void setCategoryId(Long categoryId) {
@@ -98,6 +109,10 @@ public class TradeDto {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public void setHidden(Boolean hidden) {
+    this.hidden = hidden;
   }
 
   public void setFiles(List<MultipartFile> files) {

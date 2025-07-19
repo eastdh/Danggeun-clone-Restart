@@ -1,13 +1,13 @@
 package io.github.restart.gmo_danggeun.service.impl;
 
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
+import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
-import io.github.restart.gmo_danggeun.repository.LikeRepository;
 import io.github.restart.gmo_danggeun.repository.TradeRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.CategoryRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.TradeDetailRepository;
@@ -35,18 +35,16 @@ public class TradeServiceImpl implements TradeService {
   private final TradeDetailRepository tradeDetailRepository;
   private final TradeImageListRepository tradeImageListRepository;
   private final CategoryRepository categoryRepository;
-  private final LikeRepository likeRepository;
 
   public TradeServiceImpl(TradeRepository tradeRepository, TradeListRepository tradeListRepository,
       TradeDetailRepository tradeDetailRepository,
       TradeImageListRepository tradeImageListRepository,
-      CategoryRepository categoryRepository, LikeRepository likeRepository) {
+      CategoryRepository categoryRepository) {
     this.tradeRepository = tradeRepository;
     this.tradeListRepository = tradeListRepository;
     this.tradeDetailRepository = tradeDetailRepository;
     this.tradeImageListRepository = tradeImageListRepository;
     this.categoryRepository = categoryRepository;
-    this.likeRepository = likeRepository;
   }
 
   @Override
@@ -61,9 +59,15 @@ public class TradeServiceImpl implements TradeService {
       String updateTerm = DateUtil.getMaxDateTerm(trade.getUpdateTerm());
       String bumpUpdateTerm = DateUtil.getMaxDateTerm(trade.getBumpUpdateTerm());
 
-      TradeList newTrade = new TradeList(trade.getTradeId(), trade.getTitle(), trade.getPrice(), trade.getStatus(), trade.isHidden(), trade.getCreatedAt(),
-          trade.getUpdatedAt(), trade.getBumpUpdatedAt(), updateTerm, bumpUpdateTerm, trade.getUserId(), trade.getLocation(), trade.getCategoryId(),
-          trade.getCategoryName(), trade.getImgUrl());
+      TradeList newTrade = new TradeList(
+          trade.getTradeId(), trade.getTitle(),
+          trade.getPrice(), trade.getStatus(),
+          trade.isHidden(), trade.getCreatedAt(),
+          trade.getUpdatedAt(), trade.getBumpUpdatedAt(),
+          updateTerm, bumpUpdateTerm,
+          trade.getUserId(), trade.getLocation(),
+          trade.getCategoryId(), trade.getCategoryName(),
+          trade.getImgUrl());
       list.add(newTrade);
     });
 
@@ -72,7 +76,21 @@ public class TradeServiceImpl implements TradeService {
 
   @Override
   public Optional<Trade> findById(Long id) {
-    return tradeRepository.findById(id);
+    Optional<Trade> optionalTrade = tradeRepository.findById(id);
+    if (!optionalTrade.isEmpty()) {
+      Trade trade = optionalTrade.get();
+      trade.setTitle(
+          SecurityUtil.htmlUnescape(trade.getTitle())
+      );
+      trade.setDescription(
+          SecurityUtil.htmlUnescape(trade.getDescription())
+      );
+      if (trade.getPreferredLocation() != null)
+        trade.setPreferredLocation(
+            SecurityUtil.htmlUnescape(trade.getPreferredLocation())
+        );
+    }
+    return optionalTrade;
   }
 
   @Override
@@ -128,9 +146,9 @@ public class TradeServiceImpl implements TradeService {
     preferredLocation = SecurityUtil.sanitizeInput(preferredLocation);
 
     Trade trade = new Trade();
-    trade.setTitle(title);
     trade.setUser(user);
     trade.setCategory(category);
+    trade.setTitle(title);
     trade.setDescription(description);
     trade.setPreferredLocation(preferredLocation);
     trade.setPrice(tradeDto.getPrice());
@@ -146,24 +164,33 @@ public class TradeServiceImpl implements TradeService {
 
   @Override
   @Transactional
-  public Trade edit(Trade trade, TradeDto tradeDto, Category category) {
-    String title = tradeDto.getTitle();
-    String description = tradeDto.getDescription();
-    String preferredLocation = tradeDto.getPreferredLocation();
+  public Trade edit(Trade trade, TradeEditDto tradeEditDto, Category category) {
+    String title = tradeEditDto.getTitle() != null ?
+        SecurityUtil.sanitizeInput(tradeEditDto.getTitle()) : null;
+    String description = tradeEditDto.getDescription() != null ?
+        SecurityUtil.sanitizeInput(tradeEditDto.getDescription()) : null;
+    String preferredLocation = tradeEditDto.getPreferredLocation() != null ?
+        SecurityUtil.sanitizeInput(tradeEditDto.getPreferredLocation()) : null;
 
-    title = SecurityUtil.sanitizeInput(title);
-    description = SecurityUtil.sanitizeInput(description);
-    preferredLocation = SecurityUtil.sanitizeInput(preferredLocation);
+    if (category != null)
+      trade.setCategory(category);
+    if (title != null && !title.isBlank())
+      trade.setTitle(title);
+    if (description != null && !description.isBlank())
+      trade.setDescription(description);
+    if (preferredLocation != null && !preferredLocation.isBlank())
+      trade.setPreferredLocation(preferredLocation);
+    if (tradeEditDto.getPrice() != null)
+      trade.setPrice(tradeEditDto.getPrice());
+    if (tradeEditDto.getOfferable() != null
+        && tradeEditDto.getOfferable().equals(trade.getOfferable()))
+      trade.setOfferable(tradeEditDto.getOfferable());
+    if (tradeEditDto.getStatus() != null)
+      trade.setStatus(tradeEditDto.getStatus());
+    if (tradeEditDto.getHidden() != null
+        && tradeEditDto.getHidden().equals(trade.getHidden()))
+      trade.setHidden(tradeEditDto.getHidden());
 
-    trade.setCategory(category);
-    trade.setTitle(title);
-    trade.setDescription(description);
-    if (!preferredLocation.isBlank()) trade.setPreferredLocation(preferredLocation);
-    trade.setPrice(tradeDto.getPrice());
-    trade.setOfferable(tradeDto.getOfferable());
-    if (tradeDto.getBumpCount() != null) trade.setBumpCount(tradeDto.getBumpCount());
-    if (tradeDto.getStatus() != null) trade.setStatus(tradeDto.getStatus());
-    if (tradeDto.getHidden() != null) trade.setHidden(tradeDto.getHidden());
     trade.setUpdatedAt(LocalDateTime.now());
 
     return tradeRepository.save(trade);

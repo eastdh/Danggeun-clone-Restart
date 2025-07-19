@@ -10,7 +10,7 @@
   <link rel="stylesheet" th:href="@{/css/common/footer.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade_write.css}">
-  <title th:text="${tradeDto.title} + ' 편집 | GMO당근 중고거래'">거래물품 편집 | GMO당근 중고거래</title>
+  <title th:text="${tradeEditDto.title} + ' 편집 | GMO당근 중고거래'">거래물품 편집 | GMO당근 중고거래</title>
 </head>
 <body>
 <header th:replace="~{fragments/header}"></header>
@@ -19,8 +19,8 @@
     <div class="title-box">
       <h1>내 거래글 수정</h1>
     </div>
-    <form th:action="@{/trade/{id}/edit(id=${tradeDto.id})}" method="post"
-          th:object="${tradeDto}"
+    <form th:action="@{/trade/{id}/edit(id=${tradeEditDto.id})}" method="post"
+          th:object="${tradeEditDto}"
           enctype="multipart/form-data">
       <div class="trade-profile">
         <div class="image-input-box">
