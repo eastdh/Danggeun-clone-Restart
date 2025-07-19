@@ -2,13 +2,12 @@ package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.dto.chat.ChatFilterRequestDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatMessageDto;
-import io.github.restart.gmo_danggeun.dto.chat.ChatPageResponseDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomDetailDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomSummaryDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatSendRequestDto;
 import io.github.restart.gmo_danggeun.dto.chat.TradeConfirmRequestDto;
 import io.github.restart.gmo_danggeun.security.CustomUserDetails;
-import io.github.restart.gmo_danggeun.service.TradeService;
+import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.service.chat.ChatMessageService;
 import io.github.restart.gmo_danggeun.service.chat.ChatRoomService;
 import io.github.restart.gmo_danggeun.service.chat.ChatService;

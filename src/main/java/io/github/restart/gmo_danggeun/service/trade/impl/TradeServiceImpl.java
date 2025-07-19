@@ -1,4 +1,4 @@
-package io.github.restart.gmo_danggeun.service.impl;
+package io.github.restart.gmo_danggeun.service.trade.impl;
 
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
@@ -9,11 +9,10 @@ import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.repository.TradeRepository;
-import io.github.restart.gmo_danggeun.repository.readonly.CategoryRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.TradeDetailRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.TradeImageListRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.TradeListRepository;
-import io.github.restart.gmo_danggeun.service.TradeService;
+import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.util.DateUtil;
 import io.github.restart.gmo_danggeun.util.SecurityUtil;
 import java.time.LocalDateTime;
@@ -34,17 +33,14 @@ public class TradeServiceImpl implements TradeService {
   private final TradeListRepository tradeListRepository;
   private final TradeDetailRepository tradeDetailRepository;
   private final TradeImageListRepository tradeImageListRepository;
-  private final CategoryRepository categoryRepository;
 
   public TradeServiceImpl(TradeRepository tradeRepository, TradeListRepository tradeListRepository,
       TradeDetailRepository tradeDetailRepository,
-      TradeImageListRepository tradeImageListRepository,
-      CategoryRepository categoryRepository) {
+      TradeImageListRepository tradeImageListRepository) {
     this.tradeRepository = tradeRepository;
     this.tradeListRepository = tradeListRepository;
     this.tradeDetailRepository = tradeDetailRepository;
     this.tradeImageListRepository = tradeImageListRepository;
-    this.categoryRepository = categoryRepository;
   }
 
   @Override
@@ -122,16 +118,6 @@ public class TradeServiceImpl implements TradeService {
   @Override
   public Page<TradeList> findAllByUserId(Long userId, Pageable pageable) {
     return tradeListRepository.findAllByUserId(userId, pageable);
-  }
-
-  @Override
-  public Optional<Category> findCategoryById(Long id) {
-    return categoryRepository.findById(id);
-  }
-
-  @Override
-  public List<Category> findAllCategories() {
-    return categoryRepository.findAll();
   }
 
   @Override

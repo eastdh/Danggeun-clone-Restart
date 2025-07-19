@@ -11,7 +11,7 @@ import io.github.restart.gmo_danggeun.entity.User;
 import io.github.restart.gmo_danggeun.repository.UserRepository;
 import io.github.restart.gmo_danggeun.repository.chat.ChatRoomRepository;
 import io.github.restart.gmo_danggeun.repository.chat.ChatUserRepository;
-import io.github.restart.gmo_danggeun.service.TradeService;
+import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.service.chat.ChatMessageService;
 import io.github.restart.gmo_danggeun.service.chat.ChatRoomService;
 import io.github.restart.gmo_danggeun.service.chat.ChatService;

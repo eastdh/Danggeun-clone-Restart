@@ -1,4 +1,4 @@
-package io.github.restart.gmo_danggeun.service;
+package io.github.restart.gmo_danggeun.service.trade;
 
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
@@ -25,10 +25,6 @@ public interface TradeService {
   List<TradeImageList> findAllImageById(Long id);
 
   Page<TradeList> findAllByUserId(Long userId, Pageable pageable);
-
-  Optional<Category> findCategoryById(Long id);
-
-  List<Category> findAllCategories();
 
   Trade save(User user, TradeDto tradeDto, Category category);
 
