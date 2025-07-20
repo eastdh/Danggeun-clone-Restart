@@ -1,0 +1,163 @@
+// resources/static/js/chat/managers/chat_room_manager.js
+import { API_PATHS, SENDER_TYPES, WS } from "../constants.js";
+
+/**
+ * ChatRoomManager
+ * @param {ChatStore} store
+ * @param {ApiClient} api
+ * @param {WebSocketManager} wsManager
+ * @param {Renderer} renderer
+ */
+export class ChatRoomManager {
+  constructor(store, api, wsManager, renderer) {
+    this.store = store;
+    this.api = api;
+    this.wsManager = wsManager;
+    this.renderer = renderer;
+
+    this._bindStoreEvents();
+    this._bindUIEvents();
+    this._bindWsEvents();
+  }
+
+  _bindStoreEvents() {
+    // 방이 바뀌면 상세 + 메시지 로드
+    this.store.addEventListener("currentRoomChanged", async (e) => {
+      const roomId = e.detail;
+      this.renderer.showLoading("채팅방을 불러오는 중입니다...");
+      this.renderer.hideRoom();
+      try {
+        await this._loadRoomDetail(roomId);
+        this._connectWebSocket(roomId);
+        this.renderer.showRoom();
+      } catch {
+        this.renderer.showEmptyRoom();
+      } finally {
+        this.renderer.hideLoading();
+      }
+    });
+
+    // TODO: 중복 이벤트 리스너 제거 필요
+    // // 상세 DTO 수신 시 렌더
+    // this.store.addEventListener("roomDetailChanged", (e) => {
+    //   this.renderer._renderRoomDetail(e.detail);
+    // });
+
+    // // 메시지 목록 수신 시 렌더
+    // this.store.addEventListener("messagesChanged", (e) => {
+    //   this.renderer._renderMessages(e.detail);
+    // });
+
+    // // 단일 메시지 추가
+    // this.store.addEventListener("messageAppended", (e) => {
+    //   this.renderer._appendMessage(e.detail);
+    // });
+  }
+
+  _bindUIEvents() {
+    // 전송 버튼
+    this.renderer.sendButton.addEventListener("click", () => this._handleSend());
+    // Enter 키
+    this.renderer.inputField.addEventListener("keydown", (evt) => {
+      if (evt.key === "Enter" && !evt.shiftKey && !evt.ctrlKey) {
+        evt.preventDefault();
+        this._handleSend();
+      }
+    });
+    // 거래 확정 버튼
+    this.renderer.tradeStatusBtn.addEventListener("click", () => {
+      const tradeId = Number(this.renderer.tradeStatusBtn.dataset.tradeId);
+      this.api
+        .confirmTrade(tradeId)
+        .then(() => this.store.setCurrentRoom(this.store.currentRoomId))
+        .catch(() => {
+          /* Toast 알림 */
+        });
+    });
+  }
+
+  _bindWsEvents() {
+    // 리스트 요약 업데이트
+    this.wsManager.addEventListener("chatListUpdate", (e) => {
+      const { summary, isNew } = e.detail;
+      this.store.updateChatRoomSummary(summary, isNew);
+    });
+
+    // 새 메시지 수신
+    this.wsManager.addEventListener("chatMessage", (e) => {
+      const msg = e.detail;
+      console.log("[WS] chatMessage 수신 →", msg);
+
+      if (msg.senderId === this.store.userId) {
+        if (msg.tempId) {
+          console.log(`[OPTIMISTIC] tempId=${msg.tempId} 대체 시도`, msg);
+          this.store.replaceMessage(msg.tempId, {
+            ...msg,
+            senderType: SENDER_TYPES.ME,
+            timestamp: msg.timestamp,
+          });
+          console.log("[STORE] replaceMessage 완료 → messages=", this.store.messages);
+        } else {
+          this.store.removeTempMessage();
+          this.store.appendMessage({
+            ...msg,
+            senderType: SENDER_TYPES.ME,
+            timestamp: msg.timestamp,
+          });
+        }
+      } else {
+        console.log("[PARTNER] appendMessage", msg);
+        this.store.appendMessage({
+          ...msg,
+          senderType: SENDER_TYPES.PARTNER,
+          timestamp: msg.timestamp,
+        });
+      }
+      console.log("[STORE] appendMessage 완료 → messages=", this.store.messages);
+    });
+
+    // 읽음 ACK 수신
+    this.wsManager.addEventListener("readReceipt", (e) => {
+      this.store.markMessagesAsRead(e.detail.messageIds);
+    });
+  }
+
+  async _loadRoomDetail(roomId) {
+    try {
+      const { detail, messages } = await this.api.getChatRoomDetail(roomId);
+      this.store.setCurrentRoomDetail(detail);
+      this.store.setMessages(messages);
+    } catch (err) {
+      // error 처리
+    }
+  }
+
+  _connectWebSocket(roomId) {
+    const userId = this.store.userId;
+    this.wsManager.connect(roomId, userId);
+    // 입장 시점 읽음 처리도 wsManager에서 진행
+  }
+
+  _handleSend() {
+    const content = this.renderer.inputField.value.trim();
+    if (!content) return;
+
+    const tempId = `tmp-${Date.now()}`;
+
+    const payload = {
+      chatRoomId: this.store.currentRoomId,
+      senderId: this.store.userId,
+      content,
+      messageType: "TEXT",
+      senderType: SENDER_TYPES.ME,
+      tempId,
+    };
+
+    // Optimistic UI
+    this.store.appendMessage({ ...payload, timestamp: Date.now(), senderType: SENDER_TYPES.ME, isRead: false, tempId });
+
+    // 전송
+    this.wsManager.sendMessage(payload);
+    this.renderer.inputField.value = "";
+  }
+}

@@ -8,10 +8,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "chat_user")
 @IdClass(ChatUserId.class)
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChatUser {
 
   @Id
@@ -23,30 +29,6 @@ public class ChatUser {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
-
-  public ChatUser() {
-  }
-
-  public ChatUser(ChatRoom chatRoom, User user) {
-    this.chatRoom = chatRoom;
-    this.user = user;
-  }
-
-  public ChatRoom getChatRoom() {
-    return chatRoom;
-  }
-
-  public void setChatRoom(ChatRoom chatRoom) {
-    this.chatRoom = chatRoom;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
 
   @Override
   public boolean equals(Object o) {

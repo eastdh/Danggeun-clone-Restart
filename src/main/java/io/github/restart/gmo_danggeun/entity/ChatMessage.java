@@ -11,9 +11,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "chat_message")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatMessage {
 
   @Id
@@ -36,68 +42,6 @@ public class ChatMessage {
 
   @Column(name = "read_or_not", nullable = false)
   private Boolean readOrNot;
-
-  public ChatMessage() {
-  }
-
-  public ChatMessage(Long id, ChatRoom chatRoom, User writer, String content, LocalDateTime createdAt,
-      Boolean readOrNot) {
-    this.id = id;
-    this.chatRoom = chatRoom;
-    this.writer = writer;
-    this.content = content;
-    this.createdAt = createdAt;
-    this.readOrNot = readOrNot;
-  }
-
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public ChatRoom getChatRoom() {
-    return chatRoom;
-  }
-
-  public void setChatRoom(ChatRoom chatRoom) {
-    this.chatRoom = chatRoom;
-  }
-
-  public User getWriter() {
-    return writer;
-  }
-
-  public void setWriter(User writer) {
-    this.writer = writer;
-  }
-
-  public String getContent() {
-    return content;
-  }
-
-  public void setContent(String content) {
-    this.content = content;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public Boolean getReadOrNot() {
-    return readOrNot;
-  }
-
-  public void setReadOrNot(Boolean readOrNot) {
-    this.readOrNot = readOrNot;
-  }
 
   @Override
   public boolean equals(Object o) {
