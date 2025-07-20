@@ -36,4 +36,23 @@ function selectTradeType() {
   });
 }
 
-selectTradeType();
+function setSelectedOption() {
+  const customSelect = document.querySelectorAll(".custom-select")[0];
+  if (customSelect === null || customSelect === undefined) return;
+
+  const selectEl = customSelect.querySelector("select");
+  const selectedText = selectEl.options[selectEl.selectedIndex].textContent;
+  const selectItems = document.querySelector(".select-items");
+
+  selectItems.querySelectorAll("div").forEach((el) => {
+    if (el.textContent === selectedText) {
+      el.classList.add("same-as-selected");
+      return;
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  selectTradeType();
+  setSelectedOption();
+});

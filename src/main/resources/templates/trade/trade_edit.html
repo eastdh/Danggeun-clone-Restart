@@ -37,11 +37,18 @@
           <div class="trade-category-box">
             <label>카테고리</label>
             <div class="custom-select">
-              <select class="categories" th:field="*{categoryId}">
+              <select class="categories"
+                      th:field="*{categoryId}"
+                      th:data-default="*{categoryId}"
+              >
                 <option value="" disabled selected>카테고리 선택</option>
-                <th:block th:each="item: ${categories}">
-                  <option th:value="${item.id}" th:text="${item.name}"></option>
-                </th:block>
+                  <option
+                      th:each="item: ${categories}"
+                      th:value="${item.id}"
+                      th:text="${item.name}"
+                      th:selected="${item.id == tradeEditDto.categoryId}"
+                  >
+                  </option>
               </select>
             </div>
             <div th:if="${#fields.hasErrors('categoryId')}" class="error">
@@ -129,7 +136,7 @@
     </form>
   </section>
 </main>
-<script th:src="@{/js/trade/trade_write.js}"></script>
+<script type="module" th:src="@{/js/trade/trade_write.js}"></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script src="/js/common/header.js"></script>
 </body>
