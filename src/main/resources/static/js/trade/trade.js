@@ -111,8 +111,10 @@ function makeFilterRemoveButton() {
   });
 }
 
-makeStatusFilterLink();
-makeCategoryFilterLink();
-makePriceFilterLink();
-makePriceRangeFilterButton();
-makeFilterRemoveButton();
+document.addEventListener("DOMContentLoaded", () => {
+  makeStatusFilterLink();
+  makeCategoryFilterLink();
+  makePriceFilterLink();
+  makePriceRangeFilterButton();
+  makeFilterRemoveButton();
+});

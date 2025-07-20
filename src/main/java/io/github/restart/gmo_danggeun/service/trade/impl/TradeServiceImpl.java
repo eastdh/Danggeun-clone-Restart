@@ -212,7 +212,8 @@ public class TradeServiceImpl implements TradeService {
     Trade trade = tradeRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
 
-    if (TradeConfig.isCorrectStatus(status)) {
+    if (!trade.getStatus().equalsIgnoreCase("completed")
+        && TradeConfig.isCorrectStatus(status)) {
       trade.setStatus(status.toLowerCase());
       tradeRepository.save(trade);
       result = "success";

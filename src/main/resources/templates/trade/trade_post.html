@@ -123,7 +123,7 @@
                   <span
                       class="status-text"
                       th:unless="${#strings.equals(trade.status, 'available')}"
-                      th:text="${statusMap.get(trade.status.toUpperCase())}"></span>
+                      th:text="${statusText}"></span>
                   <span th:text="*{title}">거래글 제목</span>
                 </h1>
               </div>
@@ -163,28 +163,40 @@
           </div>
           <th:block th:if="${owner != null}">
             <div class="action-button-wrap owner">
-              <button type="button" id="status-button">상태 변경</button>
-              <div id="status-alter-modal" class="modal hidden">
-                <div class="modal-content">
-                  <h3>거래글 상태 변경</h3>
-                  <br>
-                  <form id="trade-status-form">
-                    <label>상태</label>
-                    <select id="status"
-                            th:data-trade-id="*{tradeId}"
-                            th:field="*{status}">
-                      <option
-                          th:each="entry : ${statusMap}"
-                          th:value="${entry.key}"
-                          th:text="${entry.value}"></option>
-                    </select>
-                    <div class="modal-actions">
-                      <button type="submit">저장</button>
-                      <button type="button" id="cancel-button">취소</button>
-                    </div>
-                  </form>
+              <th:block th:if="${!#strings.equals(trade.status, 'completed')}">
+                <button type="button" id="status-button">상태 변경</button>
+                <div id="status-alter-modal"
+                     class="modal hidden">
+                  <div class="modal-content">
+                    <h3>거래글 상태 변경</h3>
+                    <form id="trade-status-form">
+                      <div class="status-select-box">
+                        <label
+                            for="status"
+                            th:text="'현재 상태 : ' + ${statusText}">상태</label>
+                        <div class="custom-select">
+                          <select id="status"
+                                  th:data-trade-id="*{tradeId}"
+                                  th:field="*{status}">
+                            <option value="" disabled selected>상태 선택</option>
+                            <option
+                                th:each="entry : ${statusMap}"
+                                th:if="${!#strings.equals(entry.key, trade.status.toUpperCase())}"
+                                th:value="${entry.key}"
+                                th:text="${entry.value}"
+                            ></option>
+                          </select>
+                        </div>
+                        <span class="status-warning">⚠ 거래 완료 선택 시 상태를 다시 변경할 수 없습니다.</span>
+                      </div>
+                      <div class="modal-actions">
+                        <button type="submit">저장</button>
+                        <button type="button" id="cancel-button">취소</button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-              </div>
+              </th:block>
               <a th:href="@{/trade/{id}/edit(id=${id})}">수정하기</a>
               <button type="button">삭제하기</button>
             </div>
@@ -239,7 +251,7 @@
   </div>
 </main>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
-<script src="/js/trade/trade_post.js"></script>
+<script type="module" src="/js/trade/trade_post.js"></script>
 <script src="/js/common/header.js"></script>
 </body>
 </html>

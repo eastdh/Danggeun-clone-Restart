@@ -131,7 +131,11 @@ public class TradeController {
         model.addAttribute("owner", "true");
       }
 
+      TradeConfig.Status statusEnum = TradeConfig.Status.compareName(tradeDetail.getStatus());
+      String statusText = TradeConfig.getStatusMap().get(statusEnum);
+
       model.addAttribute("trade", tradeDetail);
+      model.addAttribute("statusText", statusText);
       model.addAttribute("images", images);
       model.addAttribute("emojiFileName", emojiFileName);
       model.addAttribute("userTrades", sellerTrades);
