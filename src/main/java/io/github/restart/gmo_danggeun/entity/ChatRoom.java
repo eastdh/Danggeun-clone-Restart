@@ -8,9 +8,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "chat_room")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatRoom {
 
   @Id
@@ -20,30 +26,6 @@ public class ChatRoom {
   @ManyToOne
   @JoinColumn(name = "trade_id", nullable = false)
   private Trade trade;
-
-  public ChatRoom() {
-  }
-
-  public ChatRoom(Long id, Trade trade) {
-    this.id = id;
-    this.trade = trade;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Trade getTrade() {
-    return trade;
-  }
-
-  public void setTrade(Trade trade) {
-    this.trade = trade;
-  }
 
   @Override
   public boolean equals(Object o) {
