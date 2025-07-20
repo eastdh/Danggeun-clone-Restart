@@ -11,12 +11,22 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main class="login-container">
+        </div>
+        <!-- ✅ 회원가입 성공 메시지 -->
+        <div th:if="${param.success}" class="login-success" style="color: green; margin-bottom: 1rem;">
+            <p th:text="${param.success}">성공 메시지</p>
+        </div>
         <form th:action="@{/login}" method="post">
             <label for="email">이메일</label>
             <input type="text" id="email" name="username" placeholder="이메일를 입력해주세요" required>
 
             <label for="password">비밀번호</label>
             <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요" required>
+<!--             로그인 페이지에서 에러 메시지 표시 -->
+            <div th:if="${param.error}" style="color: red;">
+                <br>
+                <p th:text="${param.error}">로그인 오류</p>
+            </div>
 
             <button type="submit" class="btn-orange">로그인</button>
         </form>

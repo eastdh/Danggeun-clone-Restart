@@ -1,6 +1,7 @@
 package io.github.restart.gmo_danggeun.config;
 
 import io.github.restart.gmo_danggeun.exception.OAuth2NicknameRequiredException;
+import io.github.restart.gmo_danggeun.security.CustomAuthFailureHandler;
 import io.github.restart.gmo_danggeun.security.OAuth2FailureHandler;
 import io.github.restart.gmo_danggeun.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -27,18 +29,21 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService;
     private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final CustomAuthFailureHandler customAuthFailureHandler;
+
 
     public SecurityConfig(CustomUserDetailsService userDetailsService,
                           OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService,
-                          OAuth2FailureHandler oAuth2FailureHandler) {
+                          OAuth2FailureHandler oAuth2FailureHandler, CustomAuthFailureHandler customAuthFailureHandler) {
         this.userDetailsService = userDetailsService;
         this.oAuth2UserService = oAuth2UserService;
         this.oAuth2FailureHandler = oAuth2FailureHandler;
+        this.customAuthFailureHandler = customAuthFailureHandler;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -63,7 +68,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true")
+                        .failureHandler(customAuthFailureHandler)
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")

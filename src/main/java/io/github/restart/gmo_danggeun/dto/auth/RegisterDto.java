@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class RegisterDto {
     private String email;
     private String password;
+    private String confirmPassword;
     private String nickname;
     private LocalDateTime joinDate = LocalDateTime.now();
 }
