@@ -1,0 +1,29 @@
+/* resources/static/css/chat/components/toast.css */
+/* (템플릿에 로드 추가 필요) */
+.chat-toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+}
+.chat-toast {
+  margin-bottom: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  border-radius: 4px;
+  opacity: 0.9;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.chat-toast--error {
+  background: #f44336;
+}
+.chat-toast--success {
+  background: #4caf50;
+}
+.chat-toast--info {
+  background: #2196f3;
+}
+.chat-toast.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
