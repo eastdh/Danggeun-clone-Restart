@@ -49,8 +49,6 @@ function addCarouselListeners() {
   }
 }
 
-addCarouselListeners();
-
 // tooltip box
 document
   .getElementsByClassName("manner-label")[0]
@@ -109,8 +107,6 @@ function addLinks() {
   );
 }
 
-addLinks();
-
 // manner score
 function updateMannerScore() {
   const filledBar = document.getElementsByClassName("filled-bar")[0];
@@ -119,4 +115,51 @@ function updateMannerScore() {
   filledBar.style.width = mannerScore + "%";
 }
 
-updateMannerScore();
+// status modal
+function setStatusModal() {
+  const statusButton = document.getElementById("status-button");
+  const modal = document.getElementById("status-alter-modal");
+  const cancelButton = document.getElementById("cancel-button");
+  const statusForm = document.getElementById("trade-status-form");
+
+  statusButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    modal.classList.remove("hidden");
+  });
+
+  cancelButton.addEventListener("click", function () {
+    modal.classList.add("hidden");
+  });
+
+  statusForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const statusValue = document.getElementById("status").value;
+    const tradeId = document.getElementById("status").dataset.tradeId;
+
+    fetch(`/api/trade/${tradeId}/status`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: statusValue }),
+    })
+      .then((res) => {
+        if (res.ok) return res.text();
+        else alert("거래글 상태 변경을 실패했습니다.");
+      })
+      .then(() => {
+        alert("거래글 상태가 변경되었습니다.");
+        location.reload();
+      })
+      .catch(() => {
+        alert("오류로 인해 상태를 변경할 수 없습니다");
+      });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  addCarouselListeners();
+  addLinks();
+  updateMannerScore();
+  setStatusModal();
+});

@@ -2,6 +2,7 @@ package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.trade.FilterDto;
+import io.github.restart.gmo_danggeun.dto.trade.StatusDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import io.github.restart.gmo_danggeun.entity.Category;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +32,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -132,6 +136,7 @@ public class TradeController {
       model.addAttribute("emojiFileName", emojiFileName);
       model.addAttribute("userTrades", sellerTrades);
       model.addAttribute("categoryTrades", categoryTrades);
+      model.addAttribute("statusMap", TradeConfig.getStatusMap());
       return "trade/trade_post";
     } else {
       model.addAttribute("error", "거래글 없음");
@@ -254,5 +259,17 @@ public class TradeController {
     // Todo : add error page
     if (savedTrade == null) return "error";
     return "redirect:/trade/" + savedTrade.getId();
+  }
+
+  @PostMapping("/api/trade/{id}/status")
+  @ResponseBody
+  public ResponseEntity<?> alterStatus(
+      @PathVariable Long id,
+      @RequestBody StatusDto dto
+  ) {
+    String result = tradeService.alterStatus(id, dto.getStatus());
+    return result.equals("success") ?
+        ResponseEntity.ok(result) :
+        ResponseEntity.badRequest().body(result);
   }
 }

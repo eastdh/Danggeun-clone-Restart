@@ -33,4 +33,8 @@ public interface TradeService {
   void delete(Long id);
 
   void confirmTrade(Long tradeId);
+
+  void bumpTrade(Long id);
+
+  String alterStatus(Long id, String status);
 }

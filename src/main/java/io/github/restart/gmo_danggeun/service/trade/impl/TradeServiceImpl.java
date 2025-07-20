@@ -1,5 +1,6 @@
 package io.github.restart.gmo_danggeun.service.trade.impl;
 
+import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import io.github.restart.gmo_danggeun.entity.Category;
@@ -200,4 +201,22 @@ public class TradeServiceImpl implements TradeService {
     tradeRepository.save(trade);
   }
 
+  @Override
+  public void bumpTrade(Long id) {
+
+  }
+
+  @Override
+  public String alterStatus(Long id, String status) {
+    String result = "failed";
+    Trade trade = tradeRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
+
+    if (TradeConfig.isCorrectStatus(status)) {
+      trade.setStatus(status.toLowerCase());
+      tradeRepository.save(trade);
+      result = "success";
+    }
+    return result;
+  }
 }
