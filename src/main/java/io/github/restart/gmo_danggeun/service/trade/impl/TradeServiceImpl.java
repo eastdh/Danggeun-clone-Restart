@@ -57,13 +57,14 @@ public class TradeServiceImpl implements TradeService {
       String bumpUpdateTerm = DateUtil.getMaxDateTerm(trade.getBumpUpdateTerm());
 
       TradeList newTrade = new TradeList(
-          trade.getTradeId(), trade.getTitle(),
-          trade.getPrice(), trade.getStatus(),
-          trade.isHidden(), trade.getCreatedAt(),
-          trade.getUpdatedAt(), trade.getBumpUpdatedAt(),
+          trade.getTradeId(),
+          SecurityUtil.htmlUnescape(trade.getTitle()),
+          trade.getPrice(), trade.getStatus(), trade.isHidden(),
+          trade.getCreatedAt(), trade.getUpdatedAt(), trade.getBumpUpdatedAt(),
           updateTerm, bumpUpdateTerm,
           trade.getUserId(), trade.getLocation(),
-          trade.getCategoryId(), trade.getCategoryName(),
+          trade.getCategoryId(),
+          trade.getCategoryName(),
           trade.getImgUrl());
       list.add(newTrade);
     });
@@ -101,10 +102,19 @@ public class TradeServiceImpl implements TradeService {
       String bumpUpdateTerm = DateUtil.getMaxDateTerm(trade.getBumpUpdateTerm());
 
       TradeDetail newTrade = new TradeDetail(
-          trade.getTradeId(), trade.getCategoryId(), trade.getCategoryName(), trade.getTitle(), trade.getDescription(),
-          trade.getPreferredLocation(), trade.getPrice(), trade.getOfferable(), trade.getStatus(), trade.getHidden(),
-          trade.getCreatedAt(), trade.getUpdatedAt(), trade.getBumpUpdatedAt(), updateTerm, bumpUpdateTerm,
-          trade.getLikeCounts(), trade.getChatCounts(), trade.getUserId(), trade.getNickname(), trade.getLocation(),
+          trade.getTradeId(), trade.getCategoryId(),
+          trade.getCategoryName(),
+          SecurityUtil.htmlUnescape(trade.getTitle()),
+          SecurityUtil.htmlUnescape(trade.getDescription()),
+          (trade.getPreferredLocation() != null ?
+          SecurityUtil.htmlUnescape(trade.getPreferredLocation())
+          : null),
+          trade.getPrice(), trade.getOfferable(),
+          trade.getStatus(), trade.getHidden(),
+          trade.getCreatedAt(), trade.getUpdatedAt(), trade.getBumpUpdatedAt(),
+          updateTerm, bumpUpdateTerm,
+          trade.getLikeCounts(), trade.getChatCounts(),
+          trade.getUserId(), trade.getNickname(), trade.getLocation(),
           trade.getMannerScore()
       );
       return Optional.of(newTrade);
