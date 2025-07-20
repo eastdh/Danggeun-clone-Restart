@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>닉네임 입력</title>
+  <link rel="stylesheet" href="/css/login/nickname.css"/>
+</head>
 </head>
 <body>
-<h2>닉네임을 입력해주세요</h2>
 
 <form th:action="@{/oauth2/nickname}" method="post">
+  <h2>닉네임을 입력해주세요</h2>
   <input type="text" name="nickname" placeholder="닉네임" required>
+  <div th:if="${param.error}" style="color: red; margin-bottom: 1rem;">
+    <p th:text="${param.error}">에러 메시지</p>
+  </div>
   <button type="submit">제출</button>
 </form>
-
-<!-- 중복 에러 메시지 표시 -->
-<p th:if="${session.nickname_error}" th:text="${session.nickname_error}" style="color: red;"></p>
 
 </body>
 </html>
