@@ -1,0 +1,67 @@
+/* 전체 화면 중앙 정렬 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f8f8f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* 중앙 박스 */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+/* 제목 스타일 */
+h2 {
+    text-align: center;
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+/* 입력 필드 */
+input[type="text"] {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* 제출 버튼 */
+button {
+    width: 100%;
+    background-color: #ff8a3d;
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+    background-color: #ff6c00;
+}
+
+/*!* 에러 메시지 *!*/
+/*div[th\\:if] {*/
+/*    text-align: center;*/
+/*    color: red;*/
+/*    margin-top: 1rem;*/
+/*    font-size: 0.9rem;*/
+/*}*/

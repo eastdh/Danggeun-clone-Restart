@@ -3,17 +3,18 @@ package io.github.restart.gmo_danggeun.controller;
 import io.github.restart.gmo_danggeun.entity.User;
 import io.github.restart.gmo_danggeun.repository.UserRepository;
 import io.github.restart.gmo_danggeun.security.CustomUserDetails;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 @Controller
@@ -21,40 +22,50 @@ import java.time.LocalDateTime;
 public class OAuth2Controller {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // 닉네임 입력 폼 GET
     @GetMapping("/oauth2/nickname")
-    public String nicknameForm(HttpSession session, Model model) {
+    public String nicknameForm(HttpSession session, org.springframework.ui.Model model) {
+        String email = (String) session.getAttribute("oauth2_email");
+        if (email == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("email", email);
+        return "login/oauth2_nickname";
+    }
+
+    @PostMapping("/oauth2/nickname")
+    public String submitNickname(@RequestParam String nickname, HttpSession session, Model model) {
         String email = (String) session.getAttribute("oauth2_email");
 
         if (email == null) {
             return "redirect:/login";
         }
 
-        model.addAttribute("email", email);
-        return "login/oauth2_nickname";
-    }
-
-    // 닉네임 입력 폼 POST
-    @PostMapping("/oauth2/nickname")
-    public String submitNickname(@RequestParam String nickname, HttpSession session, HttpServletRequest request) {
-        String email = (String) session.getAttribute("oauth2_email");
-
-        if (email == null || nickname.isBlank()) {
-            return "redirect:/login";
+        // 이메일 중복 체크
+        if (userRepository.existsByEmail(email)) {
+            return "redirect:/login?error=duplicate";
         }
 
-        // ✅ 닉네임 중복 체크
+        // 닉네임 유효성 검사
+        if (nickname.isBlank()) {
+            model.addAttribute("error", "닉네임을 입력해주세요.");
+            model.addAttribute("email", email);
+            return "login/oauth2_nickname";
+        }
+
         if (userRepository.existsByNickname(nickname)) {
-            session.setAttribute("nickname_error", "이미 사용 중인 닉네임입니다.");
-            return "redirect:/oauth2/nickname";
+            model.addAttribute("error", "이미 사용 중인 닉네임입니다.");
+            model.addAttribute("email", email);
+            return "login/oauth2_nickname";
         }
 
-        // ✅ 새 유저 저장
+        String encodedPassword = passwordEncoder.encode("OAUTH2");
+
         User newUser = new User();
         newUser.setEmail(email);
         newUser.setNickname(nickname);
-        newUser.setPassword("OAUTH2");
+        newUser.setPassword(encodedPassword);
         newUser.setJoinDate(LocalDateTime.now());
         newUser.setMannerScore(BigDecimal.valueOf(36.5));
         newUser.setLocation("");
@@ -62,11 +73,15 @@ public class OAuth2Controller {
         userRepository.save(newUser);
         session.removeAttribute("oauth2_email");
 
-        // ✅ 자동 로그인 처리
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                new CustomUserDetails(newUser), null, new CustomUserDetails(newUser).getAuthorities());
+
+        CustomUserDetails userDetails = new CustomUserDetails(newUser);
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        return "redirect:/"; // 메인 페이지 등으로 이동
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+        return "redirect:/"; // 메인으로 이동
     }
 }

@@ -23,7 +23,11 @@
 
       <label for="nickname">닉네임</label>
       <input type="text" id="nickname" name="nickname" placeholder="닉네임을 입력해주세요" required>
-
+      <!-- register.html -->
+      <div th:if="${error}" class="error-message" style="color: red;">
+        <br>
+        <p th:text="${error}"></p>
+      </div>
       <button type="submit" class="btn-orange">회원가입</button>
     </form>
 
