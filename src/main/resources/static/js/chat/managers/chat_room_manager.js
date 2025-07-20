@@ -36,22 +36,6 @@ export class ChatRoomManager {
         this.renderer.hideLoading();
       }
     });
-
-    // TODO: 중복 이벤트 리스너 제거 필요
-    // // 상세 DTO 수신 시 렌더
-    // this.store.addEventListener("roomDetailChanged", (e) => {
-    //   this.renderer._renderRoomDetail(e.detail);
-    // });
-
-    // // 메시지 목록 수신 시 렌더
-    // this.store.addEventListener("messagesChanged", (e) => {
-    //   this.renderer._renderMessages(e.detail);
-    // });
-
-    // // 단일 메시지 추가
-    // this.store.addEventListener("messageAppended", (e) => {
-    //   this.renderer._appendMessage(e.detail);
-    // });
   }
 
   _bindUIEvents() {
@@ -98,7 +82,7 @@ export class ChatRoomManager {
           });
           console.log("[STORE] replaceMessage 완료 → messages=", this.store.messages);
         } else {
-          this.store.removeTempMessage();
+          this.store.removeTempMessages();
           this.store.appendMessage({
             ...msg,
             senderType: SENDER_TYPES.ME,
