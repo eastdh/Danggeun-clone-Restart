@@ -70,39 +70,33 @@ export class ChatRoomManager {
     // 새 메시지 수신
     this.wsManager.addEventListener("chatMessage", (e) => {
       const msg = e.detail;
-      console.log("[WS] chatMessage 수신 →", msg);
 
       if (msg.senderId === this.store.userId) {
-        if (msg.tempId) {
-          console.log(`[OPTIMISTIC] tempId=${msg.tempId} 대체 시도`, msg);
-          this.store.replaceMessage(msg.tempId, {
-            ...msg,
-            senderType: SENDER_TYPES.ME,
-            timestamp: msg.timestamp,
-          });
-          console.log("[STORE] replaceMessage 완료 → messages=", this.store.messages);
-        } else {
-          this.store.removeTempMessages();
-          this.store.appendMessage({
-            ...msg,
-            senderType: SENDER_TYPES.ME,
-            timestamp: msg.timestamp,
-          });
-        }
+        this.renderer.removeTempMessage();
+        this.store.appendMessage({
+          ...msg,
+          senderType: SENDER_TYPES.ME,
+          timestamp: msg.timestamp,
+        });
       } else {
-        console.log("[PARTNER] appendMessage", msg);
         this.store.appendMessage({
           ...msg,
           senderType: SENDER_TYPES.PARTNER,
           timestamp: msg.timestamp,
         });
       }
-      console.log("[STORE] appendMessage 완료 → messages=", this.store.messages);
     });
 
     // 읽음 ACK 수신
     this.wsManager.addEventListener("readReceipt", (e) => {
-      this.store.markMessagesAsRead(e.detail.messageIds);
+      const { readerId, messageIds } = e.detail;
+
+      // 읽은 사람이 나(=this.store.userId)가 아니라면,
+      // “내가 보낸” 메시지들의 read 상태를 true로 바꾼다
+      if (Number(readerId) !== Number(this.store.userId)) {
+        console.log("[WS] 상대방이 읽음 수신 →", e.detail);
+        this.store.markMessagesRead(messageIds);
+      }
     });
   }
 
@@ -126,7 +120,7 @@ export class ChatRoomManager {
     const content = this.renderer.inputField.value.trim();
     if (!content) return;
 
-    const tempId = `tmp-${Date.now()}`;
+    const tempMessage = true;
 
     const payload = {
       chatRoomId: this.store.currentRoomId,
@@ -134,11 +128,11 @@ export class ChatRoomManager {
       content,
       messageType: "TEXT",
       senderType: SENDER_TYPES.ME,
-      tempId,
+      tempMessage,
     };
 
     // Optimistic UI
-    this.store.appendMessage({ ...payload, timestamp: Date.now(), senderType: SENDER_TYPES.ME, isRead: false, tempId });
+    this.store.appendMessage({ ...payload, timestamp: Date.now(), senderType: SENDER_TYPES.ME, isRead: false, tempMessage: true });
 
     // 전송
     this.wsManager.sendMessage(payload);

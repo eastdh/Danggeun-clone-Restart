@@ -30,7 +30,7 @@ export class WebSocketManager extends EventTarget {
   _connect() {
     const socket = new SockJS(WS.ENDPOINT);
     this.stompClient = Stomp.over(socket);
-    this.stompClient.debug = () => {}; // 디버그 로그 비활성화
+    this.stompClient.debug = (msg) => console.log("STOMP ▶", msg); // 디버그 로그 비활성화
 
     this.stompClient.connect(
       {},

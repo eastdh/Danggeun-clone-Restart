@@ -135,11 +135,24 @@ export class Renderer {
     messages.forEach((msg) => this._appendMessage(msg));
   }
 
+  removeTempMessage() {
+    const tempEl = this.msgContainer.querySelector(".temp-message");
+    if (tempEl) {
+      tempEl.remove();
+    }
+  }
+
   // 8) 메시지 한 건 추가
   _appendMessage(msg) {
-    console.log("[UI] render message:", msg);
     const wrapper = document.createElement("div");
     wrapper.className = "room__messages__item";
+
+    // temp 메시지라면 class 추가
+    if (msg.tempMessage) {
+      wrapper.classList.add("temp-message");
+    } else {
+      wrapper.dataset.messageId = msg.messageId;
+    }
 
     // 날짜 라벨
     if (msg.messageType === MESSAGE_TYPES.DATE_LABEL) {
@@ -194,8 +207,10 @@ export class Renderer {
   _markMessagesRead(messageIds) {
     messageIds.forEach((id) => {
       const selector = `.room__messages__item[data-message-id="${id}"] .message-read-status`;
-      const el = document.querySelector(selector);
-      if (el) el.textContent = "읽음";
+      const el = this.msgContainer.querySelector(selector);
+      if (el) {
+        el.textContent = "읽음";
+      }
     });
   }
 

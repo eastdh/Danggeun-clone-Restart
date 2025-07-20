@@ -1,5 +1,6 @@
 // resources/static/js/chat/store/chat_store.js
 import { EventTargetPolyfill as EventTarget } from "../components/event_target_polyfill.js"; // IE 호환용 폴리필(필요 시)
+import { SENDER_TYPES } from "../constants.js";
 
 /**
  * ChatStore
@@ -72,20 +73,23 @@ export class ChatStore extends EventTarget {
   }
 
   replaceMessage(tempId, newMsg) {
-    console.log(`[STORE] replaceMessage 호출: tempId=${tempId}`, "newMsg=", newMsg);
     const idx = this.messages.findIndex((m) => m.tempId === tempId);
     if (idx > -1) {
       this.messages.splice(idx, 1, newMsg);
       this.dispatchEvent(new CustomEvent("messageReplaced", { detail: { tempId, newMsg } }));
-      console.log("[STORE] replaceMessage 후 messages=", this.messages);
     }
   }
 
-  markMessagesAsRead(messageIds) {
-    this.messages = this.messages.map((m) => ({
-      ...m,
-      isRead: messageIds.includes(m.messageId) || m.isRead,
-    }));
+  markMessagesRead(messageIds = []) {
+    this.messages = this.messages.map((msg) => {
+      if (messageIds.includes(msg.messageId) && msg.senderId === this.userId && !msg.isRead) {
+        console.log("[Store] 메시지 읽음 처리 →", msg.messageId);
+        return { ...msg, isRead: true };
+      }
+      return msg;
+    });
+
+    // UI 갱신 트리거
     this.dispatchEvent(new CustomEvent("messagesRead", { detail: messageIds }));
   }
 
