@@ -10,7 +10,7 @@
   <link rel="stylesheet" th:href="@{/css/common/footer.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
   <link rel="stylesheet" th:href="@{/css/trade/trade_write.css}">
-  <title th:text="${tradeDto.title} + ' 편집 | GMO당근 중고거래'">거래물품 편집 | GMO당근 중고거래</title>
+  <title th:text="${tradeEditDto.title} + ' 편집 | GMO당근 중고거래'">거래물품 편집 | GMO당근 중고거래</title>
 </head>
 <body>
 <header th:replace="~{fragments/header}"></header>
@@ -19,8 +19,8 @@
     <div class="title-box">
       <h1>내 거래글 수정</h1>
     </div>
-    <form th:action="@{/trade/{id}/edit(id=${tradeDto.id})}" method="post"
-          th:object="${tradeDto}"
+    <form th:action="@{/trade/{id}/edit(id=${tradeEditDto.id})}" method="post"
+          th:object="${tradeEditDto}"
           enctype="multipart/form-data">
       <div class="trade-profile">
         <div class="image-input-box">
@@ -37,11 +37,18 @@
           <div class="trade-category-box">
             <label>카테고리</label>
             <div class="custom-select">
-              <select class="categories" th:field="*{categoryId}">
+              <select class="categories"
+                      th:field="*{categoryId}"
+                      th:data-default="*{categoryId}"
+              >
                 <option value="" disabled selected>카테고리 선택</option>
-                <th:block th:each="item: ${categories}">
-                  <option th:value="${item.id}" th:text="${item.name}"></option>
-                </th:block>
+                  <option
+                      th:each="item: ${categories}"
+                      th:value="${item.id}"
+                      th:text="${item.name}"
+                      th:selected="${item.id == tradeEditDto.categoryId}"
+                  >
+                  </option>
               </select>
             </div>
             <div th:if="${#fields.hasErrors('categoryId')}" class="error">
@@ -129,7 +136,7 @@
     </form>
   </section>
 </main>
-<script th:src="@{/js/trade/trade_write.js}"></script>
+<script type="module" th:src="@{/js/trade/trade_write.js}"></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <script src="/js/common/header.js"></script>
 </body>

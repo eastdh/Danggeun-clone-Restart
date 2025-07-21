@@ -35,8 +35,8 @@
 <!--        <div class="img-preview"></div>-->
         <div class="trade-info">
           <div class="trade-category-box">
-            <label>카테고리</label>
-            <div class="custom-select">
+            <label for="category-select">카테고리</label>
+            <div class="custom-select" id="category-select">
               <select class="categories" th:field="*{categoryId}">
                 <option value="" disabled selected>카테고리 선택</option>
                 <th:block th:each="item: ${categories}">
@@ -63,8 +63,8 @@
             </div>
           </div>
           <div class="trade-price-box">
-            <label>거래 방식</label>
-            <div class="trade-selection">
+            <label for="trade-selection">거래 방식</label>
+            <div class="trade-selection" id="trade-selection">
               <span class="trade-type" data-trade="forSale">판매하기</span>
               <span class="trade-type" data-trade="giveAway">나눔하기</span>
             </div>
@@ -125,8 +125,8 @@
     </form>
   </section>
 </main>
-<script th:src="@{/js/trade/trade_write.js}"></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+<script type="module" th:src="@{/js/trade/trade_write.js}"></script>
 <script src="/js/common/header.js"></script>
 </body>
 </html>

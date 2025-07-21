@@ -6,7 +6,7 @@ import io.github.restart.gmo_danggeun.dto.chat.ChatRoomDetailDto;
 import io.github.restart.gmo_danggeun.dto.chat.ChatRoomSummaryDto;
 import io.github.restart.gmo_danggeun.dto.chat.ConfirmTradeDto;
 import io.github.restart.gmo_danggeun.security.CustomUserDetails;
-import io.github.restart.gmo_danggeun.service.TradeService;
+import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.service.chat.ChatMessageService;
 import io.github.restart.gmo_danggeun.service.chat.ChatRoomService;
 import io.github.restart.gmo_danggeun.service.chat.ChatService;

@@ -1,6 +1,7 @@
-package io.github.restart.gmo_danggeun.service;
+package io.github.restart.gmo_danggeun.service.trade;
 
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
+import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
@@ -25,15 +26,15 @@ public interface TradeService {
 
   Page<TradeList> findAllByUserId(Long userId, Pageable pageable);
 
-  Optional<Category> findCategoryById(Long id);
-
-  List<Category> findAllCategories();
-
   Trade save(User user, TradeDto tradeDto, Category category);
 
-  Trade edit(Trade trade, TradeDto tradeDto, Category category);
+  Trade edit(Trade trade, TradeEditDto tradeEditDto, Category category);
 
   void delete(Long id);
 
   void confirmTrade(Long tradeId);
+
+  void bumpTrade(Long id);
+
+  String alterStatus(Long id, String status);
 }

@@ -1,3 +1,6 @@
+import { customSelect } from "./custom_select.js";
+customSelect();
+
 let currentIndex = 0;
 
 // carousel
@@ -48,8 +51,6 @@ function addCarouselListeners() {
     nextButton.addEventListener("click", nextSlide);
   }
 }
-
-addCarouselListeners();
 
 // tooltip box
 document
@@ -109,8 +110,6 @@ function addLinks() {
   );
 }
 
-addLinks();
-
 // manner score
 function updateMannerScore() {
   const filledBar = document.getElementsByClassName("filled-bar")[0];
@@ -119,4 +118,76 @@ function updateMannerScore() {
   filledBar.style.width = mannerScore + "%";
 }
 
-updateMannerScore();
+// status modal
+function setStatusModal() {
+  const statusButton = document.getElementById("status-button");
+  const modal = document.getElementById("status-alter-modal");
+  const cancelButton = document.getElementById("cancel-button");
+  const statusForm = document.getElementById("trade-status-form");
+
+  if (statusButton && modal && cancelButton && statusForm) {
+    statusButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      modal.classList.remove("hidden");
+    });
+
+    cancelButton.addEventListener("click", function () {
+      modal.classList.add("hidden");
+    });
+
+    statusForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const statusValue = document.getElementById("status").value;
+      const tradeId = document.getElementById("status").dataset.tradeId;
+
+      fetch(`/api/trade/${tradeId}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: statusValue }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            alert("거래글 상태가 변경되었습니다.");
+            location.reload();
+          } else alert("거래글 상태 변경을 실패했습니다.");
+        })
+        .catch(() => {
+          alert("오류로 인해 상태를 변경할 수 없습니다");
+        });
+    });
+  }
+}
+
+function addStatusWarning() {
+  const customSelect = document.querySelectorAll(".custom-select")[0];
+  if (customSelect === null || customSelect === undefined) return;
+
+  const selectEl = customSelect.querySelector("select");
+  const selectItems = customSelect.querySelectorAll(".select-items");
+  const warning = document.getElementsByClassName("status-warning")[0];
+
+  if (selectEl.options[selectEl.selectedIndex].value === "COMPLETED") {
+    warning.classList.add("active");
+  }
+
+  selectItems.forEach((el) => {
+    el.addEventListener("click", function () {
+      const selectedDiv = selectEl.options[selectEl.selectedIndex];
+      if (selectedDiv.value === "COMPLETED") {
+        warning.classList.add("active");
+      } else {
+        warning.classList.remove("active");
+      }
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  addCarouselListeners();
+  addLinks();
+  updateMannerScore();
+  setStatusModal();
+  addStatusWarning();
+});

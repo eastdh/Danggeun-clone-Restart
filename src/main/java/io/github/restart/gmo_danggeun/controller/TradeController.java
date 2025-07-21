@@ -2,7 +2,9 @@ package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.trade.FilterDto;
+import io.github.restart.gmo_danggeun.dto.trade.StatusDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
+import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
@@ -10,17 +12,17 @@ import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.security.CustomUserDetails;
-import io.github.restart.gmo_danggeun.service.TradeService;
-import io.github.restart.gmo_danggeun.util.SecurityUtil;
+import io.github.restart.gmo_danggeun.service.trade.CategoryService;
+import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.util.UserMannerUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,16 +32,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class TradeController {
 
   private final TradeService tradeService;
+  private final CategoryService categoryService;
 
-  public TradeController(TradeService tradeService) {
+  public TradeController(TradeService tradeService, CategoryService categoryService) {
     this.tradeService = tradeService;
+    this.categoryService = categoryService;
   }
 
   @GetMapping("/trade")
@@ -86,7 +92,7 @@ public class TradeController {
 
     Pageable pageable = PageRequest.of(page, TradeConfig.TRADELIST_PAGE_SIZE);
     Page<TradeList> tradePage = tradeService.searchTrades(keyword, location, category, priceLowLimit, priceHighLimit, status, pageable);
-    List<Category> categories = tradeService.findAllCategories();
+    List<Category> categories = categoryService.findAll();
 
     FilterDto filter = new FilterDto(category, priceLowLimit, priceHighLimit, status);
 
@@ -125,11 +131,16 @@ public class TradeController {
         model.addAttribute("owner", "true");
       }
 
+      TradeConfig.Status statusEnum = TradeConfig.Status.compareName(tradeDetail.getStatus());
+      String statusText = TradeConfig.getStatusMap().get(statusEnum);
+
       model.addAttribute("trade", tradeDetail);
+      model.addAttribute("statusText", statusText);
       model.addAttribute("images", images);
       model.addAttribute("emojiFileName", emojiFileName);
       model.addAttribute("userTrades", sellerTrades);
       model.addAttribute("categoryTrades", categoryTrades);
+      model.addAttribute("statusMap", TradeConfig.getStatusMap());
       return "trade/trade_post";
     } else {
       model.addAttribute("error", "거래글 없음");
@@ -140,7 +151,7 @@ public class TradeController {
 
   @GetMapping("/trade/new")
   public String tradeWritePage(Model model) {
-    List<Category> categories = tradeService.findAllCategories();
+    List<Category> categories = categoryService.findAll();
     model.addAttribute("categories", categories);
     model.addAttribute("tradeDto", new TradeDto());
     return "trade/trade_write";
@@ -154,16 +165,14 @@ public class TradeController {
     Optional<Trade> optionalTrade = tradeService.findById(id);
     User user = (principal != null) ? principal.getUser() : null;
 
-    if (user == null) return "redirect:/login";
-
     if (!optionalTrade.isEmpty()) {
       Trade trade = optionalTrade.get();
 
       if (user.getId().equals(trade.getUser().getId())) {
-        TradeDto dto = trade.entityToDto();
-        model.addAttribute("tradeDto", dto);
+        TradeEditDto tradeEditDto = trade.entityToEditDto();
+        model.addAttribute("tradeEditDto", tradeEditDto);
 
-        List<Category> categories = tradeService.findAllCategories();
+        List<Category> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
         return "trade/trade_edit";
       }
@@ -186,10 +195,7 @@ public class TradeController {
   ) {
     User currentUser = (principal != null) ? principal.getUser() : null;
 
-    if (currentUser == null)
-      return "redirect:/login";
-
-    List<Category> categories = tradeService.findAllCategories();
+    List<Category> categories = categoryService.findAll();
     model.addAttribute("categories", categories);
     model.addAttribute("tradeDto", tradeDto);
 
@@ -197,10 +203,6 @@ public class TradeController {
       return "trade/trade_write";
 
     if (bindingResult.hasErrors())
-      return "trade/trade_write";
-
-    Set<String> nullableFields = TradeConfig.newTradeNullable;
-    if (SecurityUtil.anyNull(tradeDto, nullableFields))
       return "trade/trade_write";
 
     // 이미지 파일 저장
@@ -224,7 +226,7 @@ public class TradeController {
 
   @PostMapping("/trade/{id}/edit")
   public String editTrade(
-      @Valid @ModelAttribute TradeDto tradeDto,
+      @Valid @ModelAttribute TradeEditDto tradeEditDto,
       @PathVariable Long id,
       BindingResult bindingResult,
       @AuthenticationPrincipal CustomUserDetails principal,
@@ -232,46 +234,46 @@ public class TradeController {
   ) {
     User currentUser = (principal != null) ? principal.getUser() : null;
 
-    if (currentUser == null)
-      return "redirect:/login";
-
     Trade original = tradeService.findById(id).orElseThrow(()->new EntityNotFoundException("trade not found :" + id));
 
     // Todo : add error page
-    if (!id.equals(tradeDto.getId())) return "error";
+    if (!id.equals(tradeEditDto.getId())) return "error";
     if (!original.getUser().getId().equals(currentUser.getId()))
       return "error";
 
-    List<Category> categories = tradeService.findAllCategories();
+    List<Category> categories = categoryService.findAll();
     model.addAttribute("categories", categories);
-    model.addAttribute("tradeDto", tradeDto);
+    model.addAttribute("tradeEditDto", tradeEditDto);
 
-    if (tradeDto == null)
+    if (tradeEditDto == null)
       return "trade/trade_write";
 
     if (bindingResult.hasErrors())
-      return "trade/trade_write";
-
-    Set<String> nullableFields = TradeConfig.editTradeNullable;
-    if (SecurityUtil.anyNull(tradeDto, nullableFields))
       return "trade/trade_write";
 
     // 이미지 파일 저장
     // Todo : add image upload with Amazon S3
 
     Category category = categories.stream()
-        .filter(c -> c.getId().equals(tradeDto.getCategoryId()))
+        .filter(c -> c.getId().equals(tradeEditDto.getCategoryId()))
         .findAny()
-        .orElseGet(() ->
-            categories.stream()
-                .filter(c -> c.getId().equals(19L))
-                .findAny()
-                .orElse(null)
-        );
+        .orElse(null);
 
-    Trade savedTrade = tradeService.edit(original, tradeDto, category);
+    Trade savedTrade = tradeService.edit(original, tradeEditDto, category);
     // Todo : add error page
     if (savedTrade == null) return "error";
     return "redirect:/trade/" + savedTrade.getId();
+  }
+
+  @PostMapping("/api/trade/{id}/status")
+  @ResponseBody
+  public ResponseEntity<?> alterStatus(
+      @PathVariable Long id,
+      @RequestBody StatusDto dto
+  ) {
+    String result = tradeService.alterStatus(id, dto.getStatus());
+    return result.equals("success") ?
+        ResponseEntity.ok(result) :
+        ResponseEntity.badRequest().body(result);
   }
 }
