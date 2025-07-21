@@ -33,5 +33,10 @@ build/
 ### VS Code ###
 .vscode/
 
+# secrets 디렉터리 전체 제외
+secrets/
+.config/keys/
+src/main/resources/secrets/
+
 # Gemini 서비스 키
 **/gemini-key.json
