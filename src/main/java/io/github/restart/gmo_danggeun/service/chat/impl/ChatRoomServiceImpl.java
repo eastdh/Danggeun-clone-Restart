@@ -69,8 +69,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .partnerNickname(row.getPartnerNickname())
         .partnerLocation(LocationUtil.extractRepresentativeLocation(row.getPartnerLocation()))
         .partnerTemperature(row.getPartnerTemperature())
-        .isSeller(Boolean.TRUE.equals(row.getIsSeller()))
         // -- DetailDto 필드 --
+        .isSeller(Boolean.TRUE.equals(row.getIsSeller()))
         .isClosed("completed".equalsIgnoreCase(row.getTradeStatus()))
         .build();
   }

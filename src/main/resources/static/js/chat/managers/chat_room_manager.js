@@ -1,5 +1,5 @@
 // resources/static/js/chat/managers/chat_room_manager.js
-import { API_PATHS, SENDER_TYPES, WS } from "../constants.js";
+import { BOT_ROOM_ID, API_PATHS, SENDER_TYPES, MESSAGE_TYPES, WS } from "../constants.js";
 
 /**
  * ChatRoomManager
@@ -30,7 +30,8 @@ export class ChatRoomManager {
         await this._loadRoomDetail(roomId);
         this._connectWebSocket(roomId);
         this.renderer.showRoom();
-      } catch {
+      } catch (err) {
+        console.error("채팅방 로드 실패:", err);
         this.renderer.showEmptyRoom();
       } finally {
         this.renderer.hideLoading();
@@ -98,15 +99,64 @@ export class ChatRoomManager {
         this.store.markMessagesRead(messageIds);
       }
     });
+
+    // 챗봇 응답 수신
+    this.wsManager.addEventListener("chatBotMessage", (e) => {
+      const msg = e.detail;
+      this.store.appendMessage({
+        ...msg,
+        senderType: SENDER_TYPES.CHAT_BOT,
+        timestamp: msg.timestamp,
+      });
+    });
   }
 
   async _loadRoomDetail(roomId) {
     try {
-      const { detail, messages } = await this.api.getChatRoomDetail(roomId);
-      this.store.setCurrentRoomDetail(detail);
-      this.store.setMessages(messages);
+      if (roomId === Number(BOT_ROOM_ID)) {
+        console.log("[ChatRoomManager] 챗봇 방 로드");
+        // 챗봇 방은 API 호출 안함
+        const botDetail = {
+          chatRoomId: Number(BOT_ROOM_ID),
+          partnerNickname: "챗봇",
+          partnerTemperature: null,
+          tradeTitle: null,
+          tradePrice: null,
+          tradeThumbnailUrl: null,
+          closed: true, // 거래 버튼 숨기기용 플래그
+          seller: false,
+        };
+        this.store.setCurrentRoomDetail(botDetail);
+
+        const storageKey = `chatbot_history_${this.store.userId}`;
+        const cached = JSON.parse(localStorage.getItem(storageKey)) || [];
+        if (cached.length > 0) {
+          console.log("[ChatRoomManager] 챗봇 메시지 캐시 로드", cached);
+          this.store.setMessages(cached);
+        } else {
+          console.log("[ChatRoomManager] 챗봇 방 초기화");
+          // 최초 진입 시 환영 메시지
+          this.store.setMessages([
+            {
+              messageId: null,
+              senderId: null,
+              senderType: SENDER_TYPES.CHAT_BOT,
+              content: "안녕하세요! 무엇을 도와드릴까요?",
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              messageType: MESSAGE_TYPES.TEXT,
+            },
+          ]);
+          console.log("[ChatRoomManager] 챗봇 방 메시지 하드 코딩 완료");
+        }
+      } else {
+        const { detail, messages } = await this.api.getChatRoomDetail(roomId);
+        this.store.setCurrentRoomDetail(detail);
+        this.store.setMessages(messages);
+      }
     } catch (err) {
-      // error 처리
+      console.error("[ChatRoomManager] _loadRoomDetail 에러", err);
+      throw err;
     }
   }
 
@@ -116,26 +166,43 @@ export class ChatRoomManager {
     // 입장 시점 읽음 처리도 wsManager에서 진행
   }
 
-  _handleSend() {
+  async _handleSend() {
     const content = this.renderer.inputField.value.trim();
     if (!content) return;
 
-    const tempMessage = true;
-
-    const payload = {
+    // 1) 사용자 메시지 즉시 렌더 (Optimistic UI)
+    this.store.appendMessage({
       chatRoomId: this.store.currentRoomId,
       senderId: this.store.userId,
       content,
-      messageType: "TEXT",
       senderType: SENDER_TYPES.ME,
-      tempMessage,
-    };
-
-    // Optimistic UI
-    this.store.appendMessage({ ...payload, timestamp: Date.now(), senderType: SENDER_TYPES.ME, isRead: false, tempMessage: true });
-
-    // 전송
-    this.wsManager.sendMessage(payload);
+      timestamp: Date.now(),
+      tempMessage: true,
+      isRead: false,
+      messageType: "TEXT",
+    });
     this.renderer.inputField.value = "";
+
+    // 2) 챗봇 방이면 REST 호출만 트리거하고,
+    //    WS 구독(chatBotMessage)에서 답변을 받는다
+    if (this.store.currentRoomId === Number(BOT_ROOM_ID)) {
+      try {
+        await this.api.chatBot({
+          chatRoomId: BOT_ROOM_ID,
+          senderId: this.store.userId,
+          content,
+        });
+      } catch {
+        // Toast.error("챗봇 요청 실패", 3000);
+      }
+    } else {
+      // 일반 방은 기존 WS 전송
+      this.wsManager.sendMessage({
+        chatRoomId: this.store.currentRoomId,
+        senderId: this.store.userId,
+        content,
+        messageType: "TEXT",
+      });
+    }
   }
 }

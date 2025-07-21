@@ -99,7 +99,6 @@
 .list__room-list {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
   overflow-y: auto;
 }
 
@@ -115,6 +114,29 @@
 
 .list__room-list__item:hover {
   background-color: var(--gray-050);
+}
+
+/* 챗봇 방 아이템 고정 스타일 */
+.list__room-list__item--bot {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.list__room-list__item--bot .chat-list__item-icon {
+  margin-right: 8px;
+  font-size: 1.2em;
+}
+
+.list__room-list__item--bot:hover {
+  background-color: #f5f5f5;
+}
+
+/* 선택(highlight) 스타일이 있다면, 동일하게 적용 가능 */
+.list__room-list__item--bot.selected {
+  background-color: var(--primary-light);
 }
 
 .list__room-list__item-content {
