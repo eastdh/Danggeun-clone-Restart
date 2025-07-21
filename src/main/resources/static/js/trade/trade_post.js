@@ -186,9 +186,9 @@ function addStatusWarning() {
 
 function bumpTrade() {
   const bumpButton = document.getElementById("bump-button");
-  const tradeId = bumpButton.dataset.tradeId;
 
   if (bumpButton) {
+    const tradeId = bumpButton.dataset.tradeId;
     bumpButton.addEventListener("click", function () {
       if (!window.confirm("거래글을 끌올할까요?")) {
         return;
@@ -208,6 +208,83 @@ function bumpTrade() {
   }
 }
 
+function toggleLike() {
+  let pending = false;
+  let debounceTimer = null;
+  const likeButton = document.getElementById("like-button");
+
+  if (!likeButton) return;
+
+  const likedImageEl = likeButton.querySelector(".like-image.liked");
+  const unLikedImageEl = likeButton.querySelector(".like-image.un-liked");
+  const tradeId = likeButton.dataset.tradeId;
+  let currentLiked = likeButton.dataset.liked === "true";
+  let clientSideLiked = currentLiked;
+  let requestLiked = currentLiked;
+
+  likeButton.addEventListener("click", function () {
+    clientSideLiked = !clientSideLiked;
+    updateUI();
+
+    if (pending) {
+      clearTimeout(debounceTimer);
+    }
+    pending = true;
+    debounceTimer = setTimeout(() => {
+      requestLiked = clientSideLiked;
+      sendLikeRequest(tradeId, requestLiked);
+    }, 1000);
+  });
+
+  function updateUI() {
+    if (clientSideLiked) {
+      likedImageEl.classList.remove("hidden");
+      unLikedImageEl.classList.add("hidden");
+    } else {
+      likedImageEl.classList.add("hidden");
+      unLikedImageEl.classList.remove("hidden");
+    }
+  }
+
+  async function sendLikeRequest(tradeId, requestLiked) {
+    pending = false;
+    const url = requestLiked
+      ? `/api/trade/${tradeId}/like`
+      : `/api/trade/${tradeId}/remove-like`;
+    if (currentLiked === requestLiked) return;
+    try {
+      await fetch(url, {
+        method: "POST",
+      })
+        .then((res) => {
+          if (res.ok) return res.json();
+          else
+            throw new Error(
+              requestLiked ? "좋아요 등록 실패" : "좋아요 제거 실패"
+            );
+        })
+        .then((data) => {
+          currentLiked = data.liked;
+        });
+    } catch (e) {
+      clientSideLiked = !clientSideLiked;
+      updateUI();
+      alert("좋아요 등록/제거 동작에 실패했습니다");
+    }
+  }
+
+  window.addEventListener("beforeunload", () => {
+    requestLiked = clientSideLiked;
+    if (pending) {
+      navigator.sendBeacon(
+        requestLiked
+          ? `/api/trade/${tradeId}/like`
+          : `/api/trade/${tradeId}/remove-like`
+      );
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   addCarouselListeners();
   addLinks();
@@ -215,4 +292,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setStatusModal();
   addStatusWarning();
   bumpTrade();
+  toggleLike();
 });

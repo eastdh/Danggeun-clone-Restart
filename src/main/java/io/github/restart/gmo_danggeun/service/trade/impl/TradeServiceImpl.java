@@ -7,6 +7,7 @@ import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.Like;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
+import io.github.restart.gmo_danggeun.entity.id.LikeId;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
@@ -254,16 +255,22 @@ public class TradeServiceImpl implements TradeService {
   @Override
   @Transactional
   public String addLike(Long id, User user) {
-    String result = API_RESULT_FAILED;
     Trade trade = tradeRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
 
     if (!isTradeOwner(trade, user.getId())) {
+      Like original = likeRepository.findByUserId(user.getId())
+          .stream()
+          .filter(like->like.getTrade().getId().equals(id))
+          .findFirst()
+          .orElse(null);
+      if (original != null) return API_RESULT_FAILED;
+
       Like like = new Like(user, trade);
       Like savedLike = likeRepository.save(like);
-      if (savedLike != null) result = API_RESULT_SUCCESS;
+      if (savedLike != null) return API_RESULT_SUCCESS;
     }
-    return result;
+    return API_RESULT_FAILED;
   }
 
   @Override
@@ -274,9 +281,15 @@ public class TradeServiceImpl implements TradeService {
         .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
 
     if (!isTradeOwner(trade, userId)) {
-      Like target = likeRepository.getReferenceById(1L);
-      likeRepository.delete(target);
-      result = API_RESULT_SUCCESS;
+      Like target = likeRepository.findByUserId(userId)
+          .stream()
+          .filter(like -> like.getTrade().getId().equals(id))
+          .findFirst()
+          .orElse(null);
+      if (target != null) {
+        likeRepository.delete(target);
+        result = API_RESULT_SUCCESS;
+      }
     }
     return result;
   }

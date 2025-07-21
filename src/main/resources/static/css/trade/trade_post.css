@@ -59,6 +59,47 @@ h1 .status-text.orange {
   position: sticky;
 }
 
+.header-box {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#like-button {
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--gap-sm);
+  border: none;
+  border-radius: 5px;
+  background-color: var(--orange-600);
+  opacity: 1;
+  cursor: pointer;
+  transition: opacity 0.1s ease;
+}
+
+#like-button:hover {
+  opacity: 0.5;
+}
+
+#like-button .like-image-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#like-button .like-image-box img {
+  width: 18px;
+  height: 18px;
+  filter: invert();
+}
+
+#like-button .like-image.hidden {
+  display: none;
+}
+
 /* trade profile section */
 .carousel {
   width: 100%;
@@ -428,33 +469,6 @@ h1 .status-text.orange {
 
 .trade-meta .action-button-wrap.owner .option-button:hover {
   opacity: 0.5;
-}
-
-#like-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--gap-sm);
-  border: none;
-  opacity: 1;
-  cursor: pointer;
-  transition: opacity 0.1s ease;
-}
-
-#like-button:hover {
-  opacity: 0.5;
-}
-
-#like-button .like-image-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#like-button .like-image-box img {
-  width: 18px;
-  height: 18px;
-  filter: invert();
 }
 
 /* status modal */

@@ -118,7 +118,7 @@
         <section class="trade-meta">
           <div class="trade-info">
             <div class="trade-info-header">
-              <div>
+              <div class="header-box">
                 <h1>
                   <span
                       th:class="'status-text ' + ${#strings.equals(trade.status, 'completed') ? 'green' : 'orange'}"
@@ -126,6 +126,24 @@
                       th:text="${statusText}"></span>
                   <span th:text="*{title}">거래글 제목</span>
                 </h1>
+                <button type="button"
+                        id="like-button"
+                        th:data-trade-id="${trade.tradeId}"
+                        th:data-liked="${liked}"
+                >
+                <span class="like-image-box">
+                  <img
+                      class="like-image liked"
+                      th:classappend="${liked} ? '' : 'hidden'"
+                      th:src="@{/assets/icon/bookmark-heart-fill.svg}"
+                      alt="bookmark-heart-fill">
+                  <img
+                      class="like-image un-liked"
+                      th:classappend="${liked} ? 'hidden' : ''"
+                      th:src="@{/assets/icon/bookmark-heart.svg}"
+                      alt="bookmark-heart">
+                </span>
+                </button>
               </div>
               <div class="trade-category-time">
                 <a class="category-link"
@@ -211,17 +229,6 @@
           <th:block th:unless="${owner != null}">
             <div class="action-button-wrap">
               <a th:href="@{/chat}">채팅하기</a>
-              <button type="button"
-                      id="like-button"
-              >
-                <span class="like-image-box">
-                  <img th:src="@{/assets/icon/bookmark-heart.svg}"
-                     alt="bookmark-heart">
-                  </span>
-                <span id="liked"
-                      class="like-text"
-                      th:text="'좋아요'">좋아요</span>
-              </button>
             </div>
           </th:block>
         </section>

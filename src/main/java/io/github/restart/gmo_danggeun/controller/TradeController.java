@@ -2,6 +2,7 @@ package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.trade.FilterDto;
+import io.github.restart.gmo_danggeun.dto.trade.LikeDto;
 import io.github.restart.gmo_danggeun.dto.trade.StatusDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
@@ -12,6 +13,7 @@ import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.security.CustomUserDetails;
+import io.github.restart.gmo_danggeun.service.LikeService;
 import io.github.restart.gmo_danggeun.service.trade.CategoryService;
 import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.util.UserMannerUtil;
@@ -42,10 +44,13 @@ public class TradeController {
 
   private final TradeService tradeService;
   private final CategoryService categoryService;
+  private final LikeService likeService;
 
-  public TradeController(TradeService tradeService, CategoryService categoryService) {
+  public TradeController(TradeService tradeService, CategoryService categoryService,
+      LikeService likeService) {
     this.tradeService = tradeService;
     this.categoryService = categoryService;
+    this.likeService = likeService;
   }
 
   @GetMapping("/trade")
@@ -130,6 +135,9 @@ public class TradeController {
       if (userId != null && userId.equals(tradeDetail.getUserId())) {
         model.addAttribute("owner", "true");
       }
+
+      List<Long> likedTrades = likeService.getLikedTradeIdList(userId);
+
       model.addAttribute("trade", tradeDetail);
       model.addAttribute("statusText", statusText);
       model.addAttribute("images", images);
@@ -137,6 +145,7 @@ public class TradeController {
       model.addAttribute("userTrades", sellerTrades);
       model.addAttribute("categoryTrades", categoryTrades);
       model.addAttribute("statusMap", TradeConfig.getStatusMap());
+      model.addAttribute("liked", likedTrades.contains(id));
       return "trade/trade_post";
     } else {
       model.addAttribute("error", "거래글 없음");
@@ -288,27 +297,27 @@ public class TradeController {
 
   @PostMapping("/api/trade/{id}/like")
   @ResponseBody
-  public ResponseEntity<String> addLike(
+  public ResponseEntity<LikeDto> addLike(
       @PathVariable Long id,
       @AuthenticationPrincipal CustomUserDetails principal
   ) {
     User user = principal.getUser();
     String result = tradeService.addLike(id, user);
     return result.equals("success") ?
-        ResponseEntity.ok(result) :
-        ResponseEntity.badRequest().body(result);
+        ResponseEntity.ok(new LikeDto(true)) :
+        ResponseEntity.badRequest().build();
   }
 
   @PostMapping("/api/trade/{id}/remove-like")
   @ResponseBody
-  public ResponseEntity<String> removeLike(
+  public ResponseEntity<LikeDto> removeLike(
       @PathVariable Long id,
       @AuthenticationPrincipal CustomUserDetails principal
   ) {
     User user = principal.getUser();
     String result = tradeService.removeLike(id, user.getId());
     return result.equals("success") ?
-        ResponseEntity.ok(result) :
-        ResponseEntity.badRequest().body(result);
+        ResponseEntity.ok(new LikeDto(false)) :
+        ResponseEntity.badRequest().build();
   }
 }

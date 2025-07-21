@@ -2,26 +2,20 @@ package io.github.restart.gmo_danggeun.dto.trade;
 
 public class LikeDto {
 
-    private Long userId;
+    private boolean isLiked;
 
-    private Long tradeId;
-
-
-
-    public Long getUserId() {
-        return userId;
+    public LikeDto() {
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public LikeDto(boolean isLiked) {
+        this.isLiked = isLiked;
     }
 
-    public Long getTradeId() {
-        return tradeId;
+    public boolean isLiked() {
+        return isLiked;
     }
 
-    public void setTradeId(Long tradeId) {
-        this.tradeId = tradeId;
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
-
 }
