@@ -128,6 +128,7 @@
                 </h1>
                 <button type="button"
                         id="like-button"
+                        th:classappend="${liked} ? 'active' : ''"
                         th:data-trade-id="${trade.tradeId}"
                         th:data-liked="${liked}"
                 >
@@ -135,12 +136,12 @@
                   <img
                       class="like-image liked"
                       th:classappend="${liked} ? '' : 'hidden'"
-                      th:src="@{/assets/icon/bookmark-heart-fill.svg}"
+                      th:src="@{/assets/icon/heart-fill.svg}"
                       alt="bookmark-heart-fill">
                   <img
                       class="like-image un-liked"
                       th:classappend="${liked} ? 'hidden' : ''"
-                      th:src="@{/assets/icon/bookmark-heart.svg}"
+                      th:src="@{/assets/icon/heart.svg}"
                       alt="bookmark-heart">
                 </span>
                 </button>

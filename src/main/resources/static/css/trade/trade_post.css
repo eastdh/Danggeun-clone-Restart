@@ -67,21 +67,14 @@ h1 .status-text.orange {
 }
 
 #like-button {
-  padding: 8px;
+  padding: 1px;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: var(--gap-sm);
   border: none;
-  border-radius: 5px;
-  background-color: var(--orange-600);
-  opacity: 1;
+  background-color: transparent;
   cursor: pointer;
-  transition: opacity 0.1s ease;
-}
-
-#like-button:hover {
-  opacity: 0.5;
 }
 
 #like-button .like-image-box {
@@ -91,9 +84,8 @@ h1 .status-text.orange {
 }
 
 #like-button .like-image-box img {
-  width: 18px;
-  height: 18px;
-  filter: invert();
+  width: 24px;
+  height: 24px;
 }
 
 #like-button .like-image.hidden {

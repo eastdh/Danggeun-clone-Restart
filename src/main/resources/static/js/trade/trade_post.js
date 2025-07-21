@@ -238,9 +238,11 @@ function toggleLike() {
 
   function updateUI() {
     if (clientSideLiked) {
+      likeButton.classList.add("active");
       likedImageEl.classList.remove("hidden");
       unLikedImageEl.classList.add("hidden");
     } else {
+      likeButton.classList.remove("active");
       likedImageEl.classList.add("hidden");
       unLikedImageEl.classList.remove("hidden");
     }
