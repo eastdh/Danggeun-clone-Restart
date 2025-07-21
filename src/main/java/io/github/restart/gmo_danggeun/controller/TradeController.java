@@ -267,7 +267,7 @@ public class TradeController {
 
   @PostMapping("/api/trade/{id}/status")
   @ResponseBody
-  public ResponseEntity<?> alterStatus(
+  public ResponseEntity<String> alterStatus(
       @PathVariable Long id,
       @RequestBody StatusDto dto
   ) {
@@ -276,4 +276,43 @@ public class TradeController {
         ResponseEntity.ok(result) :
         ResponseEntity.badRequest().body(result);
   }
+
+  @PostMapping("/api/trade/{id}/bump")
+  @ResponseBody
+  public ResponseEntity<String> bump(
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails principal
+  ) {
+    User user = principal.getUser();
+    String result = tradeService.bumpTrade(id, user.getId());
+    return result.equals("success") ?
+        ResponseEntity.ok(result) :
+        ResponseEntity.badRequest().body(result);
+  }
+
+//  @PostMapping("/api/trade/{id}/like")
+//  @ResponseBody
+//  public ResponseEntity<String> like(
+//      @PathVariable Long id,
+//      @AuthenticationPrincipal CustomUserDetails principal
+//  ) {
+//    User user = principal.getUser();
+//    String result = tradeService.addLike(id, user.getId());
+//    return result.equals("success") ?
+//        ResponseEntity.ok(result) :
+//        ResponseEntity.badRequest().body(result);
+//  }
+//
+//  @PostMapping("/api/trade/{id}/remove-like")
+//  @ResponseBody
+//  public ResponseEntity<String> removeLike(
+//      @PathVariable Long id,
+//      @AuthenticationPrincipal CustomUserDetails principal
+//  ) {
+//    User user = principal.getUser();
+//    String result = tradeService.removeLike(id, user.getId());
+//    return result.equals("success") ?
+//        ResponseEntity.ok(result) :
+//        ResponseEntity.badRequest().body(result);
+//  }
 }

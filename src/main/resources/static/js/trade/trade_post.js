@@ -184,10 +184,35 @@ function addStatusWarning() {
   });
 }
 
+function bumpTrade() {
+  const bumpButton = document.getElementById("bump-button");
+  const tradeId = bumpButton.dataset.tradeId;
+
+  if (bumpButton) {
+    bumpButton.addEventListener("click", function () {
+      if (!window.confirm("거래글을 끌올할까요?")) {
+        return;
+      }
+
+      fetch(`/api/trade/${tradeId}/bump`, {
+        method: "POST",
+      })
+        .then((res) => {
+          if (res.ok) location.reload();
+          else throw new Error("거래글 끌올 실패");
+        })
+        .catch(() => {
+          alert("오류로 인해 끌올에 실패했습니다");
+        });
+    });
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   addCarouselListeners();
   addLinks();
   updateMannerScore();
   setStatusModal();
   addStatusWarning();
+  bumpTrade();
 });
