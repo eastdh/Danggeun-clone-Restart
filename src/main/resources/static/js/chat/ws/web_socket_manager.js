@@ -1,5 +1,5 @@
 // resources/static/js/chat/ws/web_socket_manager.js
-import { WS, RECONNECT_POLICY } from "../constants.js";
+import { WS, RECONNECT_POLICY, BOT_ROOM_ID } from "../constants.js";
 
 /**
  * WebSocketManager
@@ -38,9 +38,12 @@ export class WebSocketManager extends EventTarget {
       () => {
         this.attempts = 0;
         this._subscribeChatList();
-        this._subscribeChatRoom(this.roomId);
-        this._subscribeReadReceipt(this.roomId);
-
+        if (this.roomId === BOT_ROOM_ID) {
+          this._subscribeBot(this.roomId);
+        } else {
+          this._subscribeChatRoom(this.roomId);
+          this._subscribeReadReceipt(this.roomId);
+        }
         // 입장 시점 읽음 처리
         this.sendReadReceipt();
       },
@@ -84,6 +87,14 @@ export class WebSocketManager extends EventTarget {
     });
   }
 
+  /** 내부: 챗봇 메시지 구독 */
+  _subscribeBot(roomId) {
+    this.topicBot = this.stompClient.subscribe(WS.TOPIC.CHAT_BOT(roomId), ({ body }) => {
+      const botMsg = JSON.parse(body);
+      this.dispatchEvent(new CustomEvent("chatBotMessage", { detail: botMsg }));
+    });
+  }
+
   /** 클라이언트 → 서버: 메시지 전송 */
   sendMessage(payload) {
     if (!this._isConnected()) return;
@@ -114,6 +125,7 @@ export class WebSocketManager extends EventTarget {
     if (this.topicChat) this.topicChat.unsubscribe();
     if (this.topicRead) this.topicRead.unsubscribe();
     if (this.stompClient) this.stompClient.disconnect();
+    if (this.topicBot) this.topicBot.unsubscribe();
     this.stompClient = null;
   }
 

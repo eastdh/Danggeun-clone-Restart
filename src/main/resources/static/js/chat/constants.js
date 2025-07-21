@@ -2,6 +2,8 @@
 // 상수 정의 파일
 // 이 파일은 채팅 애플리케이션에서 사용되는 상수들을 정의합니다.
 
+export const BOT_ROOM_ID = -1; // 챗봇 방 ID
+
 // 메시지 타입(enum)
 export const MESSAGE_TYPES = {
   TEXT: "TEXT",
@@ -27,6 +29,7 @@ export const API_PATHS = {
   CHAT_ROOM_DETAIL: (chatRoomId) => `/api/chat/room/${chatRoomId}`,
   CONFIRM_TRADE: "/api/chat/confirm-trade",
   MARK_READ: "/api/chat/message/read",
+  CHAT_BOT: "/api/chat/bot",
 };
 
 // WebSocket/STOMP 설정
@@ -34,10 +37,12 @@ export const WS = {
   ENDPOINT: "/ws-chat",
   SEND_MESSAGE: "/app/send",
   SEND_READ: "/app/read",
+  SEND_BOT: "/api/chat/bot",
   TOPIC: {
     CHAT_LIST: "/user/queue/chat-list",
     CHAT_ROOM: (roomId) => `/topic/chat/${roomId}`,
     CHAT_ROOM_READ: (roomId) => `/topic/chat/${roomId}/read`,
+    CHAT_BOT: (roomId) => `/topic/chat/bot/${roomId}`,
   },
 };
 

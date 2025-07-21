@@ -33,6 +33,12 @@
 
         <!-- 룸 리스트 컨테이너 -->
         <div class="list__room-list">
+          <div class="list__room-list__item list__room-list__item--bot" data-chat-room-id="-1">
+            <div class="list__room-list__item-content">
+              <span class="chat-list__item-icon">🤖</span>
+              <span class="list__room-list__item__preview">챗봇</span>
+            </div>
+          </div>
           <!-- (서버사이드 렌더링된 초기 아이템, 필요 시 유지) -->
           <div class="list__room-list__item" th:each="room : ${chatRooms}" th:attr="data-chat-room-id=${room.chatRoomId}">
             <div class="list__room-list__item-content">
@@ -111,7 +117,7 @@
       </div>
     </div>
 
-    <div th:replace="~{fragments/footer :: footer}"></div>
+    <!-- <div th:replace="~{fragments/footer :: footer}"></div> -->
 
     <!-- Library -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js" defer></script>

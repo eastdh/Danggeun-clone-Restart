@@ -1,5 +1,5 @@
 // resources/static/js/chat/managers/chat_list_manager.js
-import { SELECTORS } from "../constants.js";
+import { BOT_ROOM_ID, SELECTORS } from "../constants.js";
 
 /**
  * ChatListManager
@@ -73,7 +73,7 @@ export class ChatListManager {
 
     // 읽지 않은 방 우선
     const unread = items.find((item) => item.querySelector(".unread-badge"));
-    const target = unread || items[0];
+    const target = unread || items[1]; // 챗봇 방은 제외하고 두 번째 방 선택
     // 클릭 이벤트 위임에 걸리도록 dispatch
     target.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   }

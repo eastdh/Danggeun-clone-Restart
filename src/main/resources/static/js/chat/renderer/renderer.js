@@ -1,5 +1,5 @@
 // resources/static/js/chat/renderer/renderer.js
-import { SELECTORS, MESSAGE_TYPES, SENDER_TYPES } from "../constants.js";
+import { BOT_ROOM_ID, SELECTORS, MESSAGE_TYPES, SENDER_TYPES } from "../constants.js";
 import { formatKoreanTime, isKoreanTimeString } from "../utils/time_formatter.js";
 
 export class Renderer {
@@ -41,6 +41,18 @@ export class Renderer {
   // 3) 채팅방 리스트 렌더링
   _renderChatList({ list, showUnreadOnly }) {
     this.listContainer.innerHTML = "";
+    // ① 챗봇 방 고정 추가
+    const botItem = document.createElement("div");
+    botItem.className = "list__room-list__item list__room-list__item--bot";
+    botItem.dataset.chatRoomId = BOT_ROOM_ID;
+    botItem.innerHTML = `
+    <div class="list__room-list__item-content">
+      <span class="chat-list__item-icon">🤖</span>
+      <span class="list__room-list__item__preview">챗봇</span>
+    </div>
+  `;
+    this.listContainer.appendChild(botItem);
+
     if (list.length === 0) {
       this.emptyListEl.style.display = "block";
       return;
@@ -93,7 +105,7 @@ export class Renderer {
 
     // 상단 이동
     if (isNew && item.parentNode) {
-      item.parentNode.prepend(item);
+      item.parentNode.prepend(item.parentNode.querySelector(".list__room-list__item--bot"), item);
     }
   }
 
@@ -105,8 +117,20 @@ export class Renderer {
 
   // 6) 채팅방 헤더(상대·거래) 렌더링
   _renderRoomDetail(detail) {
+    if (detail.chatRoomId === BOT_ROOM_ID) {
+      // 1) 상대 정보
+      this.partnerIdEl.textContent = detail.partnerNickname;
+      this.partnerTempEl.style.display = "none";
+
+      // 2) 거래 정보 숨기기
+      document.querySelector(".room__header__trade-info").style.display = "none";
+
+      return;
+    }
+
     this.partnerIdEl.textContent = detail.partnerNickname;
     this.partnerTempEl.textContent = detail.partnerTemperature + "°C";
+    document.querySelector(".room__header__trade-info").style.display = "flex";
     this.tradeNameEl.textContent = detail.tradeTitle;
     this.tradePriceEl.textContent = detail.tradePrice + "원";
     this.tradeImgEl.src = detail.tradeThumbnailUrl || "/assets/icon/default_product_img.svg";

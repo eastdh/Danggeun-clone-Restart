@@ -105,7 +105,7 @@
     <dependency>
       <groupId>com.google.genai</groupId>
       <artifactId>google-genai</artifactId>
-      <version>1.8.0</version> <!-- 2025-07 최신 -->
+      <version>1.9.0</version> <!-- 2025-07 최신 -->
     </dependency>
     <!-- Jackson(JSON 커스터마이징 시) -->
     <dependency>
