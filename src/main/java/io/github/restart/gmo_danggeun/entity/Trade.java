@@ -1,6 +1,7 @@
 package io.github.restart.gmo_danggeun.entity;
 
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
+import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -222,8 +223,8 @@ public class Trade {
     return Objects.hashCode(id);
   }
 
-  public TradeDto entityToDto() {
-    TradeDto dto = new TradeDto();
+  public TradeEditDto entityToEditDto() {
+    TradeEditDto dto = new TradeEditDto();
     dto.setId(id);
     dto.setCategoryId(category.getId());
     dto.setTitle(title);
@@ -231,12 +232,8 @@ public class Trade {
     dto.setPreferredLocation(preferredLocation);
     dto.setPrice(price);
     dto.setOfferable(isOfferable);
-    dto.setBumpCount(bumpCount);
     dto.setStatus(status);
     dto.setHidden(hidden);
-    dto.setCreatedAt(createdAt);
-    dto.setUpdatedAt(updatedAt);
-    dto.setBumpUpdatedAt(bumpUpdatedAt);
 
     return dto;
   }
