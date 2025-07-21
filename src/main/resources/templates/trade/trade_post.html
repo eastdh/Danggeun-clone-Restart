@@ -126,25 +126,27 @@
                       th:text="${statusText}"></span>
                   <span th:text="*{title}">거래글 제목</span>
                 </h1>
-                <button type="button"
-                        id="like-button"
-                        th:classappend="${liked} ? 'active' : ''"
-                        th:data-trade-id="${trade.tradeId}"
-                        th:data-liked="${liked}"
-                >
-                <span class="like-image-box">
-                  <img
-                      class="like-image liked"
-                      th:classappend="${liked} ? '' : 'hidden'"
-                      th:src="@{/assets/icon/heart-fill.svg}"
-                      alt="bookmark-heart-fill">
-                  <img
-                      class="like-image un-liked"
-                      th:classappend="${liked} ? 'hidden' : ''"
-                      th:src="@{/assets/icon/heart.svg}"
-                      alt="bookmark-heart">
-                </span>
-                </button>
+                <th:block th:if="${owner == null || !#strings.equals(owner, true)}">
+                  <button type="button"
+                          id="like-button"
+                          th:classappend="${liked} ? 'active' : ''"
+                          th:data-trade-id="${trade.tradeId}"
+                          th:data-liked="${liked}"
+                  >
+                  <span class="like-image-box">
+                    <img
+                        class="like-image liked"
+                        th:classappend="${liked} ? '' : 'hidden'"
+                        th:src="@{/assets/icon/heart-fill.svg}"
+                        alt="bookmark-heart-fill">
+                    <img
+                        class="like-image un-liked"
+                        th:classappend="${liked} ? 'hidden' : ''"
+                        th:src="@{/assets/icon/heart.svg}"
+                        alt="bookmark-heart">
+                  </span>
+                  </button>
+                </th:block>
               </div>
               <div class="trade-category-time">
                 <a class="category-link"
