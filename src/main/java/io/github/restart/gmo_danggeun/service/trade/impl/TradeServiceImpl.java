@@ -218,6 +218,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     trade.setStatus("completed"); // 또는 ENUM 사용 가능
+    trade.setUpdatedAt(LocalDateTime.now());
     tradeRepository.save(trade);
   }
 
@@ -246,6 +247,7 @@ public class TradeServiceImpl implements TradeService {
     if (!trade.getStatus().equalsIgnoreCase("completed")
         && TradeConfig.isCorrectStatus(status)) {
       trade.setStatus(status.toLowerCase());
+      trade.setUpdatedAt(LocalDateTime.now());
       tradeRepository.save(trade);
       result = API_RESULT_SUCCESS;
     }

@@ -24,7 +24,7 @@ public interface TradeListRepository extends ReadOnlyRepository<TradeList, Long>
       (:priceLowLimit IS NULL OR price >= :priceLowLimit) AND
       (:priceHighLimit IS NULL OR price <= :priceHighLimit)
       ORDER BY
-      rank DESC, created_at DESC, updated_at DESC
+      rank DESC NULLS LAST, bump_updated_at DESC NULLS LAST, updated_at DESC, created_at DESC
       """, nativeQuery = true)
   Page<TradeList> findAllByFilters(
       @Param("keyword") String keyword,
