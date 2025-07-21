@@ -2,7 +2,7 @@
 .chat-page {
   display: flex;
   padding: 0 10%;
-  height: 100vh;
+  height: calc(100vh - 60px);
   overflow: hidden;
   background-color: var(--yellow-200);
 }
