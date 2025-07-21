@@ -14,47 +14,30 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "image_trade")
+@IdClass(ImageTrade.class)
 public class ImageTrade {
 
-  @EmbeddedId
-  private ImageTradeId id;
-
-  @MapsId("tradeId")
+  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "trade_id")
   private Trade trade;
 
-  @MapsId("tradeId")
+  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "image_id")
   private Image image;
-
-  public ImageTrade() {
-  }
-
-  public ImageTrade(ImageTradeId id) {
-    this.id = id;
-  }
-
-  public ImageTradeId getId() {
-    return id;
-  }
-
-  public void setId(ImageTradeId id) {
-    this.id = id;
-  }
 
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ImageTrade that = (ImageTrade) o;
-    return Objects.equals(id, that.id);
+    ImageTrade imageTrade = (ImageTrade) o;
+    return Objects.equals(trade, imageTrade.trade) && Objects.equals(image, imageTrade.image);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, id);
+    return Objects.hash(trade, image);
   }
 }
