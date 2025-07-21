@@ -4,11 +4,14 @@ import io.github.restart.gmo_danggeun.config.TradeConfig;
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.Like;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
+import io.github.restart.gmo_danggeun.entity.id.LikeId;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
+import io.github.restart.gmo_danggeun.repository.LikeRepository;
 import io.github.restart.gmo_danggeun.repository.TradeRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.TradeDetailRepository;
 import io.github.restart.gmo_danggeun.repository.readonly.TradeImageListRepository;
@@ -16,6 +19,7 @@ import io.github.restart.gmo_danggeun.repository.readonly.TradeListRepository;
 import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.util.DateUtil;
 import io.github.restart.gmo_danggeun.util.SecurityUtil;
+import io.github.restart.gmo_danggeun.util.UserMannerUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +38,20 @@ public class TradeServiceImpl implements TradeService {
   private final TradeListRepository tradeListRepository;
   private final TradeDetailRepository tradeDetailRepository;
   private final TradeImageListRepository tradeImageListRepository;
+  private final LikeRepository likeRepository;
+
+  private static final String API_RESULT_FAILED = "failed";
+  private static final String API_RESULT_SUCCESS = "success";
 
   public TradeServiceImpl(TradeRepository tradeRepository, TradeListRepository tradeListRepository,
       TradeDetailRepository tradeDetailRepository,
-      TradeImageListRepository tradeImageListRepository) {
+      TradeImageListRepository tradeImageListRepository,
+      LikeRepository likeRepository) {
     this.tradeRepository = tradeRepository;
     this.tradeListRepository = tradeListRepository;
     this.tradeDetailRepository = tradeDetailRepository;
     this.tradeImageListRepository = tradeImageListRepository;
+    this.likeRepository = likeRepository;
   }
 
   @Override
@@ -212,13 +222,24 @@ public class TradeServiceImpl implements TradeService {
   }
 
   @Override
-  public void bumpTrade(Long id) {
+  @Transactional
+  public String bumpTrade(Long id, Long userId) {
+    String result = API_RESULT_FAILED;
+    Trade trade = tradeRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
 
+    if (isTradeOwner(trade, userId)) {
+      trade.setBumpCount(trade.getBumpCount()+1);
+      trade.setBumpUpdatedAt(LocalDateTime.now());
+      tradeRepository.save(trade);
+      result = API_RESULT_SUCCESS;
+    }
+    return result;
   }
 
   @Override
   public String alterStatus(Long id, String status) {
-    String result = "failed";
+    String result = API_RESULT_FAILED;
     Trade trade = tradeRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
 
@@ -226,8 +247,65 @@ public class TradeServiceImpl implements TradeService {
         && TradeConfig.isCorrectStatus(status)) {
       trade.setStatus(status.toLowerCase());
       tradeRepository.save(trade);
-      result = "success";
+      result = API_RESULT_SUCCESS;
     }
     return result;
+  }
+
+  @Override
+  @Transactional
+  public String addLike(Long id, User user) {
+    Trade trade = tradeRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
+
+    if (!isTradeOwner(trade, user.getId())) {
+      Like original = likeRepository.findByUserId(user.getId())
+          .stream()
+          .filter(like->like.getTrade().getId().equals(id))
+          .findFirst()
+          .orElse(null);
+      if (original != null) return API_RESULT_FAILED;
+
+      Like like = new Like(user, trade);
+      Like savedLike = likeRepository.save(like);
+      if (savedLike != null) return API_RESULT_SUCCESS;
+    }
+    return API_RESULT_FAILED;
+  }
+
+  @Override
+  @Transactional
+  public String removeLike(Long id, Long userId) {
+    String result = API_RESULT_FAILED;
+    Trade trade = tradeRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("거래글이 존재하지 않습니다"));
+
+    if (!isTradeOwner(trade, userId)) {
+      Like target = likeRepository.findByUserId(userId)
+          .stream()
+          .filter(like -> like.getTrade().getId().equals(id))
+          .findFirst()
+          .orElse(null);
+      if (target != null) {
+        likeRepository.delete(target);
+        result = API_RESULT_SUCCESS;
+      }
+    }
+    return result;
+  }
+
+  private boolean isTradeOwner(Trade trade, Long userId) {
+    return (trade.getUser().getId().equals(userId));
+  }
+
+  @Override
+  public String getEmojiFileName(TradeDetail tradeDetail) {
+    return UserMannerUtil.setEmoji(tradeDetail.getMannerScore());
+  }
+
+  @Override
+  public String getStatusText(TradeDetail tradeDetail) {
+    TradeConfig.Status statusEnum = TradeConfig.Status.compareName(tradeDetail.getStatus());
+    return TradeConfig.getStatusMap().get(statusEnum);
   }
 }

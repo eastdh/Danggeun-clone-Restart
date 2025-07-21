@@ -34,7 +34,15 @@ public interface TradeService {
 
   void confirmTrade(Long tradeId);
 
-  void bumpTrade(Long id);
+  String bumpTrade(Long id, Long userId);
 
   String alterStatus(Long id, String status);
+
+  String addLike(Long id, User user);
+
+  String removeLike(Long id, Long userId);
+
+  String getEmojiFileName(TradeDetail tradeDetail);
+
+  String getStatusText(TradeDetail tradeDetail);
 }
