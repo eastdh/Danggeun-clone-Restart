@@ -124,16 +124,12 @@ public class TradeController {
           null, "available", categoryTradePageable);
 
       List<TradeImageList> images = tradeService.findAllImageById(tradeDetail.getTradeId());
-
-      String emojiFileName = UserMannerUtil.setEmoji(tradeDetail.getMannerScore());
+      String emojiFileName = tradeService.getEmojiFileName(tradeDetail);
+      String statusText = tradeService.getStatusText(tradeDetail);
 
       if (userId != null && userId.equals(tradeDetail.getUserId())) {
         model.addAttribute("owner", "true");
       }
-
-      TradeConfig.Status statusEnum = TradeConfig.Status.compareName(tradeDetail.getStatus());
-      String statusText = TradeConfig.getStatusMap().get(statusEnum);
-
       model.addAttribute("trade", tradeDetail);
       model.addAttribute("statusText", statusText);
       model.addAttribute("images", images);
@@ -290,29 +286,29 @@ public class TradeController {
         ResponseEntity.badRequest().body(result);
   }
 
-//  @PostMapping("/api/trade/{id}/like")
-//  @ResponseBody
-//  public ResponseEntity<String> like(
-//      @PathVariable Long id,
-//      @AuthenticationPrincipal CustomUserDetails principal
-//  ) {
-//    User user = principal.getUser();
-//    String result = tradeService.addLike(id, user.getId());
-//    return result.equals("success") ?
-//        ResponseEntity.ok(result) :
-//        ResponseEntity.badRequest().body(result);
-//  }
-//
-//  @PostMapping("/api/trade/{id}/remove-like")
-//  @ResponseBody
-//  public ResponseEntity<String> removeLike(
-//      @PathVariable Long id,
-//      @AuthenticationPrincipal CustomUserDetails principal
-//  ) {
-//    User user = principal.getUser();
-//    String result = tradeService.removeLike(id, user.getId());
-//    return result.equals("success") ?
-//        ResponseEntity.ok(result) :
-//        ResponseEntity.badRequest().body(result);
-//  }
+  @PostMapping("/api/trade/{id}/like")
+  @ResponseBody
+  public ResponseEntity<String> addLike(
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails principal
+  ) {
+    User user = principal.getUser();
+    String result = tradeService.addLike(id, user);
+    return result.equals("success") ?
+        ResponseEntity.ok(result) :
+        ResponseEntity.badRequest().body(result);
+  }
+
+  @PostMapping("/api/trade/{id}/remove-like")
+  @ResponseBody
+  public ResponseEntity<String> removeLike(
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails principal
+  ) {
+    User user = principal.getUser();
+    String result = tradeService.removeLike(id, user.getId());
+    return result.equals("success") ?
+        ResponseEntity.ok(result) :
+        ResponseEntity.badRequest().body(result);
+  }
 }

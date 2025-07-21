@@ -38,7 +38,11 @@ public interface TradeService {
 
   String alterStatus(Long id, String status);
 
-//  String addLike(Long id, Long userId);
-//
-//  String removeLike(Long id, Long userId);
+  String addLike(Long id, User user);
+
+  String removeLike(Long id, Long userId);
+
+  String getEmojiFileName(TradeDetail tradeDetail);
+
+  String getStatusText(TradeDetail tradeDetail);
 }
