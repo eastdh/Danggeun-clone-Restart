@@ -1,6 +1,6 @@
 /* scroll-container */
 .scroll-container {
-  height: 100vh;
+  height: calc(100vh - 60px); /* 헤더 높이 제외 */
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
@@ -8,7 +8,7 @@
 
 /* 슬라이드 공통 스타일*/
 .slide {
-  height: 100vh;
+  height: calc(100vh - 60px); /* 헤더 높이 제외 */
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
