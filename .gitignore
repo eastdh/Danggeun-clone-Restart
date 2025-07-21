@@ -32,3 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Gemini 서비스 키
+**/gemini-key.json
