@@ -42,23 +42,6 @@
             </a>
           </div>
           <div class="divider-line"></div>
-          <!-- 시간 상 지역별 필터링 기능은 생략 -->
-<!--          <div class="filter-box">-->
-<!--            <h3>위치</h3>-->
-<!--            <div class="filter-contents">-->
-<!--              <th:block th:each="location:${locations}">-->
-<!--                <a-->
-<!--                    th:href="@{/trade}"-->
-<!--                    class="filter-link"-->
-<!--                >-->
-<!--                  <div class="radio-img-box"></div>-->
-<!--                  <span th:text="${location}">종로구</span>-->
-<!--                </a>-->
-<!--              </th:block>-->
-<!--              <button type="button">더보기</button>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="divider-line"></div>-->
           <div class="filter-box">
             <h3>카테고리</h3>
             <div class="filter-contents">
@@ -95,7 +78,7 @@
         </section>
       </aside>
       <div class="trade-list">
-          <div th:if="${filters != null}" class="filter-applied">
+        <div th:if="${filters != null}" class="filter-applied">
             <span th:if="${filters.status != null}" class="filter-badge">
               <span>판매중</span>
               <img th:src="@{/assets/icon/x-lg.svg}"
@@ -128,19 +111,24 @@
                    alt="취소">
             </span>
           </div>
-        <div th:class="'trade-contents ' + ${filters != null ? 'filtered' : ''}">
+        <div
+            class="trade-contents"
+            th:classappend="${filters != null ? 'filtered' : ''}"
+        >
           <th:block th:each="trade:${trades}">
             <div th:replace="~{/trade/fragments/trade_components :: trade_card (${trade}, ${true})}"
                  class="trade-card"></div>
           </th:block>
         </div>
+        <div class="loading hidden">로딩중...</div>
       </div>
     </section>
   </div>
 </main>
 <div th:replace="~{trade/fragments/trade_components :: new_trade_button}"></div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
-<script src="/js/common/header.js"></script>
+<script src="js/common/header.js"></script>
 <script src="js/trade/trade.js"></script>
+<script type="module" src="js/trade/trade_scroll.js"></script>
 </body>
 </html>

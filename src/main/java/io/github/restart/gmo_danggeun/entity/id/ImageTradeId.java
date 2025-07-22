@@ -5,14 +5,11 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Embeddable
 public class ImageTradeId implements Serializable {
 
-  @Column(name = "trade_id")
-  private Long tradeId;
+  private Long trade;
 
-  @Column(name = "image_id")
-  private Long imageId;
+  private Long image;
 
   public ImageTradeId() {
   }
@@ -27,28 +24,13 @@ public class ImageTradeId implements Serializable {
     }
 
     ImageTradeId that = (ImageTradeId) o;
-    return Objects.equals(tradeId, that.tradeId) &&
-        Objects.equals(imageId, that.imageId);
+    return Objects.equals(trade, that.trade) &&
+        Objects.equals(image, that.image);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(tradeId, imageId);
+    return Objects.hash(trade, image);
   }
 
-  public Long getTradeId() {
-    return tradeId;
-  }
-
-  public Long getImageId() {
-    return imageId;
-  }
-
-  public void setTradeId(Long tradeId) {
-    this.tradeId = tradeId;
-  }
-
-  public void setImageId(Long imageId) {
-    this.imageId = imageId;
-  }
 }

@@ -245,3 +245,15 @@ aside .section-filter {
   filter: invert();
   cursor: pointer;
 }
+
+.loading {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading.hidden {
+  display: none;
+}
