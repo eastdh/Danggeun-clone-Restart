@@ -214,6 +214,8 @@ export class Renderer {
       meta.appendChild(readStatus);
     } else if (msg.senderType === SENDER_TYPES.DATE_LABEL) {
       wrapper.classList.add("room__messages__item__date-label");
+    } else if (msg.messageType === MESSAGE_TYPES.CHAT_BOT) {
+      wrapper.classList.add("room__messages__item--chat-bot");
     } else {
       wrapper.classList.add("room__messages__item--partner");
     }

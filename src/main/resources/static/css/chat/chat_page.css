@@ -444,6 +444,10 @@
 }
 
 /* 챗봇 메시지 */
+.room__messages__item--chat-bot {
+  flex-direction: row-reverse;
+}
+
 .room__messages__item--chat-bot .room__messages__item__text {
   background-color: var(--yellow-200);
   cursor: pointer;
@@ -451,6 +455,10 @@
 
 .room__messages__item--chat-bot .room__messages__item__text:hover {
   box-shadow: 0 0 0 2px #ffeb94;
+}
+
+.room__messages__item--chat-bot .room__messages__item__meta {
+  display: none;
 }
 
 /* 메시지 입력 영역 */

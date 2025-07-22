@@ -42,6 +42,7 @@ export class ChatRoomManager {
   _bindUIEvents() {
     // 전송 버튼
     this.renderer.sendButton.addEventListener("click", () => this._handleSend());
+
     // Enter 키
     this.renderer.inputField.addEventListener("keydown", (evt) => {
       if (evt.key === "Enter" && !evt.shiftKey && !evt.ctrlKey) {
@@ -49,6 +50,7 @@ export class ChatRoomManager {
         this._handleSend();
       }
     });
+
     // 거래 확정 버튼
     this.renderer.tradeStatusBtn.addEventListener("click", () => {
       const tradeId = Number(this.renderer.tradeStatusBtn.dataset.tradeId);
@@ -146,7 +148,44 @@ export class ChatRoomManager {
               isRead: false,
               messageType: MESSAGE_TYPES.TEXT,
             },
+            {
+              messageId: null,
+              senderId: null,
+              senderType: SENDER_TYPES.CHAT_BOT,
+              content: "당근 마켓이 무엇인가요?",
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              messageType: MESSAGE_TYPES.CHAT_BOT,
+            },
+            {
+              messageId: null,
+              senderId: null,
+              senderType: SENDER_TYPES.CHAT_BOT,
+              content: "당근 마켓을 이용하는 방법을 알려주세요.",
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              messageType: MESSAGE_TYPES.CHAT_BOT,
+            },
+            {
+              messageId: null,
+              senderId: null,
+              senderType: SENDER_TYPES.CHAT_BOT,
+              content: "챗봇으로 무엇을 할 수 있나요?",
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              messageType: MESSAGE_TYPES.CHAT_BOT,
+            },
           ]);
+
+          // 메시지가 렌더링된 이후 바인딩
+          setTimeout(() => {
+            document.querySelectorAll(".room__messages__item--chat-bot .room__messages__item__text").forEach((el) => {
+              el.addEventListener("click", () => {
+                const selectedMessage = el.textContent;
+                this.handleBotExampleClick(selectedMessage);
+              });
+            });
+          }, 0);
           console.log("[ChatRoomManager] 챗봇 방 메시지 하드 코딩 완료");
         }
       } else {
@@ -204,5 +243,29 @@ export class ChatRoomManager {
         messageType: "TEXT",
       });
     }
+  }
+
+  handleBotExampleClick(selectedMessage) {
+    // ① 챗봇 예시 메시지 모두 제거
+    document.querySelectorAll(".room__messages__item--chat-bot").forEach((el) => el.remove());
+
+    // ② 내가 보낸 메시지 렌더링
+    const payload = {
+      chatRoomId: this.store.currentRoomId,
+      senderId: this.store.userId,
+      content: selectedMessage,
+      senderType: SENDER_TYPES.ME,
+      tempMessage: true,
+      isRead: false,
+      timestamp: Date.now(),
+      messageType: "TEXT",
+    };
+    this.store.appendMessage(payload);
+
+    // ③ 서버에 챗봇 요청
+    this.api.chatBot(payload).catch((err) => {
+      console.error("챗봇 요청 실패:", err);
+      Toast.error("챗봇 응답 요청 중 오류가 발생했습니다");
+    });
   }
 }
