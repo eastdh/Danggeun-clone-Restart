@@ -92,6 +92,7 @@
                 </div>
             </li>
         </ul>
+        <button id="show-more-review-btn" style="display:none;">더보기</button>
     </section>
 
     <section class="sale-items">
@@ -104,24 +105,29 @@
         </div>
 
         <div class="items-grid">
-            <div class="item-card" th:each="sale : ${profileData.sales}"  th:attr="data-status=${sale.status}">
+            <div class="item-card"
+                 th:each="sale : ${profileData.sales}"
+                 th:attr="data-id=${sale.tradeId}, data-status=${sale.status}">
                 <img th:src="${sale.thumbnailUrl != null} ? ${sale.thumbnailUrl} : '/assets/icon/default_product_img.svg'" alt="상품 이미지">
                 <div class="title" th:text="${sale.title}">상품명</div>
                 <div class="price" th:text="${#numbers.formatInteger(sale.price, 3, 'COMMA') + '원'}">가격</div>
             </div>
         </div>
     </section>
-
+    <button id="show-more-sale-btn" style="display:none;">더보기</button>
     <section class="liked-items" th:if="${currentUserId != null and currentUserId == profileData.userId}">
         <h3>관심목록</h3>
         <div class="items-grid">
-            <div class="item-card" th:each="liked : ${profileData.likedTrades}">
+            <div class="item-card"
+                 th:each="liked : ${profileData.likedTrades}"
+                 th:attr="data-id=${liked.tradeId}">
                 <img th:src="${liked.thumbnailUrl != null} ? ${liked.thumbnailUrl} : '/assets/icon/default_product_img.svg'" alt="상품 이미지">
                 <div class="title" th:text="${liked.title}">상품명</div>
                 <div class="price" th:text="${#numbers.formatInteger(liked.price, 3, 'COMMA') + '원'}">가격</div>
             </div>
         </div>
     </section>
+    <button id="show-more-liked-btn" style="display:none;">더보기</button>
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>

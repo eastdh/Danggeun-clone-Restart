@@ -40,7 +40,9 @@
             </div>
           </div>
           <!-- (서버사이드 렌더링된 초기 아이템, 필요 시 유지) -->
-          <div class="list__room-list__item" th:each="room : ${chatRooms}" th:attr="data-chat-room-id=${room.chatRoomId}">
+          <div class="list__room-list__item" th:each="room : ${chatRooms}" th:attr="data-chat-room-id=${room.chatRoomId},
+              data-trade-id=${room.tradeId},
+              data-partner-nickname=${room.partnerNickname}">
             <div class="list__room-list__item-content">
               <div class="list__room-list__item-meta">
                 <span class="list__room-list__item-meta__partner-id" th:text="${room.partnerNickname} ?: '상대방'"></span>
@@ -102,6 +104,11 @@
               <button id="tradeStatusButton" class="room__header__trade-info__status-button" type="button" data-chat-room-id="" data-trade-id="">
                 거래 상태
               </button>
+              <!-- 후기 작성 버튼 -->
+              <button class="review-button" data-trade-id="" data-partner-id="">후기 작성</button>
+              <!-- 후기 확인 버튼 -->
+              <button class="review-check-button" data-trade-id="" data-partner-id="">후기 확인</button>
+
             </div>
           </div>
 

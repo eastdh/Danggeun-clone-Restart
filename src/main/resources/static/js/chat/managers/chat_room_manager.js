@@ -1,5 +1,5 @@
 // resources/static/js/chat/managers/chat_room_manager.js
-import { API_PATHS, SENDER_TYPES, MESSAGE_TYPES, WS } from "../constants.js";
+import { API_PATHS, SENDER_TYPES, WS } from "../constants.js";
 
 /**
  * ChatRoomManager
@@ -132,6 +132,23 @@ export class ChatRoomManager {
 
   async _loadRoomDetail(roomId) {
     try {
+        const { detail, messages } = await this.api.getChatRoomDetail(roomId);
+        this.store.setCurrentRoomDetail(detail);
+        this.store.setMessages(messages);
+
+        const reviewButton = document.querySelector(".review-button");
+        if (reviewButton) {
+            reviewButton.setAttribute("data-trade-id", detail.tradeId || "");
+            reviewButton.setAttribute("data-partner-id", detail.partnerId || "");
+            reviewButton.setAttribute("data-is-seller", detail.isSeller ? "true" : "false");
+            reviewButton.setAttribute("data-chat-room-id", detail.chatRoomId || "");  // 추가
+        }
+        // 후기 확인 버튼 설정
+        const reviewCheckButton = document.querySelector(".review-check-button");
+        if (reviewCheckButton) {
+            reviewCheckButton.setAttribute("data-trade-id", detail.tradeId || "");
+            reviewCheckButton.setAttribute("data-partner-id", detail.partnerId || "");
+        }
       if (roomId < 0) {
         // 챗봇 방은 API 호출 안함
         const botDetail = {
@@ -281,5 +298,12 @@ export class ChatRoomManager {
       console.error("챗봇 요청 실패:", err);
       Toast.error("챗봇 응답 요청 중 오류가 발생했습니다");
     });
+  }
+}
+
+function selectChatRoom(room) {
+  const reviewButton = document.querySelector('.review-button');
+  if (reviewButton && room.tradeId) {
+    reviewButton.setAttribute('data-trade-id', room.tradeId);
   }
 }

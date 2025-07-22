@@ -1,0 +1,121 @@
+/* review_view.css */
+
+/* 기본 레이아웃 */
+.review-view-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333;
+}
+
+/* 제목 */
+.review-view-container h1 {
+    font-size: 26px;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 25px;
+    color: #222;
+}
+
+/* 상대방 정보 */
+.partner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    background-color: #fafafa;
+}
+
+.partner-info strong {
+    color: #444;
+}
+
+/* 리뷰 정보 */
+.review-info {
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #fafafa;
+    margin-bottom: 30px;
+}
+
+/* 별점 */
+.review-info p strong {
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+/* 키워드 */
+.keyword {
+    display: inline-block;
+    background-color: #f7f8fa;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 14px;
+    margin: 3px;
+    color: #444;
+}
+
+/* 리뷰 본문 */
+.review-content {
+    margin-top: 15px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* 버튼 영역 */
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.buttons a {
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* 채팅방으로 버튼 (회색) */
+.btn-back {
+    background-color: #f2f2f2;
+    color: #555;
+}
+
+.btn-back:hover {
+    background-color: #ddd;
+}
+
+/* 거래 상세보기 버튼 (주황색) */
+.btn-trade {
+    background-color: #ff7f50;
+    color: white;
+}
+
+.btn-trade:hover {
+    background-color: #ff5722;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    .review-view-container {
+        padding: 20px;
+    }
+    .buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

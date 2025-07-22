@@ -48,3 +48,36 @@ document.addEventListener("DOMContentLoaded", () => {
   new ChatListManager(store, api, renderer);
   new ChatRoomManager(store, api, wsManager, renderer);
 });
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.addEventListener("click", (e) => {
+    const target = e.target;
+
+    // 후기 작성 버튼
+    if (target.classList.contains("review-button")) {
+      const tradeId = target.dataset.tradeId;
+      const partnerId = target.dataset.partnerId;
+      const isSeller = target.dataset.isSeller;
+      const chatRoomId = target.dataset.chatRoomId;
+
+      if (tradeId && partnerId) {
+        window.location.href =
+            `/review/write?trade_id=${tradeId}&partner_id=${partnerId}&is_seller=${isSeller}&chat_room_id=${chatRoomId}`;
+      } else {
+        console.error("필수 데이터(tradeId, partnerId)가 누락되었습니다.");
+      }
+    }
+
+    // 후기 확인 버튼
+    if (target.classList.contains("review-check-button")) {
+      const tradeId = target.dataset.tradeId;
+      const partnerId = target.dataset.partnerId;
+
+      if (tradeId && partnerId) {
+        window.location.href =
+            `/review/review_view?trade_id=${tradeId}&partner_id=${partnerId}`;
+      } else {
+        console.error("필수 데이터(tradeId, partnerId)가 누락되었습니다.");
+      }
+    }
+  });
+});

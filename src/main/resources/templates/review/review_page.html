@@ -12,27 +12,23 @@
         <div class="review-header__left">
           <img th:src="@{${review?.profileImage} ?: '/assets/images/chat_test_pic.jpg'}" alt="프로필 이미지" class="profile-img" />
           <div class="profile-info">
-            <h2 class="profile-name" th:text="${review?.nickname ?: '닉네임'}">닉네임</h2>
-            <div class="profile-rating">⭐ <span th:text="${review?.avgRating ?: '4.8'}">4.8</span> / 5.0</div>
+            <h2 class="profile-name" th:text="${partnerNickname}">닉네임</h2>
+            <div class="profile-rating"> 매너온도: <span th:text="${partnerTemperature}">36.5</span>°C</div>
           </div>
         </div>
-        <div class="review-header__right">
-          <h3>이런 점이 좋았어요</h3>
-
-          <ul class="received-keywords structured" th:if="${receivedKeywords != null and #lists.size(receivedKeywords) > 0}">
-            <li th:each="keywordStat : ${receivedKeywords}">
-              <span class="keyword-count" th:text="${keywordStat.count + '명'}">0명</span>
-              <span class="keyword-text" th:text="${keywordStat.keyword}">키워드</span>
-            </li>
-          </ul>
-
-          <div class="no-keywords" th:if="${receivedKeywords == null or #lists.isEmpty(receivedKeywords)}">아직 받은 키워드가 없어요 😊</div>
-        </div>
+        <div class="review-header__right"></div>
       </div>
 
       <div class="review-divider"></div>
 
       <form id="reviewForm" class="review-form" method="post" th:action="@{/review/submit}">
+        <!-- Hidden Fields -->
+        <input type="hidden" name="trade_id" th:value="${trade.id}">
+        <input type="hidden" name="partner_id" th:value="${partnerId}">
+        <input type="hidden" name="is_seller" th:value="${isSeller}">
+        <input type="hidden" name="chat_room_id" th:value="${chatRoomId}">
+
+
         <section class="form-section">
           <div class="form-title">
             <span>별점을 선택해주세요!</span>
@@ -42,10 +38,10 @@
           <div class="rating-wrapper">
             <div class="rating">
               <label
-                class="rating-label"
-                th:each="i : ${#numbers.sequence(1, 10)}"
-                th:classappend="${i % 2 == 1} ? 'rating-label--half' : 'rating-label--full'"
-                th:for="${'star' + i}"
+                      class="rating-label"
+                      th:each="i : ${#numbers.sequence(1, 10)}"
+                      th:classappend="${i % 2 == 1} ? 'rating-label--half' : 'rating-label--full'"
+                      th:for="${'star' + i}"
               >
                 <input type="radio" th:id="${'star' + i}" th:name="rating" th:value="${i}" class="rating__input" />
                 <span class="star-icon"></span>
@@ -60,16 +56,10 @@
             <span>리뷰 키워드</span>
             <span class="form-badge">1~5개</span>
           </div>
-          <div class="form-subtitle">어떤 점이 좋았나요?</div>
           <div class="keyword-options">
-            <label th:each="keyword : ${availableKeywords}">
-              <input
-                type="checkbox"
-                name="keywords"
-                th:value="${keyword.name}"
-                th:checked="${review.keywords != null and review.keywords.contains(keyword.name)}"
-              />
-              <span th:text="${keyword.name}">키워드</span>
+            <label th:each="cat : ${categories}">
+              <input type="checkbox" name="categoryIds" th:value="${cat.id}">
+              <span th:text="${cat.name}">카테고리</span>
             </label>
           </div>
         </section>
@@ -85,7 +75,7 @@
           </div>
 
           <div class="review-text">
-            <textarea
+      <textarea
               id="reviewContent"
               name="content"
               rows="5"
@@ -93,7 +83,7 @@
               maxlength="200"
               placeholder="리뷰 내용을 작성해주세요"
               th:text="${review?.content ?: ''}"
-            ></textarea>
+      ></textarea>
             <div id="charCounter" class="char-counter">0 / 200자</div>
           </div>
         </section>
