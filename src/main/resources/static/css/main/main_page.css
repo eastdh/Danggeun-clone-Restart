@@ -273,8 +273,11 @@ h2 {
   margin-bottom: 40px;
 }
 
-.preview-main__img {
+.preview-main__imgs {
   width: 60%;
+}
+.preview-main__img {
+  width: 100%;
   border-radius: 12px;
   object-fit: cover;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
