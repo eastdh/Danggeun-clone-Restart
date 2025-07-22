@@ -36,8 +36,8 @@ public class S3Service {
         .build();
   }
 
-  public String uploadFile(MultipartFile file) throws IOException {
-    String fileName = generateFileName("static/trade", file.getOriginalFilename());
+  public String uploadFile(MultipartFile file, String filePath) throws IOException {
+    String fileName = generateFileName(filePath, file.getOriginalFilename());
 
     PutObjectRequest request = PutObjectRequest.builder()
         .bucket(bucketName)

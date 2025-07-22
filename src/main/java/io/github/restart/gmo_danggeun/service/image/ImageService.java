@@ -5,14 +5,12 @@ import io.github.restart.gmo_danggeun.entity.Image;
 import io.github.restart.gmo_danggeun.entity.ImageTrade;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
-import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.repository.ImageChatRepository;
 import io.github.restart.gmo_danggeun.repository.ImageRepository;
 import io.github.restart.gmo_danggeun.repository.ImageTradeRepository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.apache.tika.Tika;
@@ -28,6 +26,8 @@ public class ImageService {
   private final ImageChatRepository imageChatRepository;
   private static final Tika tika = new Tika();
 
+  private static final String S3_TRADE_FILE_PATH = "static/trade";
+
   public ImageService(S3Service s3Service, ImageRepository imageRepository,
       ImageTradeRepository imageTradeRepository, ImageChatRepository imageChatRepository) {
     this.s3Service = s3Service;
@@ -37,7 +37,11 @@ public class ImageService {
   }
 
   @Transactional
-  public List<Image> uploadImage(List<MultipartFile> files, User user) throws IOException {
+  public List<Image> uploadImage(
+      List<MultipartFile> files,
+      String filePath,
+      User user
+  ) throws IOException {
       return files.stream()
           .filter(file -> !file.isEmpty())
           .filter(file -> {
@@ -49,7 +53,7 @@ public class ImageService {
           })
           .map(file -> {
             try {
-              String s3Url = s3Service.uploadFile(file);
+              String s3Url = s3Service.uploadFile(file, filePath);
               String s3Key = extractKeyFromUrl(s3Url);
               Image image = new Image(
                   user, s3Url, s3Key, LocalDateTime.now(), LocalDateTime.now().plusMonths(30)
@@ -79,7 +83,7 @@ public class ImageService {
   @Transactional
   public List<ImageTrade> uploadTradeImages(List<MultipartFile> files, User user, Trade trade)
   throws IOException {
-    List<Image> imageList = uploadImage(files, user);
+    List<Image> imageList = uploadImage(files, S3_TRADE_FILE_PATH, user);
     return addImageTrade(trade, imageList);
   }
 
