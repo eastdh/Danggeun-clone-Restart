@@ -118,14 +118,35 @@
         <section class="trade-meta">
           <div class="trade-info">
             <div class="trade-info-header">
-              <div>
+              <div class="header-box">
                 <h1>
                   <span
-                      class="status-text"
+                      th:class="'status-text ' + ${#strings.equals(trade.status, 'completed') ? 'green' : 'orange'}"
                       th:unless="${#strings.equals(trade.status, 'available')}"
                       th:text="${statusText}"></span>
                   <span th:text="*{title}">거래글 제목</span>
                 </h1>
+                <th:block th:if="${owner == null || !#strings.equals(owner, true)}">
+                  <button type="button"
+                          id="like-button"
+                          th:classappend="${liked} ? 'active' : ''"
+                          th:data-trade-id="${trade.tradeId}"
+                          th:data-liked="${liked}"
+                  >
+                  <span class="like-image-box">
+                    <img
+                        class="like-image liked"
+                        th:classappend="${liked} ? '' : 'hidden'"
+                        th:src="@{/assets/icon/heart-fill.svg}"
+                        alt="bookmark-heart-fill">
+                    <img
+                        class="like-image un-liked"
+                        th:classappend="${liked} ? 'hidden' : ''"
+                        th:src="@{/assets/icon/heart.svg}"
+                        alt="bookmark-heart">
+                  </span>
+                  </button>
+                </th:block>
               </div>
               <div class="trade-category-time">
                 <a class="category-link"
@@ -164,7 +185,14 @@
           <th:block th:if="${owner != null}">
             <div class="action-button-wrap owner">
               <th:block th:if="${!#strings.equals(trade.status, 'completed')}">
-                <button type="button" id="status-button">상태 변경</button>
+                <button type="button"
+                        class="option-button"
+                        id="bump-button"
+                        th:data-trade-id="*{tradeId}"
+                >끌올</button>
+                <button type="button"
+                        class="option-button"
+                        id="status-button">상태 변경</button>
                 <div id="status-alter-modal"
                      class="modal hidden">
                   <div class="modal-content">
@@ -203,7 +231,7 @@
           </th:block>
           <th:block th:unless="${owner != null}">
             <div class="action-button-wrap">
-              <a th:href="@{/chat}">채팅하기</a>
+              <a id="chatButton" th:data-trade-id="${trade.tradeId}" th:data-seller-id="${trade.userId}" type="button">채팅하기</a>
             </div>
           </th:block>
         </section>

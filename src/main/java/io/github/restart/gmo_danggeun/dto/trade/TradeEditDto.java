@@ -34,7 +34,10 @@ public class TradeEditDto {
 
   private Boolean hidden;
 
+  @Size(max = 5, message = "사진은 최대 5개까지만 첨부 가능합니다.")
   private List<MultipartFile> files;
+
+  private Boolean fileDeleteFlag = false;
 
   public TradeEditDto() {
   }
@@ -117,5 +120,13 @@ public class TradeEditDto {
 
   public void setFiles(List<MultipartFile> files) {
     this.files = files;
+  }
+
+  public Boolean getFileDeleteFlag() {
+    return fileDeleteFlag;
+  }
+
+  public void setFileDeleteFlag(Boolean fileDeleteFlag) {
+    this.fileDeleteFlag = fileDeleteFlag;
   }
 }

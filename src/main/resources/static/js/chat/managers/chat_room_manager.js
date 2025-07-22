@@ -30,7 +30,8 @@ export class ChatRoomManager {
         await this._loadRoomDetail(roomId);
         this._connectWebSocket(roomId);
         this.renderer.showRoom();
-      } catch {
+      } catch (err) {
+        console.error("채팅방 로드 실패:", err);
         this.renderer.showEmptyRoom();
       } finally {
         this.renderer.hideLoading();
@@ -41,6 +42,7 @@ export class ChatRoomManager {
   _bindUIEvents() {
     // 전송 버튼
     this.renderer.sendButton.addEventListener("click", () => this._handleSend());
+
     // Enter 키
     this.renderer.inputField.addEventListener("keydown", (evt) => {
       if (evt.key === "Enter" && !evt.shiftKey && !evt.ctrlKey) {
@@ -48,11 +50,13 @@ export class ChatRoomManager {
         this._handleSend();
       }
     });
+
     // 거래 확정 버튼
     this.renderer.tradeStatusBtn.addEventListener("click", () => {
       const tradeId = Number(this.renderer.tradeStatusBtn.dataset.tradeId);
+      const chatRoomId = this.store.currentRoomId;
       this.api
-        .confirmTrade(tradeId)
+        .confirmTrade(tradeId, chatRoomId)
         .then(() => this.store.setCurrentRoom(this.store.currentRoomId))
         .catch(() => {
           /* Toast 알림 */
@@ -94,33 +98,135 @@ export class ChatRoomManager {
       // 읽은 사람이 나(=this.store.userId)가 아니라면,
       // “내가 보낸” 메시지들의 read 상태를 true로 바꾼다
       if (Number(readerId) !== Number(this.store.userId)) {
-        console.log("[WS] 상대방이 읽음 수신 →", e.detail);
         this.store.markMessagesRead(messageIds);
       }
+    });
+
+    // 챗봇 응답 수신
+    this.wsManager.addEventListener("chatBotMessage", (e) => {
+      const msg = e.detail;
+      this.store.appendMessage({
+        ...msg,
+        senderType: SENDER_TYPES.CHAT_BOT,
+        timestamp: msg.timestamp,
+      });
+    });
+
+    // 시스템 메시지 수신
+    this.wsManager.addEventListener("systemMessage", (e) => {
+      const msg = e.detail;
+      // 버튼 상태 토글 (판매자·구매자 모두 거래 완료 상태로)
+      this.renderer.updateTradeStatusButton(true);
+
+      // store에도 남겨 렌더러가 호출되게 함
+      this.store.appendMessage({
+        ...msg,
+        senderType: SENDER_TYPES.SYSTEM,
+        messageType: MESSAGE_TYPES.SYSTEM,
+        timestamp: msg.timestamp,
+        buttonText: msg.buttonText,
+        buttonUrl: msg.buttonUrl,
+      });
     });
   }
 
   async _loadRoomDetail(roomId) {
     try {
-      const { detail, messages } = await this.api.getChatRoomDetail(roomId);
-      this.store.setCurrentRoomDetail(detail);
-      this.store.setMessages(messages);
+        const { detail, messages } = await this.api.getChatRoomDetail(roomId);
+        this.store.setCurrentRoomDetail(detail);
+        this.store.setMessages(messages);
 
-      const reviewButton = document.querySelector(".review-button");
-      if (reviewButton) {
-        reviewButton.setAttribute("data-trade-id", detail.tradeId || "");
-        reviewButton.setAttribute("data-partner-id", detail.partnerId || "");
-        reviewButton.setAttribute("data-is-seller", detail.isSeller ? "true" : "false");
-        reviewButton.setAttribute("data-chat-room-id", detail.chatRoomId || "");  // 추가
-      }
-      // 후기 확인 버튼 설정
-      const reviewCheckButton = document.querySelector(".review-check-button");
-      if (reviewCheckButton) {
-        reviewCheckButton.setAttribute("data-trade-id", detail.tradeId || "");
-        reviewCheckButton.setAttribute("data-partner-id", detail.partnerId || "");
+        const reviewButton = document.querySelector(".review-button");
+        if (reviewButton) {
+            reviewButton.setAttribute("data-trade-id", detail.tradeId || "");
+            reviewButton.setAttribute("data-partner-id", detail.partnerId || "");
+            reviewButton.setAttribute("data-is-seller", detail.isSeller ? "true" : "false");
+            reviewButton.setAttribute("data-chat-room-id", detail.chatRoomId || "");  // 추가
+        }
+        // 후기 확인 버튼 설정
+        const reviewCheckButton = document.querySelector(".review-check-button");
+        if (reviewCheckButton) {
+            reviewCheckButton.setAttribute("data-trade-id", detail.tradeId || "");
+            reviewCheckButton.setAttribute("data-partner-id", detail.partnerId || "");
+        }
+      if (roomId < 0) {
+        // 챗봇 방은 API 호출 안함
+        const botDetail = {
+          chatRoomId: roomId,
+          partnerNickname: "챗봇",
+          partnerTemperature: null,
+          tradeTitle: null,
+          tradePrice: null,
+          tradeThumbnailUrl: null,
+          closed: true, // 거래 버튼 숨기기용 플래그
+          seller: false,
+        };
+        this.store.setCurrentRoomDetail(botDetail);
+
+        const storageKey = `chatbot_history_${this.store.userId}`;
+        const cached = JSON.parse(localStorage.getItem(storageKey)) || [];
+        if (cached.length > 0) {
+          this.store.setMessages(cached);
+        } else {
+          // 최초 진입 시 환영 메시지
+          this.store.setMessages([
+            {
+              messageId: null,
+              senderId: null,
+              senderType: SENDER_TYPES.CHAT_BOT,
+              content: "안녕하세요! 무엇을 도와드릴까요?",
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              messageType: MESSAGE_TYPES.TEXT,
+            },
+            {
+              messageId: null,
+              senderId: null,
+              senderType: SENDER_TYPES.CHAT_BOT,
+              content: "당근 마켓이 무엇인가요?",
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              messageType: MESSAGE_TYPES.CHAT_BOT,
+            },
+            {
+              messageId: null,
+              senderId: null,
+              senderType: SENDER_TYPES.CHAT_BOT,
+              content: "당근 마켓을 이용하는 방법을 알려주세요.",
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              messageType: MESSAGE_TYPES.CHAT_BOT,
+            },
+            {
+              messageId: null,
+              senderId: null,
+              senderType: SENDER_TYPES.CHAT_BOT,
+              content: "챗봇으로 무엇을 할 수 있나요?",
+              timestamp: new Date().toISOString(),
+              isRead: false,
+              messageType: MESSAGE_TYPES.CHAT_BOT,
+            },
+          ]);
+
+          // 메시지가 렌더링된 이후 바인딩
+          setTimeout(() => {
+            document.querySelectorAll(".room__messages__item--chat-bot .room__messages__item__text").forEach((el) => {
+              el.addEventListener("click", () => {
+                const selectedMessage = el.textContent;
+                this.handleBotExampleClick(selectedMessage);
+              });
+            });
+          }, 0);
+          console.log("[ChatRoomManager] 챗봇 방 메시지 하드 코딩 완료");
+        }
+      } else {
+        const { detail, messages } = await this.api.getChatRoomDetail(roomId);
+        this.store.setCurrentRoomDetail(detail);
+        this.store.setMessages(messages);
       }
     } catch (err) {
-      // error 처리
+      console.error("[ChatRoomManager] _loadRoomDetail 에러", err);
+      throw err;
     }
   }
 
@@ -130,27 +236,68 @@ export class ChatRoomManager {
     // 입장 시점 읽음 처리도 wsManager에서 진행
   }
 
-  _handleSend() {
+  async _handleSend() {
     const content = this.renderer.inputField.value.trim();
     if (!content) return;
 
-    const tempMessage = true;
-
-    const payload = {
+    // 1) 사용자 메시지 즉시 렌더 (Optimistic UI)
+    this.store.appendMessage({
       chatRoomId: this.store.currentRoomId,
       senderId: this.store.userId,
       content,
-      messageType: "TEXT",
       senderType: SENDER_TYPES.ME,
-      tempMessage,
-    };
-
-    // Optimistic UI
-    this.store.appendMessage({ ...payload, timestamp: Date.now(), senderType: SENDER_TYPES.ME, isRead: false, tempMessage: true });
-
-    // 전송
-    this.wsManager.sendMessage(payload);
+      timestamp: Date.now(),
+      tempMessage: true,
+      isRead: false,
+      messageType: "TEXT",
+    });
     this.renderer.inputField.value = "";
+
+    // 2) 챗봇 방이면 REST 호출만 트리거하고,
+    //    WS 구독(chatBotMessage)에서 답변을 받는다
+    if (this.store.currentRoomId < 0) {
+      try {
+        await this.api.chatBot({
+          chatRoomId: -this.store.userId,
+          senderId: this.store.userId,
+          content,
+        });
+      } catch {
+        // Toast.error("챗봇 요청 실패", 3000);
+      }
+    } else {
+      // 일반 방은 기존 WS 전송
+      this.wsManager.sendMessage({
+        chatRoomId: this.store.currentRoomId,
+        senderId: this.store.userId,
+        content,
+        messageType: "TEXT",
+      });
+    }
+  }
+
+  handleBotExampleClick(selectedMessage) {
+    // ① 챗봇 예시 메시지 모두 제거
+    document.querySelectorAll(".room__messages__item--chat-bot").forEach((el) => el.remove());
+
+    // ② 내가 보낸 메시지 렌더링
+    const payload = {
+      chatRoomId: this.store.currentRoomId,
+      senderId: this.store.userId,
+      content: selectedMessage,
+      senderType: SENDER_TYPES.ME,
+      tempMessage: true,
+      isRead: false,
+      timestamp: Date.now(),
+      messageType: "TEXT",
+    };
+    this.store.appendMessage(payload);
+
+    // ③ 서버에 챗봇 요청
+    this.api.chatBot(payload).catch((err) => {
+      console.error("챗봇 요청 실패:", err);
+      Toast.error("챗봇 응답 요청 중 오류가 발생했습니다");
+    });
   }
 }
 

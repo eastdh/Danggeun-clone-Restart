@@ -1,5 +1,5 @@
 // resources/static/js/chat/ws/web_socket_manager.js
-import { WS, RECONNECT_POLICY } from "../constants.js";
+import { WS, RECONNECT_POLICY, MESSAGE_TYPES } from "../constants.js";
 
 /**
  * WebSocketManager
@@ -38,9 +38,12 @@ export class WebSocketManager extends EventTarget {
       () => {
         this.attempts = 0;
         this._subscribeChatList();
-        this._subscribeChatRoom(this.roomId);
-        this._subscribeReadReceipt(this.roomId);
-
+        if (this.roomId < 0) {
+          this._subscribeBot(this.roomId);
+        } else {
+          this._subscribeChatRoom(this.roomId);
+          this._subscribeReadReceipt(this.roomId);
+        }
         // 입장 시점 읽음 처리
         this.sendReadReceipt();
       },
@@ -69,7 +72,12 @@ export class WebSocketManager extends EventTarget {
   _subscribeChatRoom(roomId) {
     this.topicChat = this.stompClient.subscribe(WS.TOPIC.CHAT_ROOM(roomId), ({ body }) => {
       const msg = JSON.parse(body);
-      this.dispatchEvent(new CustomEvent("chatMessage", { detail: msg }));
+      if (msg.messageType === MESSAGE_TYPES.SYSTEM) {
+        // 시스템 알림 전용 이벤트
+        this.dispatchEvent(new CustomEvent("systemMessage", { detail: msg }));
+      } else {
+        this.dispatchEvent(new CustomEvent("chatMessage", { detail: msg }));
+      }
 
       // 항상 읽음 ACK 전송
       this.sendReadReceipt([msg.messageId]);
@@ -81,6 +89,14 @@ export class WebSocketManager extends EventTarget {
     this.topicRead = this.stompClient.subscribe(WS.TOPIC.CHAT_ROOM_READ(roomId), ({ body }) => {
       const receipt = JSON.parse(body);
       this.dispatchEvent(new CustomEvent("readReceipt", { detail: receipt }));
+    });
+  }
+
+  /** 내부: 챗봇 메시지 구독 */
+  _subscribeBot(roomId) {
+    this.topicBot = this.stompClient.subscribe(WS.TOPIC.CHAT_BOT(roomId), ({ body }) => {
+      const botMsg = JSON.parse(body);
+      this.dispatchEvent(new CustomEvent("chatBotMessage", { detail: botMsg }));
     });
   }
 
@@ -114,6 +130,7 @@ export class WebSocketManager extends EventTarget {
     if (this.topicChat) this.topicChat.unsubscribe();
     if (this.topicRead) this.topicRead.unsubscribe();
     if (this.stompClient) this.stompClient.disconnect();
+    if (this.topicBot) this.topicBot.unsubscribe();
     this.stompClient = null;
   }
 

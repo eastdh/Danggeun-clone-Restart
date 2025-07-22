@@ -55,25 +55,25 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   public ChatRoomDetailDto getChatRoomDetail(Long chatRoomId, Long userId) {
     ChatRoomView row = chatRoomViewRepository
-            .findByChatRoomIdAndMeId(chatRoomId, userId)
-            .orElseThrow(() -> new RuntimeException("해당 채팅방 정보가 없습니다."));
+        .findByChatRoomIdAndMeId(chatRoomId, userId)
+        .orElseThrow(() -> new RuntimeException("해당 채팅방 정보가 없습니다."));
 
     return ChatRoomDetailDto
-            .builder()
-            // -- BaseDto 필드 --
-            .chatRoomId(row.getChatRoomId())
-            .tradeId(row.getTradeId())
-            .tradeTitle(row.getTradeTitle())
-            .tradePrice(row.getTradePrice())
-            .tradeStatus(row.getTradeStatus())
-            .tradeThumbnailUrl(row.getTradeThumbnailUrl())
+        .builder()
+        // -- BaseDto 필드 --
+        .chatRoomId(row.getChatRoomId())
+        .tradeId(row.getTradeId())
+        .tradeTitle(row.getTradeTitle())
+        .tradePrice(row.getTradePrice())
+        .tradeStatus(row.getTradeStatus())
+        .tradeThumbnailUrl(row.getTradeThumbnailUrl())
             .partnerId(row.getPartnerId()) // dto 수정
-            .partnerNickname(row.getPartnerNickname())
-            .partnerLocation(LocationUtil.extractRepresentativeLocation(row.getPartnerLocation()))
-            .partnerTemperature(row.getPartnerTemperature())
-            .isSeller(Boolean.TRUE.equals(row.getIsSeller()))
-            // -- DetailDto 필드 --
-            .isClosed("completed".equalsIgnoreCase(row.getTradeStatus()))
-            .build();
+        .partnerNickname(row.getPartnerNickname())
+        .partnerLocation(LocationUtil.extractRepresentativeLocation(row.getPartnerLocation()))
+        .partnerTemperature(row.getPartnerTemperature())
+        // -- DetailDto 필드 --
+        .isSeller(Boolean.TRUE.equals(row.getIsSeller()))
+        .isClosed("completed".equalsIgnoreCase(row.getTradeStatus()))
+        .build();
   }
 }

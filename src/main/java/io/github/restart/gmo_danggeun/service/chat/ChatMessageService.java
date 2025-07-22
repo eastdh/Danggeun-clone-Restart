@@ -13,4 +13,11 @@ public interface ChatMessageService {
 
   List<Long> getLastReadMessageIds(Long chatRoomId, Long readerId);
 
+  ChatMessageDto createSystemMessage(
+      Long chatRoomId,
+      Long senderId,
+      String content,
+      String buttonText,
+      String buttonUrl);
+
 }

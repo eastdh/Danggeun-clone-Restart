@@ -23,12 +23,15 @@ export class ApiClient {
         throw new Error(`API error ${res.status}: ${errorBody}`);
       }
 
-      // 빈 응답(204)인 경우 빈 객체 반환
-      if (res.status === 204) {
+      // 204 No Content 혹은 빈 바디인 경우 빈 객체
+      const contentType = res.headers.get("Content-Type") || "";
+      if (res.status === 204 || (!contentType.includes("application/json") && res.headers.get("Content-Length") === "0")) {
         return {};
       }
 
-      return await res.json();
+      // JSON이지만 body가 빈 문자열일 수 있으니 guard
+      const text = await res.text();
+      return text ? JSON.parse(text) : {};
     } catch (err) {
       this.onError(err);
       throw err;
@@ -53,10 +56,10 @@ export class ApiClient {
   }
 
   // 거래 확정 API 호출
-  async confirmTrade(tradeId) {
+  async confirmTrade(tradeId, chatRoomId) {
     return this.request(API_PATHS.CONFIRM_TRADE, {
       method: "POST",
-      body: JSON.stringify({ tradeId }),
+      body: JSON.stringify({ tradeId, chatRoomId }),
     });
   }
 
@@ -65,6 +68,22 @@ export class ApiClient {
     return this.request(API_PATHS.MARK_READ, {
       method: "PATCH",
       body: JSON.stringify({ chatRoomId, userId }),
+    });
+  }
+
+  // 챗봇 메시지 전송
+  async chatBot(payload) {
+    console.log("ChatBot API 호출 URL:", API_PATHS.CHAT_BOT, payload);
+    return this.request(API_PATHS.CHAT_BOT, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async createOrGetChatRoom({ tradeId, receiverId }) {
+    return this.request(API_PATHS.CREATE_CHAT_ROOM, {
+      method: "POST",
+      body: JSON.stringify({ tradeId, receiverId }),
     });
   }
 }

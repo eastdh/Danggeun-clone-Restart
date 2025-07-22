@@ -17,7 +17,6 @@ export const SENDER_TYPES = {
   ME: "ME",
   PARTNER: "PARTNER",
   SYSTEM: "SYSTEM",
-  DATE_LABEL: "DATE_LABEL",
   CHAT_BOT: "CHAT_BOT",
 };
 
@@ -27,6 +26,8 @@ export const API_PATHS = {
   CHAT_ROOM_DETAIL: (chatRoomId) => `/api/chat/room/${chatRoomId}`,
   CONFIRM_TRADE: "/api/chat/confirm-trade",
   MARK_READ: "/api/chat/message/read",
+  CHAT_BOT: "/api/chat/bot",
+  CREATE_CHAT_ROOM: "/api/chat/room",
 };
 
 // WebSocket/STOMP 설정
@@ -34,15 +35,19 @@ export const WS = {
   ENDPOINT: "/ws-chat",
   SEND_MESSAGE: "/app/send",
   SEND_READ: "/app/read",
+  SEND_BOT: "/api/chat/bot",
   TOPIC: {
     CHAT_LIST: "/user/queue/chat-list",
     CHAT_ROOM: (roomId) => `/topic/chat/${roomId}`,
     CHAT_ROOM_READ: (roomId) => `/topic/chat/${roomId}/read`,
+    CHAT_BOT: (roomId) => `/topic/chat/bot/${roomId}`,
+    TRADE_CONFIRMED: (tradeId) => `/topic/trade/${tradeId}/confirmed`,
   },
 };
 
 // 주요 CSS 셀렉터 모음
 export const SELECTORS = {
+  USER_ID: ".list__header__user-id",
   CHAT_ROOM_LIST_ITEM: ".list__room-list__item",
   UNREAD_BADGE: ".unread-badge",
   MESSAGE_CONTAINER: ".room__messages",

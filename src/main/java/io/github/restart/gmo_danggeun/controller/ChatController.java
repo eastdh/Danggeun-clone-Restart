@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,16 +32,19 @@ public class ChatController {
   private final ChatRoomService chatRoomService;
   private final ChatMessageService chatMessageService;
   private final TradeService tradeService;
+  private final SimpMessagingTemplate messagingTemplate;
 
   @Autowired
   public ChatController(ChatService chatService,
       ChatRoomService chatRoomService,
       ChatMessageService chatMessageService,
-      TradeService tradeService) {
+      TradeService tradeService,
+      SimpMessagingTemplate messagingTemplate) {
     this.chatService = chatService;
     this.chatRoomService = chatRoomService;
     this.chatMessageService = chatMessageService;
     this.tradeService = tradeService;
+    this.messagingTemplate = messagingTemplate;
   }
 
   @GetMapping("/chat")
@@ -84,18 +88,38 @@ public class ChatController {
     return ResponseEntity.ok(response);
   }
 
-//  TODO: WebSocket 추가 완료 후 삭제
-//  @PostMapping("/api/chat/message")
-//  public ResponseEntity<ChatMessageDto> sendMessage(@RequestBody ChatSendRequestDto request) {
-//    ChatMessageDto savedMessage = chatMessageService.sendMessage(request);
-//    return ResponseEntity.ok(savedMessage);
-//  }
 
   @PostMapping("/api/chat/confirm-trade")
-  public ResponseEntity<?> confirmTrade(@RequestBody ConfirmTradeDto request) {
-    tradeService.confirmTrade(request.getTradeId());
+  public ResponseEntity<Void> confirmTrade(
+      @RequestBody ConfirmTradeDto request,
+      @AuthenticationPrincipal CustomUserDetails user) {
 
-    return ResponseEntity.ok().build();
+    Long tradeId = request.tradeId();
+    Long chatRoomId = request.chatRoomId();
+    Long sellerId = user.getId();
+
+    tradeService.confirmTrade(request.tradeId());
+
+    // 시스템 메시지 생성
+    String content = "거래가 확정되었습니다. 서로에 대한 후기를 작성해주세요!";
+    String buttonText = "후기 작성하기";
+//    TODO: 리뷰 생성 url 삽입
+//    Long buyerId = ;
+//    String buttonUrl  =
+//        String.format("/reviews/create?tradeId=%d&sellerId=%d&buyerId=%d",
+//            tradeId, sellerId, buyerId);
+    ChatMessageDto sysMsg = chatMessageService.createSystemMessage(
+        chatRoomId, sellerId, content, buttonText, "buttonUrl"
+    );
+
+    // WebSocket으로 거래 완료 알림 발행 (기존 chat 로직)
+    messagingTemplate.convertAndSend(
+        "/topic/chat/" + chatRoomId,
+        sysMsg
+    );
+
+    // 빈 바디 204 No Content 반환
+    return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/api/chat/message/read")

@@ -28,10 +28,11 @@
   padding: 10px;
   background-color: var(--gray-100);
   border-bottom: 1px solid var(--gray-300);
+  height: 54px;
 }
 
 .list__header__user-id {
-  max-width: 12rem;
+  max-width: 11rem;
   font-size: 1.4rem;
   font-weight: 600;
   overflow: hidden;
@@ -48,6 +49,7 @@
   font-size: 1rem;
   font-weight: 400;
   padding: 4px;
+  white-space: nowrap;
 }
 
 .list__header__toggle-switch {
@@ -97,10 +99,11 @@
 
 /* 채팅방 리스트 */
 .list__room-list {
+  height: calc(100% - 54px);
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
   overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .list__room-list__item {
@@ -115,6 +118,29 @@
 
 .list__room-list__item:hover {
   background-color: var(--gray-050);
+}
+
+/* 챗봇 방 아이템 고정 스타일 */
+.list__room-list__item--bot {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.list__room-list__item--bot .chat-list__item-icon {
+  margin-right: 8px;
+  font-size: 1.2em;
+}
+
+.list__room-list__item--bot:hover {
+  background-color: #f5f5f5;
+}
+
+/* 선택(highlight) 스타일이 있다면, 동일하게 적용 가능 */
+.list__room-list__item--bot.selected {
+  background-color: var(--primary-light);
 }
 
 .list__room-list__item-content {
@@ -204,6 +230,7 @@
 
 /* 우측 채팅방 패널 */
 .room {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 70%;
@@ -421,6 +448,10 @@
 }
 
 /* 챗봇 메시지 */
+.room__messages__item--chat-bot {
+  flex-direction: row-reverse;
+}
+
 .room__messages__item--chat-bot .room__messages__item__text {
   background-color: var(--yellow-200);
   cursor: pointer;
@@ -428,6 +459,46 @@
 
 .room__messages__item--chat-bot .room__messages__item__text:hover {
   box-shadow: 0 0 0 2px #ffeb94;
+}
+
+.room__messages__item--chat-bot .room__messages__item__meta {
+  display: none;
+}
+
+/* 시스템 메시지 */
+.room__messages__item--system {
+  justify-content: center; /* 가운데 정렬 */
+  margin: 20px 0; /* 위아래 여백만 유지 */
+}
+
+.room__messages__item--system .room__messages__item__content.system {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 60%; /* 메시지 박스 너비 제한 */
+  background-color: var(--gray-200);
+  border: 1px solid var(--gray-300);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--gray-900);
+  text-align: center;
+}
+
+/* 시스템 액션 버튼 */
+.room__messages__item--system .system-action {
+  background-color: var(--orange-600);
+  color: var(--gray-000);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.room__messages__item--system .system-action:hover {
+  background-color: var(--orange-500);
 }
 
 /* 메시지 입력 영역 */
@@ -471,6 +542,10 @@
 
 /* 로딩 오버레이 */
 .loading-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -478,6 +553,7 @@
   justify-content: center;
   padding: 40px 0;
   color: var(--gray-500);
+  background-color: rgba(255, 255, 255, 0.5);
   font-size: 14px;
   animation: fadeIn 0.3s ease-in-out;
 }

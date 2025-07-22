@@ -14,7 +14,6 @@ public class DateUtil {
     String time = dateFormat.split(" ")[1];
     String hour = time.split(":")[0];
     String minute = time.split(":")[1];
-    String second = time.split(":")[2];
 
     if (!year.equals("00")) {
       result = Integer.parseInt(year) + "년 전";
@@ -26,8 +25,6 @@ public class DateUtil {
       result = Integer.parseInt(hour) + "시간 전";
     } else if (!minute.equals("00")) {
       result = Integer.parseInt(minute) + "분 전";
-    } else if (!second.equals("00")) {
-      result = Integer.parseInt(second) + "초 전";
     }
 
     return result;

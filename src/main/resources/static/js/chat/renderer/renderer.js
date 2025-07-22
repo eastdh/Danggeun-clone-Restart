@@ -41,6 +41,18 @@ export class Renderer {
   // 3) 채팅방 리스트 렌더링
   _renderChatList({ list, showUnreadOnly }) {
     this.listContainer.innerHTML = "";
+    // ① 챗봇 방 고정 추가
+    const botItem = document.createElement("div");
+    botItem.className = "list__room-list__item list__room-list__item--bot";
+    botItem.dataset.chatRoomId = -this.store.userId;
+    botItem.innerHTML = `
+    <div class="list__room-list__item-content">
+      <span class="chat-list__item-icon">🤖</span>
+      <span class="list__room-list__item__preview">챗봇</span>
+    </div>
+  `;
+    this.listContainer.appendChild(botItem);
+
     if (list.length === 0) {
       this.emptyListEl.style.display = "block";
       return;
@@ -93,7 +105,7 @@ export class Renderer {
 
     // 상단 이동
     if (isNew && item.parentNode) {
-      item.parentNode.prepend(item);
+      item.parentNode.prepend(item.parentNode.querySelector(".list__room-list__item--bot"), item);
     }
   }
 
@@ -105,8 +117,20 @@ export class Renderer {
 
   // 6) 채팅방 헤더(상대·거래) 렌더링
   _renderRoomDetail(detail) {
+    if (detail.chatRoomId < 0) {
+      // 1) 상대 정보
+      this.partnerIdEl.textContent = detail.partnerNickname;
+      this.partnerTempEl.style.display = "none";
+
+      // 2) 거래 정보 숨기기
+      document.querySelector(".room__header__trade-info").style.display = "none";
+
+      return;
+    }
+
     this.partnerIdEl.textContent = detail.partnerNickname;
     this.partnerTempEl.textContent = detail.partnerTemperature + "°C";
+    document.querySelector(".room__header__trade-info").style.display = "flex";
     this.tradeNameEl.textContent = detail.tradeTitle;
     this.tradePriceEl.textContent = detail.tradePrice + "원";
     this.tradeImgEl.src = detail.tradeThumbnailUrl || "/assets/icon/default_product_img.svg";
@@ -128,6 +152,33 @@ export class Renderer {
     }
   }
 
+  /**
+   * 거래 확정(완료) 버튼 상태를 토글
+   * @param {boolean} isCompleted 거래가 확정되어 버튼을 비활성화할지 여부
+   */
+  updateTradeStatusButton(isCompleted) {
+    const btn = this.tradeStatusBtn;
+    if (!btn) return;
+
+    if (isCompleted) {
+      btn.textContent = "거래 완료";
+      btn.disabled = true;
+      btn.classList.add("closed");
+    } else {
+      // 판매자용 “거래 확정하기” 또는 구매자용 “거래 중”은
+      // _renderRoomDetail 로직을 다시 호출하거나 detail 객체를 전달해서 복원
+      const { closed, seller } = this.currentRoomDetail || {};
+      if (seller) {
+        btn.textContent = "거래 확정하기";
+        btn.disabled = false;
+        btn.classList.remove("closed");
+      } else {
+        btn.textContent = "거래 중";
+        btn.disabled = true;
+      }
+    }
+  }
+
   // 7) 메시지 리스트 렌더링
   _renderMessages(messages) {
     this.msgContainer.innerHTML = "";
@@ -144,6 +195,14 @@ export class Renderer {
 
   // 8) 메시지 한 건 추가
   _appendMessage(msg) {
+    if (msg.messageType === MESSAGE_TYPES.SYSTEM) {
+      this.appendSystemMessage(msg.content, {
+        buttonText: msg.buttonText,
+        buttonUrl: msg.buttonUrl,
+      });
+      return;
+    }
+
     const wrapper = document.createElement("div");
     wrapper.className = "room__messages__item";
 
@@ -188,8 +247,10 @@ export class Renderer {
       readStatus.classList.add("message-read-status");
       readStatus.textContent = msg.isRead ? "읽음" : "전송됨";
       meta.appendChild(readStatus);
-    } else if (msg.senderType === SENDER_TYPES.DATE_LABEL) {
+    } else if (msg.messageType === MESSAGE_TYPES.DATE_LABEL) {
       wrapper.classList.add("room__messages__item__date-label");
+    } else if (msg.messageType === MESSAGE_TYPES.CHAT_BOT) {
+      wrapper.classList.add("room__messages__item--chat-bot");
     } else {
       wrapper.classList.add("room__messages__item--partner");
     }
@@ -201,6 +262,32 @@ export class Renderer {
 
     this.msgContainer.appendChild(wrapper);
     wrapper.scrollIntoView({ behavior: "smooth" });
+  }
+
+  appendSystemMessage(content, options = {}) {
+    const { buttonText = "", buttonUrl = "" } = options;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "room__messages__item room__messages__item--system";
+
+    // 메시지 본문 + 버튼(옵션)
+    wrapper.innerHTML = `
+      <div class="room__messages__item__content system">
+        ${content}
+        ${buttonText ? `<button class="system-action">${buttonText}</button>` : ""}
+      </div>
+    `;
+
+    this.msgContainer.appendChild(wrapper);
+    wrapper.scrollIntoView({ behavior: "smooth" });
+
+    // 버튼 클릭 핸들러
+    if (buttonText && buttonUrl) {
+      const btn = wrapper.querySelector(".system-action");
+      btn.addEventListener("click", () => {
+        window.location.href = buttonUrl;
+      });
+    }
   }
 
   // 9) 읽음 상태 UI 업데이트

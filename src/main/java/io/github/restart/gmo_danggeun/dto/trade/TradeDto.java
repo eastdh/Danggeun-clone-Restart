@@ -35,6 +35,7 @@ public class TradeDto {
   @Pattern(regexp = "^(available|completed|reserved)$", message = "상태는 판매중, 거래오나료, 예약중만 가능합니다.")
   private String status;
 
+  @Size(max = 5, message = "사진은 최대 5개까지만 첨부 가능합니다.")
   private List<MultipartFile> files;
 
   public TradeDto() {

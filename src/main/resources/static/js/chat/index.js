@@ -35,6 +35,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // 5) 상태 스토어
   const store = new ChatStore();
   store.setUserId(Number(userId));
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("roomId")) {
+    const roomId = parseInt(params.get("roomId"), 10);
+    store.currentRoomId = roomId;
+  }
 
   // 6) 렌더러
   const renderer = new Renderer(store);

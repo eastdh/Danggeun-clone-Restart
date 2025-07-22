@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>main page</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/common/style.css}" />
     <link rel="stylesheet" th:href="@{/css/main/main_page.css}" />
     <link rel="stylesheet" href="/css/common/header.css" />
     <link rel="stylesheet" href="/css/common/footer.css" />
@@ -59,7 +59,7 @@
           <div class="feature-card">
             <span class="feature-card__icon">🤖</span>
             <h3 class="feature-card__title">AI 챗봇 시스템</h3>
-            <p class="feature-card__desc">GPT 챗봇과 대화하며 플로팅 버튼으로 접근할 수 있습니다.</p>
+            <p class="feature-card__desc">Gemini 챗봇과 대화하며 플로팅 버튼으로 접근할 수 있습니다.</p>
           </div>
 
           <div class="feature-card">
@@ -88,6 +88,7 @@
         </div>
       </section>
 
+      <!-- TODO: 스크린샷 교체 -->
       <section class="slide slide--preview" data-label="UI 미리보기">
         <h2 class="preview__title">UI 미리보기</h2>
         <p class="slide__subtitle preview__subtitle">각 페이지와 컴포넌트를 미리 경험해보세요</p>
@@ -125,7 +126,7 @@
             class="preview-card"
             data-index="2"
             data-title="채팅 및 챗봇"
-            data-desc="사용자 간 실시간 채팅 UI 및 GPT 챗봇 인터페이스를 확인하세요."
+            data-desc="사용자 간 실시간 채팅 UI 및 Gemini 챗봇 인터페이스를 확인하세요."
             th:data-src="@{/assets/screenshots/screenshot_chat.png}"
           >
             <img th:src="@{/assets/screenshots/screenshot_chat.png}" alt="채팅" />
@@ -202,8 +203,8 @@
               <div class="stack-desc">이미지 파일 업로드 및 외부 저장소 연동</div>
             </div>
             <div class="stack-box stack-box--ai">
-              ChatGPT API
-              <div class="stack-desc">AI 챗봇 응답 생성을 위한 GPT API 연동</div>
+              Gemini API
+              <div class="stack-desc">AI 챗봇 응답 생성을 위한 Gemini API 연동</div>
             </div>
             <div class="stack-box stack-box--map">
               Google Maps API

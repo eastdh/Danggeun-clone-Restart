@@ -68,14 +68,31 @@ export class ChatListManager {
   }
 
   _autoSelectRoom() {
-    const items = Array.from(this.listContainer.querySelectorAll(".list__room-list__item"));
-    if (!items.length) return;
+    const roomId = this.store.currentRoomId;
+    if (roomId != null) {
+      // 방법 A: selector로 바로 찾기
+      const currentItem = this.listContainer.querySelector(`.list__room-list__item[data-chat-room-id="${roomId}"]`);
 
-    // 읽지 않은 방 우선
-    const unread = items.find((item) => item.querySelector(".unread-badge"));
-    const target = unread || items[0];
-    // 클릭 이벤트 위임에 걸리도록 dispatch
-    target.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      if (currentItem) {
+        currentItem.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        return;
+      }
+    }
+    const allItems = Array.from(this.listContainer.querySelectorAll(".list__room-list__item"));
+    if (allItems.length === 0) return;
+
+    // 챗봇 방 제외
+    const normalItems = allItems.filter((item) => item.dataset.chatRoomId > 0);
+
+    // 읽지 않은 채팅방 우선
+    const unread = normalItems.find((item) => item.querySelector(".unread-badge"));
+
+    // 읽지 않은 방 없으면 첫 번째 일반 방
+    const target = unread || normalItems[0];
+
+    if (target) {
+      target.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    }
   }
 
   _attachClickHandlers() {

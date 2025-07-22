@@ -53,12 +53,10 @@ function addCarouselListeners() {
 }
 
 // tooltip box
-document
-  .getElementsByClassName("manner-label")[0]
-  .addEventListener("click", function (event) {
-    const tooltip = event.currentTarget.nextElementSibling;
-    tooltip.classList.toggle("active");
-  });
+document.getElementsByClassName("manner-label")[0].addEventListener("click", function (event) {
+  const tooltip = event.currentTarget.nextElementSibling;
+  tooltip.classList.toggle("active");
+});
 
 document.addEventListener("click", function (e) {
   document.querySelectorAll(".manner-tooltip.active").forEach((tt) => {
@@ -86,21 +84,12 @@ function updateLinks(queries, target) {
 }
 
 function addLinks() {
-  const locationSearchLink =
-    document.getElementsByClassName("writer-location")[0];
-  const categorySearchLink =
-    document.getElementsByClassName("category-link")[0];
-  const keywordSearchLink =
-    document.getElementsByClassName("related-trade-link")[0];
+  const locationSearchLink = document.getElementsByClassName("writer-location")[0];
+  const categorySearchLink = document.getElementsByClassName("category-link")[0];
+  const keywordSearchLink = document.getElementsByClassName("related-trade-link")[0];
 
-  updateLinks(
-    [["location", locationSearchLink.dataset.location]],
-    locationSearchLink
-  );
-  updateLinks(
-    [["category", categorySearchLink.dataset.category]],
-    categorySearchLink
-  );
+  updateLinks([["location", locationSearchLink.dataset.location]], locationSearchLink);
+  updateLinks([["category", categorySearchLink.dataset.category]], categorySearchLink);
   updateLinks(
     [
       ["keyword", keywordSearchLink.dataset.keyword],
@@ -184,10 +173,138 @@ function addStatusWarning() {
   });
 }
 
+function bumpTrade() {
+  const bumpButton = document.getElementById("bump-button");
+
+  if (bumpButton) {
+    const tradeId = bumpButton.dataset.tradeId;
+    bumpButton.addEventListener("click", function () {
+      if (!window.confirm("거래글을 끌올할까요?")) {
+        return;
+      }
+
+      fetch(`/api/trade/${tradeId}/bump`, {
+        method: "POST",
+      })
+        .then((res) => {
+          if (res.ok) location.reload();
+          else throw new Error("거래글 끌올 실패");
+        })
+        .catch(() => {
+          alert("오류로 인해 끌올에 실패했습니다");
+        });
+    });
+  }
+}
+
+function toggleLike() {
+  let pending = false;
+  let debounceTimer = null;
+  const likeButton = document.getElementById("like-button");
+
+  if (!likeButton) return;
+
+  const likedImageEl = likeButton.querySelector(".like-image.liked");
+  const unLikedImageEl = likeButton.querySelector(".like-image.un-liked");
+  const tradeId = likeButton.dataset.tradeId;
+  let currentLiked = likeButton.dataset.liked === "true";
+  let clientSideLiked = currentLiked;
+  let requestLiked = currentLiked;
+
+  likeButton.addEventListener("click", function () {
+    clientSideLiked = !clientSideLiked;
+    updateUI();
+
+    if (pending) {
+      clearTimeout(debounceTimer);
+    }
+    pending = true;
+    debounceTimer = setTimeout(() => {
+      requestLiked = clientSideLiked;
+      sendLikeRequest(tradeId, requestLiked);
+    }, 1000);
+  });
+
+  function updateUI() {
+    if (clientSideLiked) {
+      likeButton.classList.add("active");
+      likedImageEl.classList.remove("hidden");
+      unLikedImageEl.classList.add("hidden");
+    } else {
+      likeButton.classList.remove("active");
+      likedImageEl.classList.add("hidden");
+      unLikedImageEl.classList.remove("hidden");
+    }
+  }
+
+  async function sendLikeRequest(tradeId, requestLiked) {
+    pending = false;
+    const url = requestLiked ? `/api/trade/${tradeId}/like` : `/api/trade/${tradeId}/remove-like`;
+    if (currentLiked === requestLiked) return;
+    try {
+      await fetch(url, {
+        method: "POST",
+      })
+        .then((res) => {
+          if (res.ok) return res.json();
+          else throw new Error(requestLiked ? "좋아요 등록 실패" : "좋아요 제거 실패");
+        })
+        .then((data) => {
+          currentLiked = data.liked;
+        });
+    } catch (e) {
+      clientSideLiked = !clientSideLiked;
+      updateUI();
+      alert("좋아요 등록/제거 동작에 실패했습니다");
+    }
+  }
+
+  window.addEventListener("beforeunload", () => {
+    requestLiked = clientSideLiked;
+    if (pending) {
+      navigator.sendBeacon(requestLiked ? `/api/trade/${tradeId}/like` : `/api/trade/${tradeId}/remove-like`);
+    }
+  });
+}
+
+// 채팅하기 버튼 클릭 처리
+function addChatButtonListener() {
+  const chatBtn = document.getElementById("chatButton");
+  if (!chatBtn) return;
+
+  chatBtn.addEventListener("click", async () => {
+    const tradeId = Number(chatBtn.dataset.tradeId);
+    const receiverId = Number(chatBtn.dataset.sellerId);
+
+    console.log("createChatRoom payload:", { tradeId, receiverId });
+    try {
+      const res = await fetch("/api/chat/room", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tradeId, receiverId }),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || "채팅방 생성/조회 실패");
+      }
+
+      const { chatRoomId } = await res.json();
+      window.location.href = `/chat?roomId=${chatRoomId}`;
+    } catch (err) {
+      console.error("채팅하기 오류:", err);
+      alert("채팅방 열기에 실패했습니다. 다시 시도해주세요.");
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   addCarouselListeners();
   addLinks();
   updateMannerScore();
   setStatusModal();
   addStatusWarning();
+  bumpTrade();
+  toggleLike();
+  addChatButtonListener();
 });

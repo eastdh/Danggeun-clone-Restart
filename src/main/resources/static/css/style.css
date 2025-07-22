@@ -11,9 +11,12 @@
   --gray-800: #525359;
   --gray-900: #111111;
   --yellow-200: #fffae0;
+  --orange-500: #ff9f43;
   --orange-600: #ff6f0e;
+  --red-700: #ff1010;
   --green-200: #e6f3e6;
   --green-400: #c2e8c2;
+  --green-700: #3d9970;
 }
 
 * {

@@ -6,6 +6,7 @@ import io.github.restart.gmo_danggeun.security.OAuth2FailureHandler;
 import io.github.restart.gmo_danggeun.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -61,9 +62,16 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/main", "/login", "/register", "/oauth2/nickname", "/trade", "/trade/{id}").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
-                        .anyRequest().authenticated()
+                    // common
+                    .requestMatchers("/", "/main", "/login", "/register", "/oauth2/nickname").permitAll()
+                    // user
+                    .requestMatchers("/profile/*").permitAll()
+                    // trade
+                    .requestMatchers(HttpMethod.GET, "/trade/new", "/trade/*/edit").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/trade**", "/trade", "/trade/*").permitAll()
+
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
+                    .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
