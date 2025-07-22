@@ -28,6 +28,7 @@ export const API_PATHS = {
   CONFIRM_TRADE: "/api/chat/confirm-trade",
   MARK_READ: "/api/chat/message/read",
   CHAT_BOT: "/api/chat/bot",
+  CREATE_CHAT_ROOM: "/api/chat/room",
 };
 
 // WebSocket/STOMP 설정

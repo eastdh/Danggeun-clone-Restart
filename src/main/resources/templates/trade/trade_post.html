@@ -231,7 +231,7 @@
           </th:block>
           <th:block th:unless="${owner != null}">
             <div class="action-button-wrap">
-              <a th:href="@{/chat}">채팅하기</a>
+              <a id="chatButton" th:data-trade-id="${trade.tradeId}" th:data-seller-id="${trade.userId}" type="button">채팅하기</a>
             </div>
           </th:block>
         </section>
