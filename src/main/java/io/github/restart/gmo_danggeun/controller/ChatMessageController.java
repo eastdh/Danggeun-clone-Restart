@@ -34,10 +34,10 @@ public class ChatMessageController {
   public void handleMessage(ChatMessageDto incoming) {
     // DB 저장후 브로드캐스트
     ChatMessageDto saved = chatMessageService.sendMessage(incoming);
-    messagingTemplate.convertAndSend("/topic/chat/" + saved.getChatRoomId(), saved);
+    messagingTemplate.convertAndSend("/topic/chat/" + saved.chatRoomId(), saved);
 
     // 양쪽 참여자에게 채팅 리스트 업데이트 이벤트 발송
-    updateChatListForAllParticipants(saved.getChatRoomId());
+    updateChatListForAllParticipants(saved.chatRoomId());
   }
 
   @MessageMapping("/read")

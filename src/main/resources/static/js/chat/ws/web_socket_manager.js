@@ -1,5 +1,5 @@
 // resources/static/js/chat/ws/web_socket_manager.js
-import { WS, RECONNECT_POLICY } from "../constants.js";
+import { WS, RECONNECT_POLICY, MESSAGE_TYPES } from "../constants.js";
 
 /**
  * WebSocketManager
@@ -72,7 +72,12 @@ export class WebSocketManager extends EventTarget {
   _subscribeChatRoom(roomId) {
     this.topicChat = this.stompClient.subscribe(WS.TOPIC.CHAT_ROOM(roomId), ({ body }) => {
       const msg = JSON.parse(body);
-      this.dispatchEvent(new CustomEvent("chatMessage", { detail: msg }));
+      if (msg.messageType === MESSAGE_TYPES.SYSTEM) {
+        // 시스템 알림 전용 이벤트
+        this.dispatchEvent(new CustomEvent("systemMessage", { detail: msg }));
+      } else {
+        this.dispatchEvent(new CustomEvent("chatMessage", { detail: msg }));
+      }
 
       // 항상 읽음 ACK 전송
       this.sendReadReceipt([msg.messageId]);
