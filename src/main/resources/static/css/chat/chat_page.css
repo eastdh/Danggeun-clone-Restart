@@ -28,10 +28,11 @@
   padding: 10px;
   background-color: var(--gray-100);
   border-bottom: 1px solid var(--gray-300);
+  height: 54px;
 }
 
 .list__header__user-id {
-  max-width: 12rem;
+  max-width: 11rem;
   font-size: 1.4rem;
   font-weight: 600;
   overflow: hidden;
@@ -48,6 +49,7 @@
   font-size: 1rem;
   font-weight: 400;
   padding: 4px;
+  white-space: nowrap;
 }
 
 .list__header__toggle-switch {
@@ -97,9 +99,11 @@
 
 /* 채팅방 리스트 */
 .list__room-list {
+  height: calc(100% - 54px);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .list__room-list__item {
