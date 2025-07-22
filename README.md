@@ -69,7 +69,8 @@ Team Restart(재시동)의 Spring 기반 웹 프로젝트로, 챗봇 상담사�
 
 - **RESTful API 직접 설계 및 구현**
 - 기존 템플릿 없음 (기획→설계→개발 전 과정을 자체 구성)
-- [Figma 시안](https://www.figma.com/file/kSMua8TOVGIIPbNH1jie1Q/%EC%98%A4%EB%A5%B4%EB%AF%B8-2%EA%B8%B0-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(%EB%8B%B9%EA%B7%BC%EB%A7%88%EC%BC%93Web-%ED%81%B4%EB%A1%A0%EC%BD%94%EB%94%A9)?type=design&t=0GKxjur6Zlk8Gse3-1)을 기반으로 UI 구성
+- [Figma 시안](https://www.figma.com/file/kSMua8TOVGIIPbNH1jie1Q/%EC%98%A4%EB%A5%B4%EB%AF%B8-2%EA%B8%B0-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(%EB%8B%B9%EA%B7%BC%EB%A7%88%EC%BC%93Web-%ED%81%B4%EB%A1%A0%EC%BD%94%EB%94%A9)?type=design&t=0GKxjur6Zlk8Gse3-1)
+  을 기반으로 UI 구성
 
 ---
 
