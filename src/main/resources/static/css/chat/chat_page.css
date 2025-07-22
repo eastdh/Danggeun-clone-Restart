@@ -226,6 +226,7 @@
 
 /* 우측 채팅방 패널 */
 .room {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 70%;
@@ -493,6 +494,10 @@
 
 /* 로딩 오버레이 */
 .loading-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -500,6 +505,7 @@
   justify-content: center;
   padding: 40px 0;
   color: var(--gray-500);
+  background-color: rgba(255, 255, 255, 0.5);
   font-size: 14px;
   animation: fadeIn 0.3s ease-in-out;
 }
