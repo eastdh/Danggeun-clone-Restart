@@ -22,56 +22,58 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/images")
 public class ImageController {
-
-  private final ImageService imageService;
-
-  public ImageController(ImageService imageService) {
-    this.imageService = imageService;
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<?> getImage(
-      @PathVariable Long id
-  ) {
-    Optional<Image> imageOptional = imageService.getImage(id);
-    ImageDto dto = imageOptional.map(imageService::convertImageToDto).orElse(null);
-    return dto != null ?
-        ResponseEntity.ok(dto)
-        :ResponseEntity.notFound().build();
-  }
-
-  @GetMapping("/list")
-  public ResponseEntity<List<ImageDto>> listImages(
-      @RequestBody List<Long> idList
-  ) {
-    List<Image> imageList = imageService.getAllImagesById(idList);
-    return ResponseEntity.ok(imageService.convertImagesToDtos(imageList));
-  }
-
-  @PostMapping("/upload")
-  public ResponseEntity<?> uploadImages(
-      @RequestParam("files") List<MultipartFile> files,
-      @AuthenticationPrincipal CustomUserDetails userDetails
-  ) {
-    User user = userDetails.getUser();
-    try {
-      List<Image> imageList = imageService.uploadImage(files, user);
-      List<Long> imagesId = imageService.getImagesId(imageList);
-      return ResponseEntity.ok().body(imagesId);
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().build();
-    }
-  }
-
-  @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteImage(
-      @PathVariable Long id
-  ) {
-    try {
-      imageService.deleteImage(id);
-      return ResponseEntity.ok("파일 삭제 성공");
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body("파일 삭제 실패");
-    }
-  }
+/*
+* 참고용 Controller
+ */
+//  private final ImageService imageService;
+//
+//  public ImageController(ImageService imageService) {
+//    this.imageService = imageService;
+//  }
+//
+//  @GetMapping("/{id}")
+//  public ResponseEntity<?> getImage(
+//      @PathVariable Long id
+//  ) {
+//    Optional<Image> imageOptional = imageService.getImage(id);
+//    ImageDto dto = imageOptional.map(imageService::convertImageToDto).orElse(null);
+//    return dto != null ?
+//        ResponseEntity.ok(dto)
+//        :ResponseEntity.notFound().build();
+//  }
+//
+//  @GetMapping("/list")
+//  public ResponseEntity<List<ImageDto>> listImages(
+//      @RequestBody List<Long> idList
+//  ) {
+//    List<Image> imageList = imageService.getAllImagesById(idList);
+//    return ResponseEntity.ok(imageService.convertImagesToDtos(imageList));
+//  }
+//
+//  @PostMapping("/upload")
+//  public ResponseEntity<?> uploadImages(
+//      @RequestParam("files") List<MultipartFile> files,
+//      @AuthenticationPrincipal CustomUserDetails userDetails
+//  ) {
+//    User user = userDetails.getUser();
+//    try {
+//      List<Image> imageList = imageService.uploadImage(files, user);
+//      List<Long> imagesId = imageService.getImagesId(imageList);
+//      return ResponseEntity.ok().body(imagesId);
+//    } catch (Exception e) {
+//      return ResponseEntity.badRequest().build();
+//    }
+//  }
+//
+//  @DeleteMapping("/{id}")
+//  public ResponseEntity<String> deleteImage(
+//      @PathVariable Long id
+//  ) {
+//    try {
+//      imageService.deleteImage(id);
+//      return ResponseEntity.ok("파일 삭제 성공");
+//    } catch (Exception e) {
+//      return ResponseEntity.badRequest().body("파일 삭제 실패");
+//    }
+//  }
 }

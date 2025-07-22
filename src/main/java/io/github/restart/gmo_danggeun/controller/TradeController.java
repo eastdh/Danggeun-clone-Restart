@@ -312,9 +312,9 @@ public class TradeController {
     // 이미지 파일 저장
     try {
       if (!tradeEditDto.getFiles().isEmpty()) {
-        List<Image> imageList = imageService.uploadImage(tradeEditDto.getFiles(), currentUser);
-        List<Long> imagesId = imageService.getImagesId(imageList);
-        // image_trade 추가 동작
+//        List<Image> imageList = imageService.uploadImage(tradeEditDto.getFiles(), currentUser);
+//        List<Long> imagesId = imageService.getImagesId(imageList);
+//        // image_trade 추가 동작
       }
     } catch (Exception e) {
       return "error";
