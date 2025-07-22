@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  <link rel="stylesheet" th:href="@{/css/common/header.css}">
+  <link rel="stylesheet" th:href="@{/css/common/footer.css}">
+  <link rel="stylesheet" th:href="@{/css/trade/trade.css}">
+  <link rel="stylesheet" th:href="@{/css/trade/trade_post.css}">
+  <title th:text="${trade.title} + ' | ' + ${trade.categoryName} + ' | GMO당근 중고거래'">거래물품 | 카테고리 | GMO당근 중고거래</title>
+</head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+  <div class="container">
+    <div class="trade-section">
+      <nav th:replace="~{/trade/fragments/trade_components :: nav('trade', ${trade.title})}"></nav>
+      <div class="trade-content" th:object="${trade}">
+        <section class="trade-profile">
+          <div class="carousel" id="carousel">
+            <div class="carousel-track" id="carousel-track">
+              <div class="carousel-item"
+                   th:if="${!#lists.isEmpty(images)}"
+                   th:each="image, iterStat : ${images}">
+                <img
+                    th:classappend="${iterStat.index == 0} ? ' active' : ''"
+                    th:src="${image.url == null or #strings.isEmpty(image.url)} ? @{/assets/icon/card-image.svg} : ${image.url}"
+                    alt="상품 이미지"
+                    title="상품 이미지"
+                />
+              </div>
+              <div class="carousel-item"
+                   th:if="${images == null} OR ${#lists.isEmpty(images)}">
+                <img
+                    th:src="@{/assets/images/default-trade-image.png}"
+                    alt="빈 상품 이미지"
+                    title="상품 이미지 없음"
+                />
+              </div>
+            </div>
+            <div class="carousel-indicators">
+              <button class="indicator-buttons"
+                      th:each="image, iterStat : ${images}"
+                      th:data-index="${iterStat.index}"
+                      th:classappend="${iterStat.index == 0} ? ' active' : ''"
+              >
+              </button>
+            </div>
+            <th:block th:if="${!#lists.isEmpty(images)}">
+              <button class="carousel-button prev">
+                <img th:src="@{/assets/icon/chevron-left.svg}"
+                     title="이전 사진"
+                     alt="chevron-left">
+              </button>
+              <button class="carousel-button next">
+                <img th:src="@{/assets/icon/chevron-right.svg}"
+                     title="다음 사진"
+                     alt="chevron-right">
+              </button>
+            </th:block>
+        </div>
+          <div class="writer-meta">
+            <div class="writer-info">
+              <div class="writer-profile">
+                <a th:href="${owner != null} ?
+                  @{/profile}
+                  : @{/profile/{id}(id=*{userId})}">
+                  <img class="profile-img"
+                       th:src="@{/assets/icon/person-circle.svg}"
+                       th:alt="*{nickname}">
+                </a>
+              </div>
+              <div>
+                <a class="writer-name"
+                   th:href="${owner != null} ?
+                    @{/profile}
+                    : @{/profile/{id}(id=*{userId})}"
+                   th:text="*{nickname}"
+                >사용자이름</a>
+                <a class="writer-location"
+                   th:data-location="*{location}"
+                   th:text="*{location}"
+                  >장소</a>
+              </div>
+            </div>
+            <div class="manner-temp">
+              <div class="manner-info">
+                <div>
+                  <span class="manner-score"
+                        th:text="*{mannerScore} + '℃'"
+                  >46.9℃</span>
+                  <div class="manner-bar">
+                    <div class="filled-bar"
+                         th:data-manner-score="*{mannerScore}"
+                    ></div>
+                  </div>
+                </div>
+                <div class="manner-emoji-box">
+                  <img
+                      th:src="@{/assets/icon/{file}(file=${emojiFileName})}"
+                      alt="이모지"
+                      class="emoji-image">
+                </div>
+              </div>
+              <div class="manner-description">
+                <span class="manner-label">매너온도</span>
+                <div class="manner-tooltip">
+                  <div class="box-arrow"></div>
+                  <p>매너온도는 당근 사용자로부터 받은 칭찬, 후기, 비매너 평가, 운영자 제재 등을 종합해서 만든 매너 지표예요.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="trade-meta">
+          <div class="trade-info">
+            <div class="trade-info-header">
+              <div class="header-box">
+                <h1>
+                  <span
+                      th:class="'status-text ' + ${#strings.equals(trade.status, 'completed') ? 'green' : 'orange'}"
+                      th:unless="${#strings.equals(trade.status, 'available')}"
+                      th:text="${statusText}"></span>
+                  <span th:text="*{title}">거래글 제목</span>
+                </h1>
+                <th:block th:if="${owner == null || !#strings.equals(owner, true)}">
+                  <button type="button"
+                          id="like-button"
+                          th:classappend="${liked} ? 'active' : ''"
+                          th:data-trade-id="${trade.tradeId}"
+                          th:data-liked="${liked}"
+                  >
+                  <span class="like-image-box">
+                    <img
+                        class="like-image liked"
+                        th:classappend="${liked} ? '' : 'hidden'"
+                        th:src="@{/assets/icon/heart-fill.svg}"
+                        alt="bookmark-heart-fill">
+                    <img
+                        class="like-image un-liked"
+                        th:classappend="${liked} ? 'hidden' : ''"
+                        th:src="@{/assets/icon/heart.svg}"
+                        alt="bookmark-heart">
+                  </span>
+                  </button>
+                </th:block>
+              </div>
+              <div class="trade-category-time">
+                <a class="category-link"
+                   th:data-category="*{categoryName}"
+                   th:text="*{categoryName}">카테고리</a>
+                <span>∙</span>
+                <th:block>
+                  <span th:if="${trade.bumpUpdatedAt == null}"
+                        th:text="${trade.updateTerm}"
+                  >3시간 전</span>
+                  <span th:unless="${trade.bumpUpdatedAt == null}"
+                        th:text="${trade.bumpUpdatedAt.isAfter(trade.updatedAt) ? '끌올 ' + trade.bumpUpdateTerm : trade.updateTerm}"
+                  >끌올 3시간 전</span>
+                </th:block>
+              </div>
+              <div class="trade-price-box">
+              <span th:text="*{#numbers.formatInteger(price, 1, 'COMMA') + '원'}"
+                    class="price">230,000원</span>
+                <a th:if="*{offerable}" th:href="@{/chat}" class="active">가격 제안하기</a>
+                <span th:unless="*{offerable}">가격 제안 불가</span>
+              </div>
+            </div>
+            <p th:text="*{description}" class="trade-description">거래글 설명</p>
+            <div th:if="*{preferredLocation != null} and !*{#strings.isEmpty(preferredLocation)}"
+                 class="preferred-location">
+              <span>희망 거래장소</span>
+              <span>|</span>
+              <span th:text="*{preferredLocation}"></span>
+            </div>
+          </div>
+          <div class="trade-stats">
+            <span th:text="'채팅 ' + *{chatCounts}">채팅 0</span>
+            <span>∙</span>
+            <span th:text="'관심 ' + *{likeCounts}">관심 0</span>
+          </div>
+          <th:block th:if="${owner != null}">
+            <div class="action-button-wrap owner">
+              <th:block th:if="${!#strings.equals(trade.status, 'completed')}">
+                <button type="button"
+                        class="option-button"
+                        id="bump-button"
+                        th:data-trade-id="*{tradeId}"
+                >끌올</button>
+                <button type="button"
+                        class="option-button"
+                        id="status-button">상태 변경</button>
+                <div id="status-alter-modal"
+                     class="modal hidden">
+                  <div class="modal-content">
+                    <h3>거래글 상태 변경</h3>
+                    <form id="trade-status-form">
+                      <div class="status-select-box">
+                        <label
+                            for="status"
+                            th:text="'현재 상태 : ' + ${statusText}">상태</label>
+                        <div class="custom-select">
+                          <select id="status"
+                                  th:data-trade-id="*{tradeId}"
+                                  th:field="*{status}">
+                            <option value="" disabled selected>상태 선택</option>
+                            <option
+                                th:each="entry : ${statusMap}"
+                                th:if="${!#strings.equals(entry.key, trade.status.toUpperCase())}"
+                                th:value="${entry.key}"
+                                th:text="${entry.value}"
+                            ></option>
+                          </select>
+                        </div>
+                        <span class="status-warning">⚠ 거래 완료 선택 시 상태를 다시 변경할 수 없습니다.</span>
+                      </div>
+                      <div class="modal-actions">
+                        <button type="submit">저장</button>
+                        <button type="button" id="cancel-button">취소</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </th:block>
+              <a th:href="@{/trade/{id}/edit(id=${id})}">수정하기</a>
+              <button type="button">삭제하기</button>
+            </div>
+          </th:block>
+          <th:block th:unless="${owner != null}">
+            <div class="action-button-wrap">
+              <a id="chatButton" th:data-trade-id="${trade.tradeId}" th:data-seller-id="${trade.userId}" type="button">채팅하기</a>
+            </div>
+          </th:block>
+        </section>
+      </div>
+    </div>
+    <div class="divider-line"></div>
+    <section class="related-trades writer">
+      <header class="related-trades-header">
+        <div>
+          <h2 th:text="${trade.nickname} + ' 의 판매물품'">당근당근 의 판매물품</h2>
+        </div>
+        <a th:href="${owner != null} ?
+                  @{/profile}
+                  : @{/profile/{id}(id=${trade.userId})}">
+          <span>더 구경하기</span>
+          <span>&gt;</span>
+        </a>
+      </header>
+      <div class="trade-list">
+        <th:block th:each="userTrade:${userTrades}">
+          <div th:replace="~{/trade/fragments/trade_components :: trade_card (${userTrade}, ${false})}"
+               class="trade-card"></div>
+        </th:block>
+      </div>
+    </section>
+    <section class="related-trades categories">
+      <header class="related-trades-header">
+        <div>
+          <h2>비슷한 거래 목록</h2>
+        </div>
+        <a class="related-trade-link"
+            th:data-keyword="${trade.title}"
+            data-filter="available">
+          <span>더 구경하기</span>
+          <span>&gt;</span>
+        </a>
+      </header>
+      <div class="trade-list">
+        <th:block th:each="categoryTrade:${categoryTrades}">
+          <div th:replace="~{/trade/fragments/trade_components :: trade_card (${categoryTrade}, ${false})}"
+               class="trade-card"></div>
+        </th:block>
+      </div>
+    </section>
+  </div>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script type="module" src="/js/trade/trade_post.js"></script>
+<script src="/js/common/header.js"></script>
+</body>
+</html>

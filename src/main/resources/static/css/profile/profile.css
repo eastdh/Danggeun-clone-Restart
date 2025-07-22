@@ -1,0 +1,362 @@
+body {
+    color: var(--gray-900);
+}
+
+.container {
+    background-color: var(--gray-000);
+    width: 90%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 160px 0;
+}
+
+.profile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--gray-200);
+}
+.profile-left img{
+    width:150px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.profile-left {
+    flex: 1;
+}
+
+.profile-user-info{
+    display: flex;
+}
+.profile-info{
+
+    width: 100%;
+    margin-right: 40px;
+}
+.profile-info span {
+    font-size: 30px;
+    margin-bottom: 5px;
+    margin-top:10px;
+    font-weight: bold;
+}
+.profile-username{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.profile-username a, .modal-actions button{
+    background-color: var(--gray-100);
+    border: none;
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--gray-700);
+}
+.profile-username a:hover{
+    background-color: var(--gray-300);
+    color: var(--gray-900);
+}
+.profile-manner-degree{
+    display: flex;
+    margin: 10px;
+    font-size: 18px;
+    color: var(--gray-600);
+    align-items: center;
+}
+
+.manner-degree{
+    color: var(--orange-600);
+    margin-left: 10px;
+    font-size: 23px;
+    font-weight: bold;
+}
+.manner-bar{
+    height: 6px;
+    position: relative;
+    background-color: var(--gray-200);
+    border-radius: 3px;
+    margin-left: 10px;
+    margin-right: 40px;
+}
+
+.manner-bar .filled-bar {
+    width: 50%; /* default => 수치따라 변경 */
+    height: 100%;
+    position: absolute;
+    left: 0;
+    background-color: var(--orange-600);
+    border-radius: 3px;
+}
+
+.profile-feedback {
+    flex: 1;
+}
+
+h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.profile-feedback ul {
+    list-style: none;
+}
+
+.profile-feedback li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 20px;
+    color: var(--gray-800);
+}
+
+.group-icon {
+    width: 35px;
+    height: auto;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.feedback-text-wrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.feedback-number {
+    margin-left: 8px;
+    width: 55px;
+    font-weight: bold;
+}
+.review-section {
+    margin-top: 40px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.review-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.review-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.profile-img img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.review-content {
+    flex: 1;
+}
+
+.review-meta {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 4px;
+}
+
+.nickname {
+    color: var(--gray-900);
+}
+
+.user-id {
+    color: var(--gray-600);
+}
+
+.review-text {
+    font-size: 15px;
+    color: var(--gray-900);
+}
+
+.review-section {
+    padding-bottom: 10px;
+    border-bottom: solid 1px var(--gray-200);
+}
+
+.btn-more {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.btn-more-wrapper {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.btn-more:hover {
+    background-color: var(--gray-200);
+}
+
+.sale-items, .liked-items {
+    padding-top:40px;
+    padding-bottom:10px;
+}
+.liked-items {
+    border-top: 1px solid var(--gray-200);
+}
+/*.sale-items {*/
+/*    border-bottom: 1px solid var(--gray-200);*/
+/*}*/
+.items-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.tab-button {
+    background-color: var(--gray-100);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-700);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.tab-button:hover {
+    background-color: var(--gray-300);
+    color: var(--gray-900);
+}
+
+.tab-button.active {
+    background-color: var(--orange-600);
+    color: white;
+}
+
+.item-card {
+    background-color: var(--gray-000);
+    width: 150px;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.04);
+    text-align: center;
+}
+
+.item-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.item-card .title {
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.item-card .price {
+    font-weight: bold;
+    color: var(--gray-800);
+    margin-top: 4px;
+}
+
+
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: var(--gray-000);
+    padding: 2rem;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.modal-content input {
+    padding: 8px;
+    margin: 8px 0 20px 0;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.modal-actions button:first-child {
+    background-color: var(--orange-600);
+    color: white;
+}
+
+/* 공통: 기본적으로 일정 개수(2줄, 3개)까지만 표시 */
+.items-grid,
+.review-list {
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+
+/* 판매상품/관심목록: 2줄까지만 표시 (대략 400px) */
+.items-grid {
+    max-height: 400px;
+}
+
+/* 후기: 3개까지만 표시 (대략 450px) */
+.review-list {
+    max-height: 450px;
+}
+
+/* expanded 클래스가 붙으면 전체 펼침 */
+.items-grid.expanded,
+.review-list.expanded {
+    max-height: 9999px; /* 충분히 크게 지정해서 애니메이션 가능 */
+}
+
+/* 더보기/접기 버튼 공통 스타일 */
+.show-more-btn {
+    display: none; /* JS로 필요한 경우만 노출 */
+    margin: 10px auto;
+    padding: 8px 16px;
+    background-color: #ff7e36;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.show-more-btn:hover {
+    background-color: #e86b1f;
+}

@@ -1,0 +1,142 @@
+<!-- resources/templates/chat/chat_page.html -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>채팅 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/common/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/chat/chat_page.css}" />
+    <link rel="stylesheet" href="/css/common/header.css" />
+    <link rel="stylesheet" href="/css/common/footer.css" />
+    <!-- Toast 컴포넌트 CSS (필요 시) -->
+    <link rel="stylesheet" th:href="@{/css/chat/components/toast.css}" />
+  </head>
+  <body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="chat-page">
+      <!-- 채팅 리스트 섹션 -->
+      <div class="list">
+        <div class="list__header">
+          <!-- 사용자 아이디 -->
+          <div class="list__header__user-id" th:text="${userNickname} ?: '내 닉네임'" th:attr="data-user-id=${userId}"></div>
+
+          <!-- 안 읽은 채팅만 토글 -->
+          <div class="list__header__toggle">
+            <span>안 읽은 채팅</span>
+            <label class="list__header__toggle-switch">
+              <input type="checkbox" th:checked="${showUnreadOnly}" />
+              <span class="list__header__toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 룸 리스트 컨테이너 -->
+        <div class="list__room-list">
+          <div class="list__room-list__item list__room-list__item--bot" data-chat-room-id="-1">
+            <div class="list__room-list__item-content">
+              <span class="chat-list__item-icon">🤖</span>
+              <span class="list__room-list__item__preview">챗봇</span>
+            </div>
+          </div>
+          <!-- (서버사이드 렌더링된 초기 아이템, 필요 시 유지) -->
+          <div
+            class="list__room-list__item"
+            th:each="room : ${chatRooms}"
+            th:attr="data-chat-room-id=${room.chatRoomId},
+              data-trade-id=${room.tradeId},
+              data-partner-nickname=${room.partnerNickname}"
+          >
+            <div class="list__room-list__item-content">
+              <div class="list__room-list__item-meta">
+                <span class="list__room-list__item-meta__partner-id" th:text="${room.partnerNickname} ?: '상대방'"></span>
+                <div class="list__room-list__item-meta__location" th:text="${room.partnerLocation}"></div>
+                <div class="list__room-list__item-meta__timestamp" th:text="${room.lastMessageTime}"></div>
+                <span class="unread-badge" th:if="${room.unreadCount > 0}" th:text="${room.unreadCount}"></span>
+              </div>
+              <div class="list__room-list__item__preview" th:text="${room.lastMessageContent} ?: '메시지 미리보기'"></div>
+            </div>
+            <img class="thumbnail" th:src="@{${room.tradeThumbnailUrl} ?: '/assets/icon/default_product_img.svg'}" />
+          </div>
+        </div>
+
+        <!-- 빈 리스트 안내 -->
+        <div class="list__empty-message" style="display: none">
+          <p class="empty-message__title">아직 시작된 채팅이 없어요</p>
+          <p class="empty-message__subtitle">
+            거래 상세 페이지에서 <strong>‘채팅하기’ 버튼</strong>을 누르면 <br />
+            대화를 시작할 수 있어요.<br />
+            관심 있는 상품을 먼저 둘러보는 건 어때요?
+          </p>
+          <a th:href="@{/trade}" class="empty-message__browse-button">거래글 둘러보기</a>
+        </div>
+      </div>
+
+      <!-- 채팅방 섹션 -->
+      <div class="room">
+        <!-- 방 선택 전 안내 -->
+        <div class="room__empty-message" id="roomEmptyMessage" style="display: none">
+          <p class="empty-message__title">채팅방이 선택되지 않았어요</p>
+          <p class="empty-message__subtitle">
+            왼쪽에서 채팅방을 선택하면<br />
+            상대방과의 메시지를 확인하고 거래를 진행할 수 있어요.
+          </p>
+          <div class="empty-message__arrow-indicator">👈</div>
+        </div>
+
+        <!-- 로딩 오버레이 -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none">
+          <div class="spinner"></div>
+          <p class="loading-message">채팅방을 불러오는 중입니다...</p>
+        </div>
+
+        <!-- 선택된 채팅방 -->
+        <div class="room__selected-room" id="roomSelected" style="display: none">
+          <div class="room__header">
+            <div class="room__header__partner-info">
+              <span class="room__header__partner-info__id"></span>
+              <span class="room__header__partner-info__temperature"></span>
+            </div>
+            <div class="room__header__trade-info">
+              <div class="room__header__trade-info__product">
+                <img class="thumbnail" />
+                <div class="room__header__trade-info__product-meta">
+                  <div class="room__header__trade-info__product__name"></div>
+                  <div class="room__header__trade-info__product__price"></div>
+                </div>
+              </div>
+              <button id="tradeStatusButton" class="room__header__trade-info__status-button" type="button" data-chat-room-id="" data-trade-id="">
+                거래 상태
+              </button>
+              <!-- 후기 작성 버튼 -->
+              <button class="review-button" data-trade-id="" data-partner-id="" style="display: none">후기 작성</button>
+              <!-- 후기 확인 버튼 -->
+              <button class="review-check-button" data-trade-id="" data-partner-id="" style="display: none">후기 확인</button>
+            </div>
+          </div>
+
+          <div class="room__messages"></div>
+
+          <div class="room__input-area">
+            <div class="room__input-area__wrapper">
+              <textarea class="room__input-area__field" placeholder="메시지를 입력하세요"></textarea>
+              <button class="room__input-area__send-button" type="button">전송</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div th:replace="~{fragments/footer :: footer}"></div> -->
+
+    <!-- Header -->
+    <script src="/js/common/header.js"></script>
+
+    <!-- Library -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js" defer></script>
+
+    <!-- Chat entry point -->
+    <script th:src="@{/js/chat/index.js}" type="module" defer></script>
+  </body>
+</html>

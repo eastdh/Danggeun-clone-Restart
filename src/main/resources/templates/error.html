@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" th:href="@{/css/common/style.css}">
+  <link rel="stylesheet" th:href="@{/css/common/header.css}">
+  <link rel="stylesheet" th:href="@{/css/common/footer.css}">
+  <link rel="stylesheet" th:href="@{/css/common/error.css}">
+  <title th:text="${error} == null ? '에러' : ${error} + ' 에러'">에러 페이지</title>
+</head>
+<body>
+<header th:replace="~{fragments/header}"></header>
+<main>
+  <section class="error-section">
+    <div class="error-header">
+      <h1 th:text="${error}"></h1>
+    </div>
+    <div class="error-box">
+      <p>에러가 발생했습니다</p>
+      <a id="link-to-back"
+         onclick="history.back()"
+      >이전 페이지로 돌아가기</a>
+      <a th:href="@{/main}">메인으로 돌아가기</a>
+    </div>
+  </section>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script src="/js/common/header.js"></script>
+</body>
+</html>

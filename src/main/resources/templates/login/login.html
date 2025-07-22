@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 | 당근마켓</title>
+    <link rel="stylesheet" href="/css/common/style.css" />
+    <link rel="stylesheet" href="/css/common/header.css" />
+    <link rel="stylesheet" href="/css/common/footer.css" />
+    <link rel="stylesheet" href="/css/login/login.css" />
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main class="login-container">
+        </div>
+        <!-- ✅ 회원가입 성공 메시지 -->
+        <div th:if="${param.success}" class="login-success" style="color: green; margin-bottom: 1rem;">
+            <p th:text="${param.success}">성공 메시지</p>
+        </div>
+        <form th:action="@{/login}" method="post">
+            <label for="email">이메일</label>
+            <input type="text" id="email" name="username" placeholder="이메일를 입력해주세요" required>
+
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요" required>
+<!--             로그인 페이지에서 에러 메시지 표시 -->
+            <div th:if="${param.error}" style="color: red;">
+                <br>
+                <p th:text="${param.error}">로그인 오류</p>
+            </div>
+
+            <button type="submit" class="btn-orange">로그인</button>
+        </form>
+
+        <div class="social-login">
+            <a th:href="@{/oauth2/authorization/google}" class="btn-google">
+                <img src="/assets/icon/google.svg" alt="Google 로고" />
+                Google로 로그인
+            </a>
+        </div>
+
+        <div class="to-register">
+            <p class="question">당근마켓 회원이 아니신가요?</p>
+            <a th:href="@{/register}">회원가입</a>
+        </div>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script src="/js/common/header.js"></script>
+</body>
+</html>

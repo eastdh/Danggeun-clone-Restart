@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>main page</title>
+    <link rel="stylesheet" th:href="@{/css/common/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/main/main_page.css}" />
+    <link rel="stylesheet" href="/css/common/header.css" />
+    <link rel="stylesheet" href="/css/common/footer.css" />
+  </head>
+  <body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="scroll-container">
+      <section class="slide slide--intro" data-label="Intro">
+        <!-- TODO: 프로젝트 로고 (favicon) -->
+        <div class="intro__project-logo">
+          <img th:src="@{/assets/logo/gmo_danggeun_logo.svg}" alt="GMO-Danggeun 로고" />
+        </div>
+        <h1 class="intro__title">GMO-Danggeun</h1>
+        <p class="intro__description">
+          오르미 백엔드 11기 5팀 <strong>Restart</strong><br />
+          당근마켓 클론코딩 Spring 프로젝트
+        </p>
+        <!-- TODO: 팀 로고 -->
+        <div class="intro__team-logo">
+          <img th:src="@{/assets/logo/restart_team_logo_with_name.svg}" alt="팀 Restart 로고" />
+        </div>
+        <div class="scroll-down-indicator">
+          scroll down
+          <span class="arrow"></span>
+        </div>
+      </section>
+
+      <section class="slide slide--features" data-label="기능 소개">
+        <div class="features__grid">
+          <div>
+            <h2 class="features__title">주요 기능 소개</h2>
+            <p class="slide__subtitle features__subtitle">서비스 내에서 제공되는 핵심 기능들</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-card__icon">🔐</span>
+            <h3 class="feature-card__title">계정 인증 및 관리</h3>
+            <p class="feature-card__desc">로그인, 가입, 비밀번호 찾기, 정보 수정, 탈퇴 등을 지원합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">📝</span>
+            <h3 class="feature-card__title">거래 게시글 관리</h3>
+            <p class="feature-card__desc">등록, 수정, 끌올, 삭제, 검색, 추천 기능을 포함합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">💬</span>
+            <h3 class="feature-card__title">채팅 및 거래 제안</h3>
+            <p class="feature-card__desc">실시간 메시지 교환과 가격 제안이 가능합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">🤖</span>
+            <h3 class="feature-card__title">AI 챗봇 시스템</h3>
+            <p class="feature-card__desc">Gemini 챗봇과 대화하며 플로팅 버튼으로 접근할 수 있습니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">⭐</span>
+            <h3 class="feature-card__title">후기 및 매너온도</h3>
+            <p class="feature-card__desc">거래 후기 작성 및 평가로 매너온도를 관리합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">📍</span>
+            <h3 class="feature-card__title">위치 기반 추천</h3>
+            <p class="feature-card__desc">지역 설정을 통해 맞춤 거래글을 추천합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">🖼️</span>
+            <h3 class="feature-card__title">이미지 업로드 및 수정</h3>
+            <p class="feature-card__desc">프로필, 거래글, 채팅 이미지 등록/관리 기능을 제공합니다.</p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-card__icon">👥</span>
+            <h3 class="feature-card__title">사용자 페이지</h3>
+            <p class="feature-card__desc">마이페이지 및 프로필 정보 확인, UI 분기 처리 등 포함됩니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TODO: 스크린샷 교체 -->
+      <section class="slide slide--preview" data-label="UI 미리보기">
+        <h2 class="preview__title">UI 미리보기</h2>
+        <p class="slide__subtitle preview__subtitle">각 페이지와 컴포넌트를 미리 경험해보세요</p>
+
+        <!-- 중앙 큰 미리보기 카드 -->
+        <div class="preview__main" id="previewMain">
+          <img th:src="@{/assets/screenshots/screenshot_login.png}" alt="미리보기" class="preview-main__img" />
+          <div class="preview-main__content">
+            <h3 class="preview-main__title">로그인 페이지</h3>
+            <p class="preview-main__desc">사이트 및 소셜 로그인 UI. 오류 피드백, 자동 포커싱 등이 포함됩니다.</p>
+          </div>
+        </div>
+
+        <!-- 하단 작은 카드 리스트 -->
+        <ul class="preview__list" id="previewList">
+          <li
+            class="preview-card"
+            data-index="0"
+            data-title="로그인 페이지"
+            data-desc="사이트 및 소셜 로그인 UI. 오류 피드백, 자동 포커싱 등이 포함됩니다."
+            th:data-src="@{/assets/screenshots/screenshot_login.png}"
+          >
+            <img th:src="@{/assets/screenshots/screenshot_login.png}" alt="로그인" />
+          </li>
+          <li
+            class="preview-card"
+            data-index="1"
+            data-title="거래글 목록"
+            data-desc="지역 기반 추천을 반영한 거래글 카드 UI입니다."
+            th:data-src="@{/assets/screenshots/screenshot_trade.png}"
+          >
+            <img th:src="@{/assets/screenshots/screenshot_trade.png}" alt="거래글" />
+          </li>
+          <li
+            class="preview-card"
+            data-index="2"
+            data-title="채팅 및 챗봇"
+            data-desc="사용자 간 실시간 채팅 UI 및 Gemini 챗봇 인터페이스를 확인하세요."
+            th:data-src="@{/assets/screenshots/screenshot_chat.png}"
+          >
+            <img th:src="@{/assets/screenshots/screenshot_chat.png}" alt="채팅" />
+          </li>
+          <li
+            class="preview-card"
+            data-index="3"
+            data-title="후기 작성"
+            data-desc="거래 완료 후 사용자 평가와 매너온도 UI입니다."
+            th:data-src="@{/assets/screenshots/screenshot_review.png}"
+          >
+            <img th:src="@{/assets/screenshots/screenshot_review.png}" alt="후기" />
+          </li>
+          <li
+            class="preview-card"
+            data-index="4"
+            data-title="프로필 페이지"
+            data-desc="마이페이지 및 타인의 프로필 UI를 비교해보세요."
+            th:data-src="@{/assets/screenshots/screenshot_profile.png}"
+          >
+            <img th:src="@{/assets/screenshots/screenshot_profile.png}" alt="프로필" />
+          </li>
+        </ul>
+      </section>
+
+      <section class="slide slide--stack" data-label="기술 스택">
+        <h2 class="stack__title">기술 스택</h2>
+        <p class="slide__subtitle stack__subtitle">프로젝트에 적용된 주요 기술과 사용 목적</p>
+
+        <div class="stack-flow-html">
+          <!-- 칼럼: 사용자 -->
+          <div class="stack-column">
+            <h4 class="stack-label">🧑 사용자</h4>
+            <div class="stack-box stack-box--gray">
+              화면 요청
+              <div class="stack-desc">브라우저 화면에서 서버에 요청 발생</div>
+            </div>
+          </div>
+          <div class="stack-arrow"><br />→</div>
+
+          <!-- 칼럼: 프론트엔드 -->
+          <div class="stack-column">
+            <h4 class="stack-label">🖥️ 프론트엔드</h4>
+            <div class="stack-box stack-box--template">
+              Thymeleaf
+              <div class="stack-desc">서버사이드 템플릿 엔진으로 HTML 렌더링</div>
+            </div>
+          </div>
+          <div class="stack-arrow"><br />→</div>
+
+          <!-- 칼럼: 백엔드 -->
+          <div class="stack-column">
+            <h4 class="stack-label">🔧 백엔드</h4>
+            <div class="stack-box stack-box--backend">
+              Spring Boot
+              <div class="stack-desc">백엔드 로직과 API 서버를 구성</div>
+            </div>
+            <div class="stack-box stack-box--security">
+              Spring Security
+              <div class="stack-desc">로그인, 권한 검증, 인증 인가 처리</div>
+            </div>
+          </div>
+          <div class="stack-arrow"><br />→</div>
+
+          <!-- 칼럼: 외부 연동 -->
+          <div class="stack-column">
+            <h4 class="stack-label">📦 외부 연동</h4>
+            <div class="stack-box stack-box--db">
+              PostgreSQL
+              <div class="stack-desc">거래글, 유저, 후기 등 관계형 데이터 저장</div>
+            </div>
+            <div class="stack-box stack-box--storage">
+              Amazon S3
+              <div class="stack-desc">이미지 파일 업로드 및 외부 저장소 연동</div>
+            </div>
+            <div class="stack-box stack-box--ai">
+              Gemini API
+              <div class="stack-desc">AI 챗봇 응답 생성을 위한 Gemini API 연동</div>
+            </div>
+            <div class="stack-box stack-box--map">
+              Google Maps API
+              <div class="stack-desc">지도 기반 위치 등록 및 추천 기능 제공</div>
+            </div>
+            <div class="stack-box stack-box--auth">
+              Google OAuth2
+              <div class="stack-desc">소셜 로그인 인증(Google 계정 연동)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--team" data-label="팀 소개">
+        <h2>팀원 소개</h2>
+        <p class="slide__subtitle">우리 팀의 기여와 협업을 소개합니다</p>
+
+        <!-- 팀 로고 삽입 -->
+        <img th:src="@{/assets/logo/restart_team_logo_with_name.svg}" alt="Restart 팀 로고" class="team-logo" />
+
+        <div class="team-cards">
+          <div class="card">
+            <h3>유동혁</h3>
+            <p>팀장<br />채팅 페이지, 메인 페이지 담당</p>
+          </div>
+          <div class="card">
+            <h3>안시은</h3>
+            <p>거래글 페이지 담당</p>
+          </div>
+          <div class="card">
+            <h3>이재원</h3>
+            <p>로그인, 동네 인증, 프로필 페이지 담당</p>
+          </div>
+        </div>
+
+        <p class="team-note">* 모든 팀원은 프론트엔드 및 백엔드 개발을 동등하게 참여하여 협업하였습니다</p>
+
+        <!-- 프로젝트 GitHub 링크 -->
+        <a href="https://github.com/eastdh/Danggeun-clone-Restart/" target="_blank" class="project-github">프로젝트 GitHub 바로가기</a>
+      </section>
+    </div>
+
+    <!-- 스크롤 인디케이터 -->
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="/js/common/header.js"></script>
+    <script th:src="@{/js/main/main_page.js}"></script>
+  </body>
+</html>

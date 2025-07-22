@@ -1,0 +1,69 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- nav -->
+<nav th:fragment="nav (page, trade_title)" class="trade-nav">
+  <ul class="nav-list">
+    <li><a th:href="@{/}">홈</a></li>
+    <th:block th:if="${#strings.equals(page, 'trade')}">
+      <li><img th:src="@{/assets/icon/chevron-right.svg}" alt="chevron-right"></li>
+      <li>
+        <th:block th:switch="${#strings.isEmpty(trade_title)}">
+          <span th:case="${true}" class="nav-current">중고거래</span>
+          <a th:case="${false}"
+             th:href="@{/trade}">중고거래</a>
+        </th:block>
+      </li>
+      <th:block th:if="${!#strings.isEmpty(trade_title)}">
+        <li><img th:src="@{/assets/icon/chevron-right.svg}" alt="chevron-right"></li>
+        <li><span th:text="${trade_title}" class="nav-current"></span></li>
+      </th:block>
+    </th:block>
+  </ul>
+</nav>
+
+<!-- trade new route button -->
+<div th:fragment="new_trade_button"
+     title="거래글쓰기"
+     class="float-box">
+  <a th:href="@{/trade/new}">
+    <img th:src="@{/assets/icon/pencil-fill.svg}" alt="거래글쓰기">
+  </a>
+</div>
+
+<!-- trade_post's trades card -->
+<div th:fragment="trade_card (trade, is_trade_list)" class="trade-card">
+  <a
+      th:href="@{/trade/{id}(id=${trade.tradeId})}"
+      class="trade-card-link">
+    <div class="card-img-box">
+      <th:block th:switch="${trade.status}">
+        <span th:case="completed" class="badge-status completed">판매완료</span>
+        <span th:case="reserved" class="badge-status reserved">예약중</span>
+      </th:block>
+      <img th:src="${#strings.isEmpty(trade.imgUrl)} ? @{/assets/icon/card-image.svg} : ${trade.imgUrl}"
+           th:alt="${trade.title != null} ? ${trade.title} : '거래글 이미지'"
+           class="card-img">
+    </div>
+    <div class="card-info">
+      <div>
+        <span th:text="${trade.title}" class="card-title">거래글이름</span>
+        <span th:text="${#numbers.formatInteger(trade.price, 1, 'COMMA')} + '원'"
+              class="card-price">10,000원</span>
+      </div>
+      <div>
+        <span th:text="${trade.location}">장소</span>
+        <span th:if="${is_trade_list}" class="card-time">
+          <span>•</span>
+          <span th:if="${trade.bumpUpdatedAt == null}"
+              th:text="${trade.updateTerm}"
+              >3시간 전</span>
+          <span th:unless="${trade.bumpUpdatedAt == null}"
+                th:text="${trade.bumpUpdatedAt.isAfter(trade.updatedAt) ? '끌올 ' + trade.bumpUpdateTerm : trade.updateTerm}"
+          >끌올 3시간 전</span>
+        </span>
+      </div>
+    </div>
+  </a>
+</div>
+
+</html>

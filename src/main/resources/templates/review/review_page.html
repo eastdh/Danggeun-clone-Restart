@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>review page</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/src/main/resources/static/css/style.css" />
+    <link rel="stylesheet" th:href="@{/css/review/review_page.css}" href="/src/main/resources/static/css/review/review_page.css" />
+  </head>
+  <body>
+    <section class="review-page">
+      <div class="review-header">
+        <div class="review-header__left">
+          <img th:src="@{${review?.profileImage} ?: '/assets/images/chat_test_pic.jpg'}" alt="프로필 이미지" class="profile-img" />
+          <div class="profile-info">
+            <h2 class="profile-name" th:text="${partnerNickname}">닉네임</h2>
+            <div class="profile-rating"> 매너온도: <span th:text="${partnerTemperature}">36.5</span>°C</div>
+          </div>
+        </div>
+        <div class="review-header__right"></div>
+      </div>
+
+      <div class="review-divider"></div>
+
+      <form id="reviewForm" class="review-form" method="post" th:action="@{/review/submit}">
+        <!-- Hidden Fields -->
+        <input type="hidden" name="trade_id" th:value="${trade.id}">
+        <input type="hidden" name="partner_id" th:value="${partnerId}">
+        <input type="hidden" name="is_seller" th:value="${isSeller}">
+        <input type="hidden" name="chat_room_id" th:value="${chatRoomId}">
+
+
+        <section class="form-section">
+          <div class="form-title">
+            <span>별점을 선택해주세요!</span>
+            <span class="form-badge">최대 5점</span>
+          </div>
+          <div class="form-subtitle">별을 클릭하면 점수가 표시됩니다</div>
+          <div class="rating-wrapper">
+            <div class="rating">
+              <label
+                      class="rating-label"
+                      th:each="i : ${#numbers.sequence(1, 10)}"
+                      th:classappend="${i % 2 == 1} ? 'rating-label--half' : 'rating-label--full'"
+                      th:for="${'star' + i}"
+              >
+                <input type="radio" th:id="${'star' + i}" th:name="rating" th:value="${i}" class="rating__input" />
+                <span class="star-icon"></span>
+              </label>
+            </div>
+            <div class="rating-value-display" id="ratingValue"></div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="form-title">
+            <span>리뷰 키워드</span>
+            <span class="form-badge">1~5개</span>
+          </div>
+          <div class="keyword-options">
+            <label th:each="cat : ${categories}">
+              <input type="checkbox" name="categoryIds" th:value="${cat.id}">
+              <span th:text="${cat.name}">카테고리</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="form-title">
+            <span>리뷰 작성</span>
+            <span class="form-badge">최대 200자</span>
+          </div>
+          <div class="review-guide" id="reviewGuide">
+            <p class="guide-bubble loading">💬 가이드를 불러오는 중입니다...</p>
+            <p class="guide-bubble loading">🌱 잠시만 기다려주세요!</p>
+          </div>
+
+          <div class="review-text">
+      <textarea
+              id="reviewContent"
+              name="content"
+              rows="5"
+              required
+              maxlength="200"
+              placeholder="리뷰 내용을 작성해주세요"
+              th:text="${review?.content ?: ''}"
+      ></textarea>
+            <div id="charCounter" class="char-counter">0 / 200자</div>
+          </div>
+        </section>
+
+        <div class="review-buttons">
+          <button type="submit" class="btn-submit" th:text="${mode == 'edit'} ? '수정' : '등록'">등록</button>
+          <button type="reset" class="btn-cancel">취소</button>
+        </div>
+      </form>
+    </section>
+    <script th:src="@{/js/review/review_page.js}" src="/src/main/resources/static/js/review/review_page.js"></script>
+  </body>
+</html>

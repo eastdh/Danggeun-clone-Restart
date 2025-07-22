@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>프로필 | 당근마켓</title>
+    <link rel="stylesheet" href="/css/common/style.css"/>
+    <link rel="stylesheet" href="/css/common/header.css"/>
+    <link rel="stylesheet" href="/css/common/footer.css"/>
+    <link rel="stylesheet" href="/css/profile/profile.css"/>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+    <section class="profile-top">
+        <div class="profile-left">
+            <div class="profile-user-info">
+                <img src="/assets/icon/profile.svg" alt="프로필 사진" class="profile-img">
+                <div class="profile-info">
+                    <div class="profile-username">
+                        <span class="nickname" th:text="${profileData.nickname}">닉네임</span>
+                        <div th:if="${currentUserId != null and currentUserId == profileData.userId}">
+                            <a th:href="@{/profile/edit}">프로필 수정</a>
+                            <!-- 프로필 수정 모달 -->
+                            <div id="profile-edit-modal" class="modal hidden">
+                                <div class="modal-content">
+                                    <h2>프로필 수정</h2>
+                                    <br>
+                                    <form id="profile-edit-form">
+                                        <label for="nickname">닉네임</label>
+                                        <input type="text" id="nickname" name="nickname" th:value="${profileData.nickname}" required>
+                                        <div class="modal-actions">
+                                            <button type="submit">저장</button>
+                                            <button type="button" id="cancel-btn">취소</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <a th:href="@{/profile/delete}">회원 탈퇴</a>
+                            <!-- 회원 탈퇴 확인 모달 -->
+                            <div id="withdrawal-modal" class="modal hidden">
+                                <div class="modal-content">
+                                    <h2>정말 탈퇴하시겠어요?</h2>
+                                    <br>
+                                    <p>탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.</p>
+                                    <br>
+                                    <div class="modal-actions">
+                                        <button id="confirm-withdrawal-btn" style="color: white; background-color: red;">탈퇴하기</button>
+                                        <button id="cancel-withdrawal-btn">취소</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-id" th:text="'#' + ${profileData.userId}">#1234</div>
+                </div>
+            </div>
+            <div class="profile-manner-degree">
+                <p>매너온도</p>
+                <p class="manner-degree" th:text="${profileData.mannerScore + '℃'}">46.8℃</p>
+            </div>
+            <div class="manner-bar">
+                <div class="filled-bar" th:style="'width:' + ${profileData.mannerScore} + '%'"></div>
+            </div>
+        </div>
+        <div class="profile-feedback">
+            <h3>받은 매너 평가</h3>
+            <ul>
+                <li th:each="feedback : ${profileData.mannerFeedbacks}">
+                    <img src="/assets/icon/group.svg" class="group-icon" alt="group-icon">
+                    <p class="feedback-number" th:text="${feedback.count + '명'}">0명</p>
+                    <p class="feedback-detail" th:text="${feedback.categoryName}">시간약속을 잘 지켜요</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="review-section">
+        <h3>받은 거래 후기</h3>
+        <ul class="review-list">
+            <li class="review-item" th:each="review : ${profileData.reviews}">
+                <div class="profile-img"><img src="/assets/icon/group.svg" class="group-icon" alt="프로필"></div>
+                <div class="review-content">
+                    <div class="review-meta">
+                        <strong class="nickname" th:text="${review.reviewerNickname}">닉네임</strong>
+                        <span class="role" th:text="${review.role}">구매자</span> ·
+                        <span class="location" th:text="${review.location}">지역</span> ·
+                        <span class="time" th:text="${#dates.format(review.createdAt, 'yyyy.MM.dd')}">날짜</span>
+                    </div>
+                    <div class="review-text" th:text="${review.content}">리뷰 내용</div>
+                </div>
+            </li>
+        </ul>
+        <button id="show-more-review-btn" style="display:none;">더보기</button>
+    </section>
+
+    <section class="sale-items">
+        <h3>판매상품</h3>
+        <div class="tab-buttons">
+            <button class="tab-button active" data-status="ALL">전체</button>
+            <button class="tab-button" data-status="available">판매중</button>
+            <button class="tab-button" data-status="reserved">예약중</button>
+            <button class="tab-button" data-status="completed">판매완료</button>
+        </div>
+
+        <div class="items-grid">
+            <div class="item-card"
+                 th:each="sale : ${profileData.sales}"
+                 th:attr="data-id=${sale.tradeId}, data-status=${sale.status}">
+                <img th:src="${sale.thumbnailUrl != null} ? ${sale.thumbnailUrl} : '/assets/icon/default_product_img.svg'" alt="상품 이미지">
+                <div class="title" th:text="${sale.title}">상품명</div>
+                <div class="price" th:text="${#numbers.formatInteger(sale.price, 3, 'COMMA') + '원'}">가격</div>
+            </div>
+        </div>
+    </section>
+    <button id="show-more-sale-btn" style="display:none;">더보기</button>
+    <section class="liked-items" th:if="${currentUserId != null and currentUserId == profileData.userId}">
+        <h3>관심목록</h3>
+        <div class="items-grid">
+            <div class="item-card"
+                 th:each="liked : ${profileData.likedTrades}"
+                 th:attr="data-id=${liked.tradeId}">
+                <img th:src="${liked.thumbnailUrl != null} ? ${liked.thumbnailUrl} : '/assets/icon/default_product_img.svg'" alt="상품 이미지">
+                <div class="title" th:text="${liked.title}">상품명</div>
+                <div class="price" th:text="${#numbers.formatInteger(liked.price, 3, 'COMMA') + '원'}">가격</div>
+            </div>
+        </div>
+    </section>
+    <button id="show-more-liked-btn" style="display:none;">더보기</button>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="/js/common/header.js"></script>
+<script src="/js/profile/profile.js"></script>
+</body>
+</html>
