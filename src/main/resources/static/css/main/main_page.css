@@ -2,6 +2,7 @@
 .scroll-container {
   height: calc(100vh - 60px); /* 헤더 높이 제외 */
   overflow-y: scroll;
+  scrollbar-width: thin;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
 }
