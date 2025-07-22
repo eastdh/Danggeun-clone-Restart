@@ -17,7 +17,6 @@ export const SENDER_TYPES = {
   ME: "ME",
   PARTNER: "PARTNER",
   SYSTEM: "SYSTEM",
-  DATE_LABEL: "DATE_LABEL",
   CHAT_BOT: "CHAT_BOT",
 };
 
@@ -42,11 +41,13 @@ export const WS = {
     CHAT_ROOM: (roomId) => `/topic/chat/${roomId}`,
     CHAT_ROOM_READ: (roomId) => `/topic/chat/${roomId}/read`,
     CHAT_BOT: (roomId) => `/topic/chat/bot/${roomId}`,
+    TRADE_CONFIRMED: (tradeId) => `/topic/trade/${tradeId}/confirmed`,
   },
 };
 
 // 주요 CSS 셀렉터 모음
 export const SELECTORS = {
+  USER_ID: ".list__header__user-id",
   CHAT_ROOM_LIST_ITEM: ".list__room-list__item",
   UNREAD_BADGE: ".unread-badge",
   MESSAGE_CONTAINER: ".room__messages",

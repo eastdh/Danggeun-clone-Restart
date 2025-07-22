@@ -23,8 +23,11 @@ public class Image {
   @JoinColumn(name = "uploader_id", nullable = false)
   private User uploader;
 
-  @Column(length = 100, nullable = false)
+  @Column(nullable = false)
   private String url;
+
+  @Column(nullable = false)
+  private String s3key;
 
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
@@ -35,10 +38,11 @@ public class Image {
   public Image() {
   }
 
-  public Image(Long id, User uploader, String url, LocalDateTime createdAt, LocalDateTime expireDate) {
+  public Image(Long id, User uploader, String url, String s3key, LocalDateTime createdAt, LocalDateTime expireDate) {
     this.id = id;
     this.uploader = uploader;
     this.url = url;
+    this.s3key = s3key;
     this.createdAt = createdAt;
     this.expireDate = expireDate;
   }
@@ -65,6 +69,14 @@ public class Image {
 
   public void setUrl(String url) {
     this.url = url;
+  }
+
+  public String getS3key() {
+    return s3key;
+  }
+
+  public void setS3key(String s3key) {
+    this.s3key = s3key;
   }
 
   public LocalDateTime getCreatedAt() {

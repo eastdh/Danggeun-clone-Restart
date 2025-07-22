@@ -4,5 +4,5 @@ public enum SenderType {
   ME,
   PARTNER,
   SYSTEM,
-  DATE_LABEL
+  CHAT_BOT
 }

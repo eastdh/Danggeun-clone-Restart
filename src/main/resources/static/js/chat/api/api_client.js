@@ -56,10 +56,10 @@ export class ApiClient {
   }
 
   // 거래 확정 API 호출
-  async confirmTrade(tradeId) {
+  async confirmTrade(tradeId, chatRoomId) {
     return this.request(API_PATHS.CONFIRM_TRADE, {
       method: "POST",
-      body: JSON.stringify({ tradeId }),
+      body: JSON.stringify({ tradeId, chatRoomId }),
     });
   }
 

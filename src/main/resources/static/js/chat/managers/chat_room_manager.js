@@ -54,8 +54,9 @@ export class ChatRoomManager {
     // 거래 확정 버튼
     this.renderer.tradeStatusBtn.addEventListener("click", () => {
       const tradeId = Number(this.renderer.tradeStatusBtn.dataset.tradeId);
+      const chatRoomId = this.store.currentRoomId;
       this.api
-        .confirmTrade(tradeId)
+        .confirmTrade(tradeId, chatRoomId)
         .then(() => this.store.setCurrentRoom(this.store.currentRoomId))
         .catch(() => {
           /* Toast 알림 */
@@ -97,7 +98,6 @@ export class ChatRoomManager {
       // 읽은 사람이 나(=this.store.userId)가 아니라면,
       // “내가 보낸” 메시지들의 read 상태를 true로 바꾼다
       if (Number(readerId) !== Number(this.store.userId)) {
-        console.log("[WS] 상대방이 읽음 수신 →", e.detail);
         this.store.markMessagesRead(messageIds);
       }
     });
@@ -111,12 +111,28 @@ export class ChatRoomManager {
         timestamp: msg.timestamp,
       });
     });
+
+    // 시스템 메시지 수신
+    this.wsManager.addEventListener("systemMessage", (e) => {
+      const msg = e.detail;
+      // 버튼 상태 토글 (판매자·구매자 모두 거래 완료 상태로)
+      this.renderer.updateTradeStatusButton(true);
+
+      // store에도 남겨 렌더러가 호출되게 함
+      this.store.appendMessage({
+        ...msg,
+        senderType: SENDER_TYPES.SYSTEM,
+        messageType: MESSAGE_TYPES.SYSTEM,
+        timestamp: msg.timestamp,
+        buttonText: msg.buttonText,
+        buttonUrl: msg.buttonUrl,
+      });
+    });
   }
 
   async _loadRoomDetail(roomId) {
     try {
       if (roomId < 0) {
-        console.log("[ChatRoomManager] 챗봇 방 로드");
         // 챗봇 방은 API 호출 안함
         const botDetail = {
           chatRoomId: roomId,
@@ -133,10 +149,8 @@ export class ChatRoomManager {
         const storageKey = `chatbot_history_${this.store.userId}`;
         const cached = JSON.parse(localStorage.getItem(storageKey)) || [];
         if (cached.length > 0) {
-          console.log("[ChatRoomManager] 챗봇 메시지 캐시 로드", cached);
           this.store.setMessages(cached);
         } else {
-          console.log("[ChatRoomManager] 챗봇 방 초기화");
           // 최초 진입 시 환영 메시지
           this.store.setMessages([
             {

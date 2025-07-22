@@ -42,27 +42,56 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
   @Override
   public ChatMessageDto sendMessage(ChatMessageDto dto) {
-    if (!chatRoomRepository.existsById(dto.getChatRoomId())) {
-      throw new IllegalArgumentException("채팅방이 존재하지 않습니다");
-    }
 
-    if (!userRepository.existsById(dto.getSenderId())) {
-      throw new IllegalArgumentException("보낸 사람 정보가 없습니다");
-    }
+    validateRoomAndUser(dto.chatRoomId(), dto.senderId());
 
-    ChatRoom roomRef = entityManager.getReference(ChatRoom.class, dto.getChatRoomId());
-    User writerRef = entityManager.getReference(User.class, dto.getSenderId());
+    ChatRoom roomRef = entityManager.getReference(ChatRoom.class, dto.chatRoomId());
+    User writerRef = entityManager.getReference(User.class, dto.senderId());
 
     ChatMessage message = new ChatMessage();
     message.setChatRoom(roomRef);
     message.setWriter(writerRef);
-    message.setContent(dto.getContent());
+    message.setContent(dto.content());
     message.setCreatedAt(LocalDateTime.now());
     message.setReadOrNot(false);
 
     ChatMessage saved = chatMessageRepository.save(message);
 
     return MessageConverter.toDto(saved, writerRef.getId());
+  }
+
+  @Override
+  public ChatMessageDto createSystemMessage(
+      Long chatRoomId,
+      Long senderId,
+      String content,
+      String buttonText,
+      String buttonUrl) {
+
+    validateRoomAndUser(chatRoomId, senderId);
+
+    ChatRoom room = entityManager.getReference(ChatRoom.class, chatRoomId);
+    User writer = entityManager.getReference(User.class, senderId);
+
+    ChatMessage sysMsg = new ChatMessage();
+    sysMsg.setChatRoom(room);
+    sysMsg.setWriter(writer);
+    sysMsg.setContent("SYSTEM<"+ content + "," + buttonText + "," + buttonUrl +">");
+    sysMsg.setCreatedAt(LocalDateTime.now());
+    sysMsg.setReadOrNot(false);
+
+    ChatMessage saved = chatMessageRepository.save(sysMsg);
+    return MessageConverter.toSystemDto(saved, senderId, buttonText, buttonUrl);
+
+  }
+
+  private void validateRoomAndUser(Long roomId, Long userId) {
+    if (!chatRoomRepository.existsById(roomId)) {
+      throw new IllegalArgumentException("채팅방이 존재하지 않습니다: " + roomId);
+    }
+    if (!userRepository.existsById(userId)) {
+      throw new IllegalArgumentException("사용자 정보가 없습니다: " + userId);
+    }
   }
 
 
@@ -85,7 +114,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
       LocalDate currentDate = created.toLocalDate();
 
       if (!currentDate.equals(previousDate)) {
-        result.add(MessageConverter.toDateLabel(created));
+        result.add(MessageConverter.toDateLabel(chatRoomId, created));
         previousDate = currentDate;
       }
 
@@ -108,5 +137,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         chatRoomId, readerId
     );
   }
+
 
 }
