@@ -429,6 +429,7 @@ h1 .status-text.orange {
   background-color: var(--orange-600);
   border-radius: 6px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .trade-meta .action-button-wrap a {
@@ -449,7 +450,6 @@ h1 .status-text.orange {
   border: none;
   color: var(--gray-800);
   background-color: var(--gray-200);
-  cursor: pointer;
 }
 
 .trade-meta .action-button-wrap.owner .option-button {
