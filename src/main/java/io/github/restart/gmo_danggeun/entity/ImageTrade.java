@@ -27,6 +27,30 @@ public class ImageTrade {
   @JoinColumn(name = "image_id")
   private Image image;
 
+  public ImageTrade() {
+  }
+
+  public ImageTrade(Trade trade, Image image) {
+    this.trade = trade;
+    this.image = image;
+  }
+
+  public Trade getTrade() {
+    return trade;
+  }
+
+  public Image getImage() {
+    return image;
+  }
+
+  public void setTrade(Trade trade) {
+    this.trade = trade;
+  }
+
+  public void setImage(Image image) {
+    this.image = image;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) {

@@ -37,7 +37,7 @@ public class S3Service {
   }
 
   public String uploadFile(MultipartFile file) throws IOException {
-    String fileName = generateFileName(file.getOriginalFilename());
+    String fileName = generateFileName("static/trade", file.getOriginalFilename());
 
     PutObjectRequest request = PutObjectRequest.builder()
         .bucket(bucketName)
@@ -80,7 +80,7 @@ public class S3Service {
         .toList();
   }
 
-  private String generateFileName(String originalFilename) {
-    return UUID.randomUUID().toString() + "-" + originalFilename;
+  private String generateFileName(String filePath, String originalFilename) {
+    return filePath + "/" + UUID.randomUUID().toString() + "-" + originalFilename;
   }
 }

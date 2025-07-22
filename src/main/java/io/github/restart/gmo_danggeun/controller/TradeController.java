@@ -1,6 +1,7 @@
 package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.config.TradeConfig;
+import io.github.restart.gmo_danggeun.dto.image.ImageDto;
 import io.github.restart.gmo_danggeun.dto.trade.FilterDto;
 import io.github.restart.gmo_danggeun.dto.trade.LikeDto;
 import io.github.restart.gmo_danggeun.dto.trade.StatusDto;
@@ -8,6 +9,8 @@ import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeRequestDto;
 import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.Image;
+import io.github.restart.gmo_danggeun.entity.ImageTrade;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
@@ -15,11 +18,13 @@ import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.security.CustomUserDetails;
 import io.github.restart.gmo_danggeun.service.LikeService;
+import io.github.restart.gmo_danggeun.service.image.ImageService;
 import io.github.restart.gmo_danggeun.service.trade.CategoryService;
 import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.util.UserMannerUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -46,12 +51,14 @@ public class TradeController {
   private final TradeService tradeService;
   private final CategoryService categoryService;
   private final LikeService likeService;
+  private final ImageService imageService;
 
   public TradeController(TradeService tradeService, CategoryService categoryService,
-      LikeService likeService) {
+      LikeService likeService, ImageService imageService) {
     this.tradeService = tradeService;
     this.categoryService = categoryService;
     this.likeService = likeService;
+    this.imageService = imageService;
   }
 
   @GetMapping("/trade")
@@ -157,7 +164,12 @@ public class TradeController {
           tradeDetail.getCategoryName(), null,
           null, "available", categoryTradePageable);
 
-      List<TradeImageList> images = tradeService.findAllImageById(tradeDetail.getTradeId());
+      List<Long> imagesList = tradeService.findAllImageById(tradeDetail.getTradeId())
+          .stream()
+          .map(TradeImageList::getImageId).toList();
+      List<ImageDto> images = imageService.convertImagesToDtos(
+          imageService.getAllImagesById(imagesList)
+      );
       String emojiFileName = tradeService.getEmojiFileName(tradeDetail);
       String statusText = tradeService.getStatusText(tradeDetail);
 
@@ -239,9 +251,6 @@ public class TradeController {
     if (bindingResult.hasErrors())
       return "trade/trade_write";
 
-    // 이미지 파일 저장
-    // Todo : add image upload with Amazon S3
-
     Category category = categories.stream()
         .filter(c -> c.getId().equals(tradeDto.getCategoryId()))
         .findAny()
@@ -253,6 +262,21 @@ public class TradeController {
         );
 
     Trade savedTrade = tradeService.save(currentUser, tradeDto, category);
+
+    // 이미지 파일 저장
+    try {
+      if (!tradeDto.getFiles().isEmpty()) {
+        List<ImageTrade> imageTrades = imageService.uploadTradeImages(
+            tradeDto.getFiles(), currentUser, savedTrade
+        );
+        if (imageTrades.size() != tradeDto.getFiles().size()) {
+          model.addAttribute("warning", "일부 파일 누락됨");
+        }
+      }
+    } catch (Exception e) {
+      return "error";
+    }
+
     // Todo : add error page
     if (savedTrade == null) return "error";
     return "redirect:/trade/" + savedTrade.getId();
@@ -286,7 +310,15 @@ public class TradeController {
       return "trade/trade_write";
 
     // 이미지 파일 저장
-    // Todo : add image upload with Amazon S3
+    try {
+      if (!tradeEditDto.getFiles().isEmpty()) {
+        List<Image> imageList = imageService.uploadImage(tradeEditDto.getFiles(), currentUser);
+        List<Long> imagesId = imageService.getImagesId(imageList);
+        // image_trade 추가 동작
+      }
+    } catch (Exception e) {
+      return "error";
+    }
 
     Category category = categories.stream()
         .filter(c -> c.getId().equals(tradeEditDto.getCategoryId()))

@@ -2,11 +2,17 @@ package io.github.restart.gmo_danggeun.service.image;
 
 import io.github.restart.gmo_danggeun.dto.image.ImageDto;
 import io.github.restart.gmo_danggeun.entity.Image;
+import io.github.restart.gmo_danggeun.entity.ImageTrade;
+import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
+import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
+import io.github.restart.gmo_danggeun.repository.ImageChatRepository;
 import io.github.restart.gmo_danggeun.repository.ImageRepository;
+import io.github.restart.gmo_danggeun.repository.ImageTradeRepository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.apache.tika.Tika;
@@ -18,11 +24,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageService {
   private final S3Service s3Service;
   private final ImageRepository imageRepository;
+  private final ImageTradeRepository imageTradeRepository;
+  private final ImageChatRepository imageChatRepository;
   private static final Tika tika = new Tika();
 
-  public ImageService(S3Service s3Service, ImageRepository imageRepository) {
+  public ImageService(S3Service s3Service, ImageRepository imageRepository,
+      ImageTradeRepository imageTradeRepository, ImageChatRepository imageChatRepository) {
     this.s3Service = s3Service;
     this.imageRepository = imageRepository;
+    this.imageTradeRepository = imageTradeRepository;
+    this.imageChatRepository = imageChatRepository;
   }
 
   @Transactional
@@ -44,11 +55,32 @@ public class ImageService {
                   user, s3Url, s3Key, LocalDateTime.now(), LocalDateTime.now().plusMonths(30)
               );
               return imageRepository.save(image);
-            } catch (IOException e) {
+            } catch (Exception e) {
               throw new RuntimeException("이미지 업로드 실패: " + file.getOriginalFilename());
             }
           })
           .toList();
+  }
+
+  @Transactional
+  public List<ImageTrade> addImageTrade(Trade trade, List<Image> imageList) {
+    return imageList.stream()
+        .map(image -> {
+          try {
+            ImageTrade imageTrade = new ImageTrade(trade, image);
+            return imageTradeRepository.save(imageTrade);
+          } catch (Exception e) {
+            throw new RuntimeException("거래글 이미지 정보 추가 실패");
+          }
+        })
+        .toList();
+  }
+
+  @Transactional
+  public List<ImageTrade> uploadTradeImages(List<MultipartFile> files, User user, Trade trade)
+  throws IOException {
+    List<Image> imageList = uploadImage(files, user);
+    return addImageTrade(trade, imageList);
   }
 
   public List<Long> getImagesId(List<Image> imageList) {

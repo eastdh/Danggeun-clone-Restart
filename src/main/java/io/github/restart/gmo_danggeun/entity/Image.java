@@ -24,10 +24,10 @@ public class Image {
   @JoinColumn(name = "uploader_id", nullable = false)
   private User uploader;
 
-  @Column(length = 100, nullable = false)
+  @Column(nullable = false)
   private String url;
 
-  @Column(length = 200, nullable = false)
+  @Column(nullable = false)
   private String s3key;
 
   @Column(name = "created_at", nullable = false)
