@@ -6,6 +6,7 @@ import io.github.restart.gmo_danggeun.dto.trade.LikeDto;
 import io.github.restart.gmo_danggeun.dto.trade.StatusDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
+import io.github.restart.gmo_danggeun.dto.trade.TradeRequestDto;
 import io.github.restart.gmo_danggeun.entity.Category;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
@@ -108,6 +109,34 @@ public class TradeController {
     model.addAttribute("location", location);
     model.addAttribute("filters", filter);
     return "trade/trade";
+  }
+
+  @GetMapping("/api/trade")
+  @ResponseBody
+  public ResponseEntity<Page<TradeList>> tradeApi(@ModelAttribute TradeRequestDto dto) {
+    int page = dto.getPage();
+    String location = dto.getLocation();
+    String keyword = dto.getKeyword();
+    String category = dto.getCategory();
+    String status = dto.getStatus();
+    String priceRange = dto.getPriceRange();
+
+    if (location == null || location.isBlank()) {
+      location = TradeConfig.DEFAULT_LOCATION;
+    }
+
+    Integer priceLowLimit = null;
+    Integer priceHighLimit = null;
+
+    if (priceRange != null) {
+      priceLowLimit = Integer.parseInt(priceRange.split("_")[0]);
+      priceHighLimit = Integer.parseInt(priceRange.split("_")[1]);
+    }
+
+    Pageable pageable = PageRequest.of(page, TradeConfig.TRADELIST_PAGE_SIZE);
+    Page<TradeList> tradePage = tradeService.searchTrades(keyword, location, category, priceLowLimit, priceHighLimit, status, pageable);
+
+    return ResponseEntity.ok(tradePage);
   }
 
   @GetMapping("/trade/{id}")
