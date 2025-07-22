@@ -1,5 +1,5 @@
 // resources/static/js/chat/ws/web_socket_manager.js
-import { WS, RECONNECT_POLICY, BOT_ROOM_ID } from "../constants.js";
+import { WS, RECONNECT_POLICY } from "../constants.js";
 
 /**
  * WebSocketManager
@@ -38,7 +38,7 @@ export class WebSocketManager extends EventTarget {
       () => {
         this.attempts = 0;
         this._subscribeChatList();
-        if (this.roomId === BOT_ROOM_ID) {
+        if (this.roomId < 0) {
           this._subscribeBot(this.roomId);
         } else {
           this._subscribeChatRoom(this.roomId);

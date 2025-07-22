@@ -2,8 +2,6 @@
 // 상수 정의 파일
 // 이 파일은 채팅 애플리케이션에서 사용되는 상수들을 정의합니다.
 
-export const BOT_ROOM_ID = -1; // 챗봇 방 ID
-
 // 메시지 타입(enum)
 export const MESSAGE_TYPES = {
   TEXT: "TEXT",

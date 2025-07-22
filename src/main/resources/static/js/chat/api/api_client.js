@@ -70,7 +70,7 @@ export class ApiClient {
 
   // 챗봇 메시지 전송
   async chatBot(payload) {
-    console.log("ChatBot API 호출 URL:", API_PATHS.CHAT_BOT);
+    console.log("ChatBot API 호출 URL:", API_PATHS.CHAT_BOT, payload);
     return this.request(API_PATHS.CHAT_BOT, {
       method: "POST",
       body: JSON.stringify(payload),

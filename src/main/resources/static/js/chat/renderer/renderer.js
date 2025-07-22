@@ -1,5 +1,5 @@
 // resources/static/js/chat/renderer/renderer.js
-import { BOT_ROOM_ID, SELECTORS, MESSAGE_TYPES, SENDER_TYPES } from "../constants.js";
+import { SELECTORS, MESSAGE_TYPES, SENDER_TYPES } from "../constants.js";
 import { formatKoreanTime, isKoreanTimeString } from "../utils/time_formatter.js";
 
 export class Renderer {
@@ -44,7 +44,7 @@ export class Renderer {
     // ① 챗봇 방 고정 추가
     const botItem = document.createElement("div");
     botItem.className = "list__room-list__item list__room-list__item--bot";
-    botItem.dataset.chatRoomId = BOT_ROOM_ID;
+    botItem.dataset.chatRoomId = -this.store.userId;
     botItem.innerHTML = `
     <div class="list__room-list__item-content">
       <span class="chat-list__item-icon">🤖</span>
@@ -117,7 +117,7 @@ export class Renderer {
 
   // 6) 채팅방 헤더(상대·거래) 렌더링
   _renderRoomDetail(detail) {
-    if (detail.chatRoomId === BOT_ROOM_ID) {
+    if (detail.chatRoomId < 0) {
       // 1) 상대 정보
       this.partnerIdEl.textContent = detail.partnerNickname;
       this.partnerTempEl.style.display = "none";
@@ -214,6 +214,8 @@ export class Renderer {
       meta.appendChild(readStatus);
     } else if (msg.senderType === SENDER_TYPES.DATE_LABEL) {
       wrapper.classList.add("room__messages__item__date-label");
+    } else if (msg.messageType === MESSAGE_TYPES.CHAT_BOT) {
+      wrapper.classList.add("room__messages__item--chat-bot");
     } else {
       wrapper.classList.add("room__messages__item--partner");
     }
