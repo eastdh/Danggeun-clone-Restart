@@ -16,6 +16,8 @@ abstract class ChatRoomBaseDto {
   Integer tradePrice;
   String tradeStatus;
   String tradeThumbnailUrl;
+
+  Long partnerId;            // 상대방 유저 ID 추가
   String partnerNickname;
   String partnerLocation;
   Double partnerTemperature;

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>작성한 리뷰 확인</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/review/review_view.css}">
+</head>
+<body>
+<section class="review-view-container">
+    <h1>내가 작성한 리뷰</h1>
+
+    <!-- 상대방 정보 -->
+    <section class="partner-info">
+        <h2>거래 상대방</h2>
+        <p><strong>닉네임:</strong> <span th:text="${partner.nickname}">상대방 닉네임</span></p>
+        <p><strong>매너온도:</strong> <span th:text="${partner.mannerScore}">36.5</span>℃</p>
+    </section>
+
+    <!-- 리뷰 정보 -->
+    <section class="review-info">
+        <h2>리뷰 내용</h2>
+        <p><strong>별점:</strong>
+            <span th:text="${review.rating / 2}">5.0</span> / 5점
+        </p>
+
+        <!-- 선택된 키워드들 -->
+        <p>
+            <strong>키워드:</strong>
+            <span th:if="${#lists.isEmpty(review.categories)}">선택된 키워드 없음</span>
+            <span th:each="cat : ${review.categories}">
+                <span class="keyword" th:text="${cat}">키워드</span>
+            </span>
+        </p>
+
+        <!-- 리뷰 본문 -->
+        <p class="review-content" th:text="${review.content}">
+            리뷰 본문이 표시됩니다.
+        </p>
+    </section>
+
+    <!-- 뒤로가기 / 채팅방으로 -->
+    <div class="buttons">
+        <!-- trade.chatRoomId 대신 chatRoomId 직접 사용 -->
+        <a th:href="@{'/chat?room_id=' + ${chatRoomId}}" class="btn-back">채팅방으로 돌아가기</a>
+    </div>
+</section>
+</body>
+</html>

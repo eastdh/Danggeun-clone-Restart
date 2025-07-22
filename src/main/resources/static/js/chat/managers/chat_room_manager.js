@@ -105,6 +105,20 @@ export class ChatRoomManager {
       const { detail, messages } = await this.api.getChatRoomDetail(roomId);
       this.store.setCurrentRoomDetail(detail);
       this.store.setMessages(messages);
+
+      const reviewButton = document.querySelector(".review-button");
+      if (reviewButton) {
+        reviewButton.setAttribute("data-trade-id", detail.tradeId || "");
+        reviewButton.setAttribute("data-partner-id", detail.partnerId || "");
+        reviewButton.setAttribute("data-is-seller", detail.isSeller ? "true" : "false");
+        reviewButton.setAttribute("data-chat-room-id", detail.chatRoomId || "");  // 추가
+      }
+      // 후기 확인 버튼 설정
+      const reviewCheckButton = document.querySelector(".review-check-button");
+      if (reviewCheckButton) {
+        reviewCheckButton.setAttribute("data-trade-id", detail.tradeId || "");
+        reviewCheckButton.setAttribute("data-partner-id", detail.partnerId || "");
+      }
     } catch (err) {
       // error 처리
     }
@@ -137,5 +151,12 @@ export class ChatRoomManager {
     // 전송
     this.wsManager.sendMessage(payload);
     this.renderer.inputField.value = "";
+  }
+}
+
+function selectChatRoom(room) {
+  const reviewButton = document.querySelector('.review-button');
+  if (reviewButton && room.tradeId) {
+    reviewButton.setAttribute('data-trade-id', room.tradeId);
   }
 }

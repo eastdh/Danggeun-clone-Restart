@@ -40,9 +40,8 @@
 
 /* 우측 키워드 리스트 */
 .review-header__right {
-  background-color: var(--gray-050);
+  background-color: var(--gray-000);
   padding: 16px;
-  border-radius: 8px;
 }
 
 .received-keywords.structured {

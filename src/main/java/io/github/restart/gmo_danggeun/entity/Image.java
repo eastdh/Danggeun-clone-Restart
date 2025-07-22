@@ -23,8 +23,11 @@ public class Image {
   @JoinColumn(name = "uploader_id", nullable = false)
   private User uploader;
 
-  @Column(length = 100, nullable = false)
+  @Column(nullable = false) // 수정
   private String url;
+
+  @Column(nullable = false) // 수정
+  private String s3key;
 
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
@@ -33,67 +36,5 @@ public class Image {
   private LocalDateTime expireDate;
 
   public Image() {
-  }
-
-  public Image(Long id, User uploader, String url, LocalDateTime createdAt, LocalDateTime expireDate) {
-    this.id = id;
-    this.uploader = uploader;
-    this.url = url;
-    this.createdAt = createdAt;
-    this.expireDate = expireDate;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public User getUploader() {
-    return uploader;
-  }
-
-  public void setUploader(User uploader) {
-    this.uploader = uploader;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public LocalDateTime getExpireDate() {
-    return expireDate;
-  }
-
-  public void setExpireDate(LocalDateTime expireDate) {
-    this.expireDate = expireDate;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    Image image = (Image) o;
-    return Objects.equals(id, image.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(id);
   }
 }

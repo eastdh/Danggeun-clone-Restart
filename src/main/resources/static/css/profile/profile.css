@@ -320,3 +320,43 @@ h3 {
     color: white;
 }
 
+/* 공통: 기본적으로 일정 개수(2줄, 3개)까지만 표시 */
+.items-grid,
+.review-list {
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+
+/* 판매상품/관심목록: 2줄까지만 표시 (대략 400px) */
+.items-grid {
+    max-height: 400px;
+}
+
+/* 후기: 3개까지만 표시 (대략 450px) */
+.review-list {
+    max-height: 450px;
+}
+
+/* expanded 클래스가 붙으면 전체 펼침 */
+.items-grid.expanded,
+.review-list.expanded {
+    max-height: 9999px; /* 충분히 크게 지정해서 애니메이션 가능 */
+}
+
+/* 더보기/접기 버튼 공통 스타일 */
+.show-more-btn {
+    display: none; /* JS로 필요한 경우만 노출 */
+    margin: 10px auto;
+    padding: 8px 16px;
+    background-color: #ff7e36;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.show-more-btn:hover {
+    background-color: #e86b1f;
+}
