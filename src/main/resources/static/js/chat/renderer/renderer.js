@@ -284,8 +284,21 @@ export class Renderer {
     // 버튼 클릭 핸들러
     if (buttonText && buttonUrl) {
       const btn = wrapper.querySelector(".system-action");
+      console.log("[Renderer] 시스템 메시지 버튼 클릭", buttonUrl);
       btn.addEventListener("click", () => {
-        window.location.href = buttonUrl;
+        // 후기 작성 버튼 클릭 이벤트
+
+        const params = new URLSearchParams(buttonUrl.split("?")[1]);
+        const tradeId = params.get("trade_id");
+        const sellerId = Number(params.get("seller_id"));
+        const buyerId = Number(params.get("buyer_id"));
+        const chatRoomId = params.get("chat_room_id");
+
+        // 현재 로그인 유저 ID는 store.userId
+        const isSeller = this.store.userId === sellerId;
+        const partnerId = isSeller ? buyerId : sellerId;
+
+        window.location.href = `/review/write` + `?trade_id=${tradeId}` + `&partner_id=${partnerId}` + `&is_seller=${isSeller}` + `&chat_room_id=${chatRoomId}`;
       });
     }
   }

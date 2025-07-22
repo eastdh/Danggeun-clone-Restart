@@ -68,7 +68,7 @@ public class ReviewController {
             .orElseThrow(() -> new IllegalArgumentException("로그인된 유저를 찾을 수 없습니다."));
     reviewService.createReview(
             tradeId, writer.getId(), partnerId, content, rating, isSellerWriter, categoryIds);
-    return "redirect:/chat?room_id=" + chatRoomId;
+    return "redirect:/chat?roomId=" + chatRoomId;
   }
 
   @GetMapping("/review/review_view")

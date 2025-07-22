@@ -103,13 +103,15 @@ public class ChatController {
     // 시스템 메시지 생성
     String content = "거래가 확정되었습니다. 서로에 대한 후기를 작성해주세요!";
     String buttonText = "후기 작성하기";
-//    TODO: 리뷰 생성 url 삽입
-//    Long buyerId = ;
-//    String buttonUrl  =
-//        String.format("/reviews/create?tradeId=%d&sellerId=%d&buyerId=%d",
-//            tradeId, sellerId, buyerId);
+
+    ChatRoomDetailDto detail = chatRoomService.getChatRoomDetail(chatRoomId, sellerId);
+    Long buyerId = detail.getPartnerId();
+    String buttonUrl = String.format(
+        "/review/write?trade_id=%d&seller_id=%d&buyer_id=%d&chat_room_id=%d",
+        tradeId, sellerId, buyerId, chatRoomId
+    );
     ChatMessageDto sysMsg = chatMessageService.createSystemMessage(
-        chatRoomId, sellerId, content, buttonText, "buttonUrl"
+        chatRoomId, sellerId, content, buttonText, buttonUrl
     );
 
     // WebSocket으로 거래 완료 알림 발행 (기존 chat 로직)
