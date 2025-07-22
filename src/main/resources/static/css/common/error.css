@@ -1,0 +1,39 @@
+.error-section,
+.error-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.error-section {
+  gap: 1.5rem;
+  height: 50vh;
+}
+
+.error-header {
+  width: 100%;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+.error-box {
+  gap: 1rem;
+}
+
+.error-box p {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.error-box a {
+  text-decoration: underline;
+}
+
+#link-to-back {
+  cursor: pointer;
+}

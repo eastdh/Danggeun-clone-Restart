@@ -1,5 +1,7 @@
 package io.github.restart.gmo_danggeun.dto.image;
 
+import java.time.LocalDateTime;
+
 public class ImageDto {
 
     private Long id;
@@ -8,11 +10,21 @@ public class ImageDto {
 
     private String url;
 
-    private String createdAt;
+    private LocalDateTime createdAt;
 
-    private String expireDate;
+    private LocalDateTime expireDate;
 
+    public ImageDto() {
+    }
 
+    public ImageDto(Long id, Long uploaderId, String url, LocalDateTime createdAt,
+        LocalDateTime expireDate) {
+        this.id = id;
+        this.uploaderId = uploaderId;
+        this.url = url;
+        this.createdAt = createdAt;
+        this.expireDate = expireDate;
+    }
 
     public Long getId() {
         return id;
@@ -38,20 +50,19 @@ public class ImageDto {
         this.url = url;
     }
 
-    public String getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getExpireDate() {
+    public LocalDateTime getExpireDate() {
         return expireDate;
     }
 
-    public void setExpireDate(String expireDate) {
+    public void setExpireDate(LocalDateTime expireDate) {
         this.expireDate = expireDate;
     }
-
 }

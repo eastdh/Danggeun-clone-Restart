@@ -26,9 +26,9 @@ public interface TradeService {
 
   Page<TradeList> findAllByUserId(Long userId, Pageable pageable);
 
-  Trade save(User user, TradeDto tradeDto, Category category);
+  Trade save(User user, TradeDto tradeDto);
 
-  Trade edit(Trade trade, TradeEditDto tradeEditDto, Category category);
+  Trade edit(Trade trade, TradeEditDto tradeEditDto);
 
   void delete(Long id);
 

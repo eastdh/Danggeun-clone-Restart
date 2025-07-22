@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import org.checkerframework.checker.units.qual.C;
 
 @Entity
 @Table(name = "image")
@@ -38,8 +39,8 @@ public class Image {
   public Image() {
   }
 
-  public Image(Long id, User uploader, String url, String s3key, LocalDateTime createdAt, LocalDateTime expireDate) {
-    this.id = id;
+  public Image(User uploader, String url, String s3key, LocalDateTime createdAt,
+      LocalDateTime expireDate) {
     this.uploader = uploader;
     this.url = url;
     this.s3key = s3key;

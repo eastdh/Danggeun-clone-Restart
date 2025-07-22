@@ -1,12 +1,16 @@
 package io.github.restart.gmo_danggeun.controller;
 
 import io.github.restart.gmo_danggeun.config.TradeConfig;
+import io.github.restart.gmo_danggeun.dto.image.ImageDto;
 import io.github.restart.gmo_danggeun.dto.trade.FilterDto;
 import io.github.restart.gmo_danggeun.dto.trade.LikeDto;
 import io.github.restart.gmo_danggeun.dto.trade.StatusDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeDto;
 import io.github.restart.gmo_danggeun.dto.trade.TradeEditDto;
+import io.github.restart.gmo_danggeun.dto.trade.TradeRequestDto;
 import io.github.restart.gmo_danggeun.entity.Category;
+import io.github.restart.gmo_danggeun.entity.Image;
+import io.github.restart.gmo_danggeun.entity.ImageTrade;
 import io.github.restart.gmo_danggeun.entity.Trade;
 import io.github.restart.gmo_danggeun.entity.User;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeDetail;
@@ -14,11 +18,13 @@ import io.github.restart.gmo_danggeun.entity.readonly.TradeImageList;
 import io.github.restart.gmo_danggeun.entity.readonly.TradeList;
 import io.github.restart.gmo_danggeun.security.CustomUserDetails;
 import io.github.restart.gmo_danggeun.service.LikeService;
+import io.github.restart.gmo_danggeun.service.image.ImageService;
 import io.github.restart.gmo_danggeun.service.trade.CategoryService;
 import io.github.restart.gmo_danggeun.service.trade.TradeService;
 import io.github.restart.gmo_danggeun.util.UserMannerUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -45,12 +51,14 @@ public class TradeController {
   private final TradeService tradeService;
   private final CategoryService categoryService;
   private final LikeService likeService;
+  private final ImageService imageService;
 
   public TradeController(TradeService tradeService, CategoryService categoryService,
-      LikeService likeService) {
+      LikeService likeService, ImageService imageService) {
     this.tradeService = tradeService;
     this.categoryService = categoryService;
     this.likeService = likeService;
+    this.imageService = imageService;
   }
 
   @GetMapping("/trade")
@@ -110,6 +118,34 @@ public class TradeController {
     return "trade/trade";
   }
 
+  @GetMapping("/api/trade")
+  @ResponseBody
+  public ResponseEntity<Page<TradeList>> tradeApi(@ModelAttribute TradeRequestDto dto) {
+    int page = dto.getPage();
+    String location = dto.getLocation();
+    String keyword = dto.getKeyword();
+    String category = dto.getCategory();
+    String status = dto.getStatus();
+    String priceRange = dto.getPriceRange();
+
+    if (location == null || location.isBlank()) {
+      location = TradeConfig.DEFAULT_LOCATION;
+    }
+
+    Integer priceLowLimit = null;
+    Integer priceHighLimit = null;
+
+    if (priceRange != null) {
+      priceLowLimit = Integer.parseInt(priceRange.split("_")[0]);
+      priceHighLimit = Integer.parseInt(priceRange.split("_")[1]);
+    }
+
+    Pageable pageable = PageRequest.of(page, TradeConfig.TRADELIST_PAGE_SIZE);
+    Page<TradeList> tradePage = tradeService.searchTrades(keyword, location, category, priceLowLimit, priceHighLimit, status, pageable);
+
+    return ResponseEntity.ok(tradePage);
+  }
+
   @GetMapping("/trade/{id}")
   public String tradeDetail(
       @PathVariable Long id,
@@ -128,7 +164,12 @@ public class TradeController {
           tradeDetail.getCategoryName(), null,
           null, "available", categoryTradePageable);
 
-      List<TradeImageList> images = tradeService.findAllImageById(tradeDetail.getTradeId());
+      List<Long> imagesList = tradeService.findAllImageById(tradeDetail.getTradeId())
+          .stream()
+          .map(TradeImageList::getImageId).toList();
+      List<ImageDto> images = imageService.convertImagesToDtos(
+          imageService.getAllImagesById(imagesList)
+      );
       String emojiFileName = tradeService.getEmojiFileName(tradeDetail);
       String statusText = tradeService.getStatusText(tradeDetail);
 
@@ -149,8 +190,7 @@ public class TradeController {
       return "trade/trade_post";
     } else {
       model.addAttribute("error", "거래글 없음");
-      // Todo : edit redirect to error page
-      return "trade/trade_post";
+      return "error";
     }
   }
 
@@ -181,11 +221,9 @@ public class TradeController {
         model.addAttribute("categories", categories);
         return "trade/trade_edit";
       }
-      // Todo : edit redirect to error page
       return "error";
     } else {
       model.addAttribute("error", "거래글 없음");
-      // Todo : edit redirect to error page
       return "error";
     }
   }
@@ -210,21 +248,22 @@ public class TradeController {
     if (bindingResult.hasErrors())
       return "trade/trade_write";
 
+    Trade savedTrade = tradeService.save(currentUser, tradeDto);
+
     // 이미지 파일 저장
-    // Todo : add image upload with Amazon S3
-
-    Category category = categories.stream()
-        .filter(c -> c.getId().equals(tradeDto.getCategoryId()))
-        .findAny()
-        .orElseGet(() ->
-          categories.stream()
-              .filter(c -> c.getId().equals(19L))
-              .findAny()
-              .orElse(null)
+    try {
+      if (!tradeDto.getFiles().isEmpty()) {
+        List<Long> imageTrades = imageService.uploadTradeImages(
+            tradeDto.getFiles(), currentUser, savedTrade
         );
+        if (imageTrades.size() != tradeDto.getFiles().size()) {
+          model.addAttribute("warning", "일부 파일 누락됨");
+        }
+      }
+    } catch (Exception e) {
+      return "error";
+    }
 
-    Trade savedTrade = tradeService.save(currentUser, tradeDto, category);
-    // Todo : add error page
     if (savedTrade == null) return "error";
     return "redirect:/trade/" + savedTrade.getId();
   }
@@ -241,7 +280,6 @@ public class TradeController {
 
     Trade original = tradeService.findById(id).orElseThrow(()->new EntityNotFoundException("trade not found :" + id));
 
-    // Todo : add error page
     if (!id.equals(tradeEditDto.getId())) return "error";
     if (!original.getUser().getId().equals(currentUser.getId()))
       return "error";
@@ -256,16 +294,18 @@ public class TradeController {
     if (bindingResult.hasErrors())
       return "trade/trade_write";
 
+    Trade savedTrade = tradeService.edit(original, tradeEditDto);
+
     // 이미지 파일 저장
-    // Todo : add image upload with Amazon S3
+    try {
+      List<ImageTrade> imageTrades = imageService.editTradeImages(
+          tradeEditDto.getFiles(), currentUser, savedTrade, tradeEditDto.getFileDeleteFlag()
+      );
+      model.addAttribute("currentFiles" , imageTrades.size());
+    } catch (Exception e) {
+      return "error";
+    }
 
-    Category category = categories.stream()
-        .filter(c -> c.getId().equals(tradeEditDto.getCategoryId()))
-        .findAny()
-        .orElse(null);
-
-    Trade savedTrade = tradeService.edit(original, tradeEditDto, category);
-    // Todo : add error page
     if (savedTrade == null) return "error";
     return "redirect:/trade/" + savedTrade.getId();
   }
