@@ -10,9 +10,11 @@ import io.github.restart.gmo_danggeun.repository.ImageRepository;
 import io.github.restart.gmo_danggeun.repository.ImageTradeRepository;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +58,7 @@ public class ImageService {
               String s3Url = s3Service.uploadFile(file, filePath);
               String s3Key = extractKeyFromUrl(s3Url);
               Image image = new Image(
-                  user, s3Url, s3Key, LocalDateTime.now(), LocalDateTime.now().plusMonths(30)
+                  user, s3Url, s3Key, LocalDateTime.now(), LocalDateTime.now().plusMonths(1)
               );
               return imageRepository.save(image);
             } catch (Exception e) {
@@ -67,12 +69,13 @@ public class ImageService {
   }
 
   @Transactional
-  public List<ImageTrade> addImageTrade(Trade trade, List<Image> imageList) {
+  public List<Long> addImageTrade(Trade trade, List<Image> imageList) {
     return imageList.stream()
         .map(image -> {
           try {
             ImageTrade imageTrade = new ImageTrade(trade, image);
-            return imageTradeRepository.save(imageTrade);
+            ImageTrade saved = imageTradeRepository.save(imageTrade);
+            return saved.getImage().getId();
           } catch (Exception e) {
             throw new RuntimeException("거래글 이미지 정보 추가 실패");
           }
@@ -81,10 +84,47 @@ public class ImageService {
   }
 
   @Transactional
-  public List<ImageTrade> uploadTradeImages(List<MultipartFile> files, User user, Trade trade)
+  public List<Long> uploadTradeImages(List<MultipartFile> files, User user, Trade trade)
   throws IOException {
     List<Image> imageList = uploadImage(files, S3_TRADE_FILE_PATH, user);
     return addImageTrade(trade, imageList);
+  }
+
+  @Transactional
+  public List<ImageTrade> editTradeImages(List<MultipartFile> files, User user, Trade trade, Boolean deleteFlag)
+      throws Exception {
+    files = files.stream()
+        .filter(f -> f != null && !f.isEmpty())
+        .collect(Collectors.toList());
+
+    if (deleteFlag) {
+      deleteTradeImages(trade.getId());
+      if (!files.isEmpty()) {
+        uploadTradeImages(files, user, trade);
+      }
+    } else {
+      if (!files.isEmpty()) {
+        deleteTradeImages(trade.getId());
+        uploadTradeImages(files, user, trade);
+      }
+    }
+    return imageTradeRepository.findByTradeId(trade.getId());
+  }
+
+  @Transactional
+  public int deleteTradeImages(Long tradeId) throws Exception {
+    List<ImageTrade> imageTradeList = imageTradeRepository.findByTradeId(tradeId);
+    imageTradeList.stream()
+      .filter(itl -> itl != null)
+      .forEach(itl -> {
+        try {
+          //deleteImage(itl.getImage().getId());
+          deleteImage(itl);
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      });
+    return imageTradeList.size();
   }
 
   public List<Long> getImagesId(List<Image> imageList) {
@@ -122,12 +162,22 @@ public class ImageService {
   }
 
   @Transactional
-  public void deleteImage(Long id) throws Exception {
-    Optional<Image> imageOptional = imageRepository.findById(id);
-    if (imageOptional.isPresent()) {
+  public void deleteImage(ImageTrade id) throws Exception {
+//    Optional<Image> imageOptional = imageRepository.findById(id);
+//    if (!imageOptional.isEmpty()) {
+//      Image image = imageOptional.get();
+//      s3Service.deleteFile(fullFilePath(S3_TRADE_FILE_PATH, image.getS3key()));
+//      imageTradeRepository.delete();
+//      imageRepository.deleteById(id);
+//    } else {
+//      throw new Exception("이미지를 찾을 수 없습니다");
+//    }
+        Optional<Image> imageOptional = imageRepository.findById(id.getImage().getId());
+    if (!imageOptional.isEmpty()) {
       Image image = imageOptional.get();
-      s3Service.deleteFile(image.getS3key());
-      imageRepository.deleteById(id);
+      s3Service.deleteFile(fullFilePath(S3_TRADE_FILE_PATH, image.getS3key()));
+      imageTradeRepository.delete(id);
+      imageRepository.delete(image);
     } else {
       throw new Exception("이미지를 찾을 수 없습니다");
     }
@@ -144,5 +194,9 @@ public class ImageService {
 
   private String extractKeyFromUrl(String url) {
     return url.substring(url.lastIndexOf("/") + 1);
+  }
+
+  private String fullFilePath(String filePath, String fileName) {
+    return filePath + "/" + URLDecoder.decode(fileName);
   }
 }

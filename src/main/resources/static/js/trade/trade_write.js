@@ -52,7 +52,39 @@ function setSelectedOption() {
   });
 }
 
+/*
+ * Todo : 이미지 용량 제한 알림창 표시(에러는 나중에 이동하도록 설정)
+ */
+function beforeSubmit(event) {
+  const input = document.getElementById("images");
+  const files = Array.from(input.files);
+  const MAX_COUNT = 5;
+  const MAX_TOTAL_BYTES = 100 * 1024 * 1024; // 100MB
+
+  if (files.length > MAX_COUNT) {
+    alert(`파일은 최대 ${MAX_COUNT}개까지 첨부할 수 있습니다.`);
+    event.preventDefault();
+    return;
+  }
+
+  files.forEach((file) => {
+    if (file.size > 100 * 1024 * 1024) {
+      alert("각 파일의 용량은 100MB를 초과할 수 없습니다.");
+      event.preventDefault();
+      return;
+    }
+  });
+
+  const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+  if (totalBytes > MAX_TOTAL_BYTES) {
+    alert("첨부파일 전체 용량은 100MB를 초과할 수 없습니다.");
+    event.preventDefault();
+    return;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   selectTradeType();
   setSelectedOption();
+  document.querySelector("form").addEventListener("submit", beforeSubmit);
 });

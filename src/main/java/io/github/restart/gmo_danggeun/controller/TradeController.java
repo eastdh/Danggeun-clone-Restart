@@ -190,8 +190,7 @@ public class TradeController {
       return "trade/trade_post";
     } else {
       model.addAttribute("error", "거래글 없음");
-      // Todo : edit redirect to error page
-      return "trade/trade_post";
+      return "error";
     }
   }
 
@@ -222,11 +221,9 @@ public class TradeController {
         model.addAttribute("categories", categories);
         return "trade/trade_edit";
       }
-      // Todo : edit redirect to error page
       return "error";
     } else {
       model.addAttribute("error", "거래글 없음");
-      // Todo : edit redirect to error page
       return "error";
     }
   }
@@ -251,22 +248,12 @@ public class TradeController {
     if (bindingResult.hasErrors())
       return "trade/trade_write";
 
-    Category category = categories.stream()
-        .filter(c -> c.getId().equals(tradeDto.getCategoryId()))
-        .findAny()
-        .orElseGet(() ->
-          categories.stream()
-              .filter(c -> c.getId().equals(19L))
-              .findAny()
-              .orElse(null)
-        );
-
-    Trade savedTrade = tradeService.save(currentUser, tradeDto, category);
+    Trade savedTrade = tradeService.save(currentUser, tradeDto);
 
     // 이미지 파일 저장
     try {
       if (!tradeDto.getFiles().isEmpty()) {
-        List<ImageTrade> imageTrades = imageService.uploadTradeImages(
+        List<Long> imageTrades = imageService.uploadTradeImages(
             tradeDto.getFiles(), currentUser, savedTrade
         );
         if (imageTrades.size() != tradeDto.getFiles().size()) {
@@ -277,7 +264,6 @@ public class TradeController {
       return "error";
     }
 
-    // Todo : add error page
     if (savedTrade == null) return "error";
     return "redirect:/trade/" + savedTrade.getId();
   }
@@ -294,7 +280,6 @@ public class TradeController {
 
     Trade original = tradeService.findById(id).orElseThrow(()->new EntityNotFoundException("trade not found :" + id));
 
-    // Todo : add error page
     if (!id.equals(tradeEditDto.getId())) return "error";
     if (!original.getUser().getId().equals(currentUser.getId()))
       return "error";
@@ -309,24 +294,18 @@ public class TradeController {
     if (bindingResult.hasErrors())
       return "trade/trade_write";
 
+    Trade savedTrade = tradeService.edit(original, tradeEditDto);
+
     // 이미지 파일 저장
     try {
-      if (!tradeEditDto.getFiles().isEmpty()) {
-//        List<Image> imageList = imageService.uploadImage(tradeEditDto.getFiles(), currentUser);
-//        List<Long> imagesId = imageService.getImagesId(imageList);
-//        // image_trade 추가 동작
-      }
+      List<ImageTrade> imageTrades = imageService.editTradeImages(
+          tradeEditDto.getFiles(), currentUser, savedTrade, tradeEditDto.getFileDeleteFlag()
+      );
+      model.addAttribute("currentFiles" , imageTrades.size());
     } catch (Exception e) {
       return "error";
     }
 
-    Category category = categories.stream()
-        .filter(c -> c.getId().equals(tradeEditDto.getCategoryId()))
-        .findAny()
-        .orElse(null);
-
-    Trade savedTrade = tradeService.edit(original, tradeEditDto, category);
-    // Todo : add error page
     if (savedTrade == null) return "error";
     return "redirect:/trade/" + savedTrade.getId();
   }

@@ -30,6 +30,9 @@
                th:src="@{/assets/icon/camera.svg}"
           alt="이미지 추가하기"
           title="이미지 추가하기">
+          <div th:if="${#fields.hasErrors('files')}" class="error">
+            <p th:errors="*{files}"></p>
+          </div>
         </div>
         <!-- Todo: add image preview components -->
 <!--        <div class="img-preview"></div>-->

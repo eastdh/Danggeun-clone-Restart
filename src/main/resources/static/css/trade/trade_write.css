@@ -108,6 +108,23 @@ form label .label-text-length {
   object-fit: cover;
 }
 
+.image-input-box .delete-flag-box {
+  padding: 2px 5px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--gap-sm);
+  background-color: var(--gray-100);
+  border-radius: 5px;
+}
+
+.image-input-box .delete-flag-box input[type="checkbox"] {
+  opacity: 1;
+}
+
 .trade-profile .trade-info {
   width: calc(100% - var(--gap-2) - 300px);
   height: 100%;
@@ -169,7 +186,7 @@ form label .label-text-length {
 }
 
 /* custom checkbox*/
-.trade-price-box .offerable-box input[type="checkbox"] {
+input[type="checkbox"] {
   width: 20px;
   height: 20px;
   padding: 10px;
@@ -182,12 +199,12 @@ form label .label-text-length {
   position: relative;
 }
 
-.trade-price-box .offerable-box input[type="checkbox"]:checked {
+input[type="checkbox"]:checked {
   background-color: var(--orange-600);
   border-color: var(--orange-600);
 }
 
-.trade-price-box .offerable-box input[type="checkbox"]::after {
+input[type="checkbox"]::after {
   content: "";
   position: absolute;
   top: 2px;
@@ -200,7 +217,7 @@ form label .label-text-length {
   transform: rotate(45deg);
 }
 
-.trade-price-box .offerable-box input[type="checkbox"]:checked::after {
+input[type="checkbox"]:checked::after {
   opacity: 1;
 }
 

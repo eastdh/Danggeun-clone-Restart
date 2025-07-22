@@ -30,6 +30,15 @@
                th:src="@{/assets/icon/camera.svg}"
                alt="이미지 추가하기"
                title="이미지 추가하기">
+          <div class="delete-flag-box">
+            <input type="checkbox" id="delete-flag"
+                   th:field="*{fileDeleteFlag}"
+            >
+            <label for="delete-flag">저장된 사진 모두 제거</label>
+          </div>
+          <div th:if="${#fields.hasErrors('files')}" class="error">
+            <p th:errors="*{files}"></p>
+          </div>
         </div>
         <!-- Todo: add image preview components -->
         <!--        <div class="img-preview"></div>-->
