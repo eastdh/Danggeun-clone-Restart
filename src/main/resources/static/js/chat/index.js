@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 3) API 클라이언트
   const api = new ApiClient({
-    onLoading: (isLoading) => (isLoading ? overlay.show() : overlay.hide()),
-    onError: (err) => toast.error(err.message),
+    // onLoading: (isLoading) => (isLoading ? overlay.show() : overlay.hide()),
+    // onError: (err) => toast.error(err.message),
   });
 
   // 4) WebSocket 매니저

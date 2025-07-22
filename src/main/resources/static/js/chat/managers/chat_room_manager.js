@@ -1,5 +1,5 @@
 // resources/static/js/chat/managers/chat_room_manager.js
-import { BOT_ROOM_ID, API_PATHS, SENDER_TYPES, MESSAGE_TYPES, WS } from "../constants.js";
+import { API_PATHS, SENDER_TYPES, MESSAGE_TYPES, WS } from "../constants.js";
 
 /**
  * ChatRoomManager
@@ -113,11 +113,11 @@ export class ChatRoomManager {
 
   async _loadRoomDetail(roomId) {
     try {
-      if (roomId === Number(BOT_ROOM_ID)) {
+      if (roomId < 0) {
         console.log("[ChatRoomManager] 챗봇 방 로드");
         // 챗봇 방은 API 호출 안함
         const botDetail = {
-          chatRoomId: Number(BOT_ROOM_ID),
+          chatRoomId: roomId,
           partnerNickname: "챗봇",
           partnerTemperature: null,
           tradeTitle: null,
@@ -185,10 +185,10 @@ export class ChatRoomManager {
 
     // 2) 챗봇 방이면 REST 호출만 트리거하고,
     //    WS 구독(chatBotMessage)에서 답변을 받는다
-    if (this.store.currentRoomId === Number(BOT_ROOM_ID)) {
+    if (this.store.currentRoomId < 0) {
       try {
         await this.api.chatBot({
-          chatRoomId: BOT_ROOM_ID,
+          chatRoomId: -this.store.userId,
           senderId: this.store.userId,
           content,
         });

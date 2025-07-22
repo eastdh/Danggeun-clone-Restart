@@ -1,5 +1,5 @@
 // resources/static/js/chat/managers/chat_list_manager.js
-import { BOT_ROOM_ID, SELECTORS } from "../constants.js";
+import { SELECTORS } from "../constants.js";
 
 /**
  * ChatListManager
