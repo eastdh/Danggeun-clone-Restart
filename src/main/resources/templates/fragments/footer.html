@@ -1,43 +1,44 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<footer class="footer" th:fragment="footer">
-  <div class="footer-top">
-    <div class="footer-left">
-      <a th:href="@{/home}"><img src="/assets/icon/carrot.svg" alt="당근로고" /></a>
-      <div class="footer-left-link">
-        <a href="https://github.com/eastdh/Danggeun-clone-Restart" target="_blank"><img src="/assets/icon/github.svg" alt="깃허브" /></a>
-        <a href="https://www.notion.so/225dccc42309801fa0e5d0f4f63691a0" target="_blank"><img src="/assets/icon/notion.svg" alt="노션" /></a>
-        <a href="https://www.figma.com/board/iKa15eZ2AmwkSS3GtQg4NQ/GMO%EB%8B%B9%EA%B7%BC-Figjam?node-id=0-1&p=f&t=Ct3R7JAHcQvgqG3S-0" target="_blank"><img src="/assets/icon/figma.svg" alt="피그마" /></a>
+  <footer class="footer" th:fragment="footer">
+    <div class="footer-top">
+      <div class="footer-left">
+        <a th:href="@{/home}"><img src="/assets/icon/carrot.svg" alt="당근로고" /></a>
+        <div class="footer-left-link">
+          <a href="https://github.com/eastdh/Danggeun-clone-Restart" target="_blank"><img src="/assets/icon/github.svg" alt="깃허브" /></a>
+          <a href="https://www.notion.so/225dccc42309801fa0e5d0f4f63691a0" target="_blank"><img src="/assets/icon/notion.svg" alt="노션" /></a>
+          <a href="https://www.figma.com/board/iKa15eZ2AmwkSS3GtQg4NQ/GMO%EB%8B%B9%EA%B7%BC-Figjam?node-id=0-1&p=f&t=Ct3R7JAHcQvgqG3S-0" target="_blank"
+            ><img src="/assets/icon/figma.svg" alt="피그마"
+          /></a>
+        </div>
+      </div>
+      <div class="footer-right">
+        <p>탐색</p>
+        <div class="store-buttons">
+          <a th:href="@{/templates/trade}">중고거래</a>
+          <a th:href="@{/chat}">채팅하기</a>
+        </div>
       </div>
     </div>
-    <div class="footer-right">
-      <p>탐색</p>
-      <div class="store-buttons">
-        <a th:href="@{/templates/trade}">중고거래</a>
-        <a th:href="@{/chat}">채팅하기</a>
+    <div class="footer-bottom">
+      <div class="team-info">
+        <h3>Team-Info</h3>
+        <ul>
+          <li>팀명: Restart (5조)</li>
+          <li>팀장: 유동혁</li>
+          <li>팀원: 안시은, 이재원</li>
+        </ul>
+      </div>
+
+      <div class="license-info">
+        <h3>Licence-Info</h3>
+        <p>
+          이 프로젝트는 <strong>비영리 학습 목적</strong>으로 진행되며,<br />
+          국내에서는 <strong>당근마켓</strong>으로, 해외에서는 <strong>Karrot Market</strong>이라는 이름으로 알려진<br />
+          <a href="https://www.daangn.com/" target="_blank">당근마켓 공식 서비스</a>와는 무관합니다.<br />
+          코드 및 자료는 자유롭게 참고 가능하지만, <strong>상업적 사용은 삼가주시기 바랍니다.</strong>
+        </p>
       </div>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <div class="team-info">
-      <h3>Team-Info</h3>
-      <ul>
-        <li>팀명: Restart (5조)</li>
-        <li>팀장: 유동혁</li>
-        <li>팀원: 안시은, 이재원</li>
-      </ul>
-    </div>
-
-    <div class="license-info">
-      <h3>Licence-Info</h3>
-      <p>
-        이 프로젝트는 <strong>비영리 학습 목적</strong>으로 진행되며,<br/>
-        당근마켓(Danggeun Market) 공식 서비스와는 무관합니다.<br/>
-        코드 및 자료는 자유롭게 참고 가능하지만, <strong>상업적 사용은 삼가주시기 바랍니다.</strong>
-      </p>
-    </div>
-  </div>
-</footer>
-
+  </footer>
 </html>
