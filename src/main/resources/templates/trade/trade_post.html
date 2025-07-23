@@ -17,7 +17,7 @@
 <main>
   <div class="container">
     <div class="trade-section">
-      <nav th:replace="~{/trade/fragments/trade_components :: nav('trade', ${trade.title})}"></nav>
+      <nav th:replace="~{trade/fragments/trade_components :: nav('trade', ${trade.title})}"></nav>
       <div class="trade-content" th:object="${trade}">
         <section class="trade-profile">
           <div class="carousel" id="carousel">
@@ -252,7 +252,7 @@
       </header>
       <div class="trade-list">
         <th:block th:each="userTrade:${userTrades}">
-          <div th:replace="~{/trade/fragments/trade_components :: trade_card (${userTrade}, ${false})}"
+          <div th:replace="~{trade/fragments/trade_components :: trade_card (${userTrade}, ${false})}"
                class="trade-card"></div>
         </th:block>
       </div>
@@ -271,7 +271,7 @@
       </header>
       <div class="trade-list">
         <th:block th:each="categoryTrade:${categoryTrades}">
-          <div th:replace="~{/trade/fragments/trade_components :: trade_card (${categoryTrade}, ${false})}"
+          <div th:replace="~{trade/fragments/trade_components :: trade_card (${categoryTrade}, ${false})}"
                class="trade-card"></div>
         </th:block>
       </div>
