@@ -26,4 +26,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // 특정 유저가 buyer 또는 seller로 참여한 모든 리뷰 조회
     List<Review> findByBuyerIdOrSellerId(Long buyerId, Long sellerId);
+
+    @Query("""
+    SELECT r FROM Review r
+    WHERE (r.isSellerWriter = false AND r.seller.id = :userId)
+    OR (r.isSellerWriter = true AND r.buyer.id = :userId)
+    """)
+    List<Review> findAllReviewForProfile(@Param("userId") Long userId);
 }

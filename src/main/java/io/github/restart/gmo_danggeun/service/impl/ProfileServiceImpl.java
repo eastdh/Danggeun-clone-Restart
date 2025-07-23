@@ -32,17 +32,17 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
 
         // 2. 후기 조회 (판매자 기준)
-        List<Review> reviews = reviewRepository.findBySellerId(userId);
+        List<Review> reviews = reviewRepository.findAllReviewForProfile(userId);
 
         // 2-1. 각 리뷰에 해당하는 카테고리 조회 및 매핑
         List<ReviewDto> reviewDtos = new ArrayList<>();
         Map<String, Long> feedbackCountMap = new HashMap<>();
 
         for (Review review : reviews) {
-            User buyer = review.getBuyer();
+            User writer = review.getSellerWriter() ? review.getSeller() : review.getBuyer();
 
             // 🛑 Null 체크
-            if (buyer == null) {
+            if (writer == null) {
                 continue; // 또는 필요시 기본값 설정하고 진행
             }
             List<ReviewReviewCategory> rrCategories = reviewReviewCategoryRepository.findByReviewId(review.getId());
@@ -54,9 +54,9 @@ public class ProfileServiceImpl implements ProfileService {
 
             ReviewDto reviewDto = new ReviewDto();
             reviewDto.setReviewId(review.getId());
-            reviewDto.setRole("구매자"); // 항상 구매자 기준
-            reviewDto.setReviewerNickname(buyer.getNickname());
-            reviewDto.setLocation(buyer.getLocation());
+            reviewDto.setRole(review.getSellerWriter() ? "판매자" : "구매자");
+            reviewDto.setReviewerNickname(writer.getNickname());
+            reviewDto.setLocation(writer.getLocation());
             reviewDto.setContent(review.getContent());
             reviewDto.setRating(review.getRating());
             reviewDto.setCreatedAt(Timestamp.valueOf(review.getCreatedAt()));
