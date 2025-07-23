@@ -17,7 +17,7 @@
 <header th:replace="~{fragments/header}"></header>
 <main>
   <div class="container">
-    <nav th:replace="~{/trade/fragments/trade_components :: nav('trade', '')}"></nav>
+    <nav th:replace="~{trade/fragments/trade_components :: nav('trade', '')}"></nav>
     <div th:if="${keyword}">
       <h1 th:text="${keyword} + ' 검색 결과'">"키워드" 검색 결과</h1>
     </div>
@@ -116,7 +116,7 @@
             th:classappend="${filters != null ? 'filtered' : ''}"
         >
           <th:block th:each="trade:${trades}">
-            <div th:replace="~{/trade/fragments/trade_components :: trade_card (${trade}, ${true})}"
+            <div th:replace="~{trade/fragments/trade_components :: trade_card (${trade}, ${true})}"
                  class="trade-card"></div>
           </th:block>
         </div>
