@@ -15,7 +15,7 @@ function fetchMoreTrade() {
   if (loadingLock) return;
   if (lastContent) return;
   loadingLock = true;
-  loadingBox.classList.remove("hidden");
+  loadingBox.classList.add("visible");
 
   const params = new URLSearchParams();
   params.append("page", page);
@@ -35,7 +35,7 @@ function fetchMoreTrade() {
     .then((res) => res.json())
     .then((data) => {
       lastContent = data.empty;
-      loadingBox.classList.add("hidden");
+      loadingBox.classList.remove("visible");
       if (lastContent) return;
 
       const trades = data.content;
@@ -46,7 +46,7 @@ function fetchMoreTrade() {
       page++;
     })
     .catch(() => {
-      loadingBox.classList.add("hidden");
+      loadingBox.classList.add("visible");
       loadingLock = false;
     });
 }

@@ -25,6 +25,14 @@ header {
   color: var(--gray-700);
 }
 
+.trade-link {
+  transition: color 0.1s ease;
+}
+
+.trade-link:hover {
+  color: var(--orange-600);
+}
+
 .search-container {
   gap: 10px;
 }

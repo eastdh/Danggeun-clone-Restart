@@ -247,13 +247,13 @@ aside .section-filter {
 }
 
 .loading {
+  display: none;
+}
+
+.loading.visible {
   margin-top: 20px;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.loading.hidden {
-  display: none;
 }

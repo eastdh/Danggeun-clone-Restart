@@ -7,7 +7,7 @@
             <a th:href="@{/main}">
                 <img src="/assets/icon/carrot.svg" alt="당근로고" />
             </a>
-            <a th:href="@{/trade}">중고거래</a>
+            <a class="trade-link" th:href="@{/trade}">중고거래</a>
 
             <!-- 로그인 후 -->
             <a th:href="@{/location}" sec:authorize="isAuthenticated()">동네인증</a>
