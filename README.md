@@ -8,6 +8,8 @@ Team Restart(재시동)의 Spring 기반 웹 프로젝트로, 챗봇 상담사�
 
 당근마켓을 참고하여 사용자 중심의 중고거래 기능과 AI 챗봇을 통한 실시간 상담 서비스를 제공합니다. Spring 생태계를 활용하며, 팀원 전원이 다양한 역할을 수행합니다.
 
+🎥 [시연 영상 보러가기](https://youtu.be/AWOMrevFndQ)
+
 ## 👥 Team Restart
 
 | 이름   | 역할              |
