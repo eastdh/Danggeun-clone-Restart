@@ -19,7 +19,7 @@
     <div class="title-box">
       <h1>내 거래글 수정</h1>
     </div>
-    <form th:action="@{trade/{id}/edit(id=${tradeEditDto.id})}" method="post"
+    <form th:action="@{/trade/{id}/edit(id=${tradeEditDto.id})}" method="post"
           th:object="${tradeEditDto}"
           enctype="multipart/form-data">
       <div class="trade-profile">
