@@ -10,6 +10,7 @@ Team Restart(재시동)의 Spring 기반 웹 프로젝트로, 챗봇 상담사�
 
 - 🎥 [시연 영상 보러가기](https://youtu.be/AWOMrevFndQ)
 - 🔗 [배포된 사이트 보러가기](http://52.78.128.12:8080/main)
+- 👨‍🏫 [발표 자료 보러가기](https://docs.google.com/presentation/d/1xnmhA6hxTgWd8VdpbU0rGPeMrR3lJ92RYPtqJMnwPY0/edit?usp=sharing)
 
 ## 👥 Team Restart
 
